@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include "defs.h"
 
 //Reads the binary file
@@ -30,7 +31,7 @@ void binary_file_loader(char *filename, char *memory) {
 void print_binary(uint8_t *memory) {
 
     printf("%s\n", "Non-zero memory:");
-    for (int i = 0; i < NUM_ADDRESSES; i = i + 4) {
+    for (int i = 0; i < 32; i = i + 4) {
         uint8_t value[4];
         value[3] = (memory[i]);
         value[2] = (memory[i + 1]);
