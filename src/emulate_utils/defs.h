@@ -9,6 +9,7 @@
 #define NUM_REGISTERS 17
 #define PC 15
 #define CPSR 16
+#define INSTRUCTION_SIZE 32
 
 
 typedef struct {
