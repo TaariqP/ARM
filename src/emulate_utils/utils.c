@@ -12,7 +12,6 @@
 
 void binary_file_loader(char *filename, char *memory) {
 
-
     FILE *binaryFile;
     FILE *fp = fopen(filename, "rb");
     fseek(fp, 0, SEEK_END);
@@ -42,5 +41,10 @@ void print_binary(uint8_t *memory) {
             printf("0x%08x: 0x%08x\n", i, instruction);
         }
     }
-
 }
+
+
+uint8_t mask_4_bit(int value, int end_bit){
+    return (value >> (32 - end_bit) & 0xF);
+}
+

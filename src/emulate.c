@@ -20,6 +20,7 @@ int main(int argc, char **argv) {
         printf("Invalid File");
         return EXIT_FAILURE;
     }
+
     uint8_t memory[NUM_ADDRESSES];
     binary_file_loader(filename, (char *) memory);
     print_binary(memory);
