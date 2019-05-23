@@ -28,4 +28,9 @@ typedef struct {
     fetched_instruction fetched_instruction;
 } current_state;
 
+current_state INITIAL_STATE = {
+        .memory = {0},
+        .registers = {0}
+};
+
 #endif //ARM11_11_DEFS_H

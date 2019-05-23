@@ -43,6 +43,24 @@ void print_binary(uint8_t *memory) {
     }
 }
 
+void print_registers(int32_t *registers) {
+    printf("%s\n", "Registers:");
+    printf("$0  : %10d (0x%08x)\n", registers[0], registers[0]);
+    printf("$1  : %10d (0x%08x)\n", registers[1], registers[1]);
+    printf("$2  : %10d (0x%08x)\n", registers[2], registers[2]);
+    printf("$3  : %10d (0x%08x)\n", registers[3], registers[3]);
+    printf("$4  : %10d (0x%08x)\n", registers[4], registers[4]);
+    printf("$5  : %10d (0x%08x)\n", registers[5], registers[5]);
+    printf("$6  : %10d (0x%08x)\n", registers[6], registers[6]);
+    printf("$7  : %10d (0x%08x)\n", registers[7], registers[7]);
+    printf("$8  : %10d (0x%08x)\n", registers[8], registers[8]);
+    printf("$9  : %10d (0x%08x)\n", registers[9], registers[9]);
+    printf("$10 : %10d (0x%08x)\n", registers[10], registers[10]);
+    printf("$11 : %10d (0x%08x)\n", registers[11], registers[11]);
+    printf("$12 : %10d (0x%08x)\n", registers[12], registers[12]);
+    printf("PC  : %10d (0x%08x)\n", registers[PC], registers[PC]);
+    printf("CPSR: %10d (0x%08x)\n", registers[CPSR], registers[CPSR]);
+}
 
 
 uint32_t get_instruct(current_state *state, int address){
