@@ -8,7 +8,6 @@
 
 void decode_dpi(current_state *state){
     uint32_t value = state->fetched_instruction.binary_value;
-
     //NOTE: bits 32 - 28 corresponds to 0 to 4 bits; thus mask ending at the 4th bit
     state->decoded_instruction.cond = mask_4_bit(value, 28);
     state->decoded_instruction.i = mask_1_bit(value, 25);
