@@ -8,6 +8,7 @@
 
 void binary_file_loader(char* , char*);
 void print_binary(uint8_t*);
+uint8_t mask_4_bit(int, int);
 
 
 #endif //ARM11_11_UTILS_H
