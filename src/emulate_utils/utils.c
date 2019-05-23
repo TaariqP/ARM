@@ -30,7 +30,7 @@ void binary_file_loader(char *filename, char *memory) {
 void print_binary(uint8_t *memory) {
 
     printf("%s\n", "Non-zero memory:");
-    for (int i = 0; i < 32; i = i + 4) {
+    for (int i = 0; i < NUM_ADDRESSES; i = i + 4) {
         uint8_t value[4];
         value[3] = (memory[i]);
         value[2] = (memory[i + 1]);
@@ -41,6 +41,20 @@ void print_binary(uint8_t *memory) {
             printf("0x%08x: 0x%08x\n", i, instruction);
         }
     }
+}
+
+
+
+uint32_t get_instruct(current_state *state, int address){
+
+    uint8_t value[4];
+    value[0] = (state->memory[address]);
+    value[1] = (state->memory[address+1]);
+    value[2] = (state->memory[address+2]);
+    value[3] = (state->memory[address+3]);
+    uint32_t instruction = (value[3] << 24) | (value[2] << 16) | (value[1] << 8) | value[0];
+    return instruction;
+
 }
 
 

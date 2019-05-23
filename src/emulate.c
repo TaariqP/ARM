@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "emulate_utils/utils.h"
 #include "emulate_utils/defs.h"
-
+#include "emulate_utils/utils.c"
 
 int main(int argc, char **argv) {
 
@@ -27,6 +27,3 @@ int main(int argc, char **argv) {
 
     return EXIT_SUCCESS;
 }
-
-
-

@@ -3,7 +3,8 @@
 //
 
 #include <stdint.h>
+#include "defs.h"
 
-void decode_dpi(uint32_t instruction){
+void decode_dpi(current_state *state){
 
 }
