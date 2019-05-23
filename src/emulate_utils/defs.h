@@ -14,7 +14,12 @@
 
 typedef struct {
     uint8_t cond;
-    uint32_t operation;
+    uint8_t i;
+    uint8_t opcode;
+    uint8_t s;
+    uint8_t rn;
+    uint8_t rd;
+    uint8_t operand2;
 } decoded_instruction;
 
 typedef struct {
@@ -26,6 +31,7 @@ typedef struct {
     uint8_t memory[NUM_ADDRESSES];
     int32_t registers[NUM_REGISTERS];
     fetched_instruction fetched_instruction;
+    decoded_instruction decoded_instruction;
 } current_state;
 
 current_state INITIAL_STATE = {

@@ -5,7 +5,6 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include <stdlib.h>
 #include "defs.h"
 
 //Reads the binary file
@@ -63,24 +62,24 @@ void print_registers(int32_t *registers) {
 }
 
 
-uint32_t get_instruct(current_state *state, int address){
+uint32_t get_instruct(current_state *state, int address) {
 
     uint8_t value[4];
     value[0] = (state->memory[address]);
-    value[1] = (state->memory[address+1]);
-    value[2] = (state->memory[address+2]);
-    value[3] = (state->memory[address+3]);
+    value[1] = (state->memory[address + 1]);
+    value[2] = (state->memory[address + 2]);
+    value[3] = (state->memory[address + 3]);
     uint32_t instruction = (value[3] << 24) | (value[2] << 16) | (value[1] << 8) | value[0];
     return instruction;
 
 }
 
-int mask_1_bit(int value, int bit){
-    return (value >> (32 - (bit + 1))) & 0x1;
+int mask_1_bit(int value, int bit) {
+    return (value >> bit) & 0x1;
 }
 
 
-uint8_t mask_4_bit(int value, int end_bit){
-    return (value >> (32 - end_bit) & 0xF);
+uint8_t mask_4_bit(int value, int end_bit) {
+    return (value >> end_bit) & 0xF;
 }
 
