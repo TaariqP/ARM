@@ -8,5 +8,17 @@
 
 void execute_dpi(current_state *state){
     int8_t opcode = state->decoded_instruction.opcode;
-    int8_t i =
+
+}
+
+void execute_sdt(current_state *state){
+
+}
+
+void execute_mul(current_state *state){
+
+}
+
+void execute_branch(current_state *state){
+
 }

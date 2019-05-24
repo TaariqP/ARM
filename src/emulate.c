@@ -2,15 +2,32 @@
 #include <stdio.h>
 #include <printf.h>
 #include <stdint.h>
-#include <stdbool.h>
-#include "emulate_utils/utils.h"
 #include "emulate_utils/defs.h"
 #include "emulate_utils/utils.c"
-
-
+#include "emulate_utils/execute.h"
+#include "emulate_utils/execute.c"
 
 
 void execute(current_state *state) {
+    instruction_type type = state->decoded_instruction.type;
+    if (check_condition(state)) {
+        switch (type) {
+            case DPI:
+                execute_dpi(state);
+                break;
+            case SDT:
+                execute_sdt(state);
+                break;
+            case MUL:
+                execute_mul(state);
+                break;
+            case BRANCH:
+                execute_branch(state);
+                break;
+            default:
+                printf("Error in execute type");
+        }
+    }
 }
 
 int main(int argc, char **argv) {
@@ -20,7 +37,7 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    char* filename = argv[1];
+    char *filename = argv[1];
     FILE *input = fopen(filename, "rb");
 
     if (input == NULL) {
@@ -32,7 +49,7 @@ int main(int argc, char **argv) {
     *state = INITIAL_STATE;
 
 
-    binary_file_loader(filename, (char*) state->memory);
+    binary_file_loader(filename, (char *) state->memory);
     print_registers(state->registers);
     print_binary(state->memory);
 
