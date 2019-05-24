@@ -65,25 +65,19 @@ void fetch(current_state *state) {
 
 
 void pipeline_cycle(current_state *state){
+    //initialisation
+    fetch(state);
+    pc_increment(state);
+    decode(state);
+    fetch(state);
+    pc_increment(state);
+
     //infinite loop till halt encountered
-    while(1) {
-        //upon program initialisation
-        if (state->fetched_instruction.binary_value == 0){
-            fetch(state);
-            pc_increment(state);
-        } else if (state->decoded_instruction.type == NONE){
-            decode(state);
-            fetch(state);
-            pc_increment(state);
-        } else if (state->decoded_instruction.type != ALL_ZERO){
+    while(state->decoded_instruction.type != ALL_ZERO){
             execute(state);
             decode(state);
             fetch(state);
             pc_increment(state);
-        } else {
-            //halt instruction encountered
-            break;
-        }
     }
 
 
