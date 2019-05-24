@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
 
     binary_file_loader(filename, (char*) state->memory);
     print_registers(state->registers);
-    print_binary(memory);
+    print_binary(state->memory);
 
     return EXIT_SUCCESS;
 }

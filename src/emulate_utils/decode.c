@@ -22,3 +22,11 @@ void decode_dpi(current_state *state) {
 void decode_sdt(current_state *state) {
 
 }
+
+
+
+void decode_branch(current_state *state){
+    uint32_t value = state->fetched_instruction.binary_value;
+    state->decoded_instruction.cond = mask_4_bit(value, 28);
+    state->decoded_instruction.offset = value & 0xFFFFFF;
+}
