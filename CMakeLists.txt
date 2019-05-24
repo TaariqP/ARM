@@ -1,1 +1,0 @@
-add_executable(emulate src/emulate.c src/emulate_utils)
