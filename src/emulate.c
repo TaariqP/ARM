@@ -3,9 +3,10 @@
 #include <printf.h>
 #include <stdint.h>
 #include "emulate_utils/defs.h"
-#include "emulate_utils/utils.c"
+#include "emulate_utils/utils.h"
 #include "emulate_utils/execute.h"
 #include "emulate_utils/execute.c"
+#include "emulate_utils/decode.c"
 
 
 void execute(current_state *state) {
@@ -30,6 +31,12 @@ void execute(current_state *state) {
     }
 }
 
+void decode(current_state *state){
+    uint32_t fetched_instruction = state->fetched_instruction.binary_value;
+
+    //TODO
+}
+
 int main(int argc, char **argv) {
 
     if (argc != 2) {
@@ -49,7 +56,12 @@ int main(int argc, char **argv) {
     *state = INITIAL_STATE;
 
 
+
     binary_file_loader(filename, (char *) state->memory);
+
+    decode_dpi(state);
+    execute_dpi(state);
+
     print_registers(state->registers);
     print_binary(state->memory);
 
