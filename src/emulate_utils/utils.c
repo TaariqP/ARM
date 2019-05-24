@@ -111,3 +111,20 @@ uint32_t get_instruct(current_state *state, int address) {
     return instruction;
 
 }
+
+int ror(uint32_t val, uint32_t num){
+    return (val >> num) | val << (32 - num);
+}
+
+int lsr(int x, int n) {
+    return (int) ((unsigned int) x >> n);
+}
+
+//Preserves sign bit
+int asr(int x, int n) {
+    return x >> n;
+}
+
+int lsl(int x, int n) {
+    return (int) ((unsigned int) x << n);
+}

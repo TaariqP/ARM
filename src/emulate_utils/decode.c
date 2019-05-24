@@ -23,6 +23,10 @@ void decode_sdt(current_state *state) {
 
 }
 
+void decode_mul(current_state *state){
+
+}
+
 
 
 void decode_branch(current_state *state){
