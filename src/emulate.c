@@ -77,11 +77,11 @@ int main(int argc, char **argv) {
 
     binary_file_loader(filename, (char *) state->memory);
 
-    decode_dpi(state);
-    execute_dpi(state);
 
-    print_registers(state->registers);
-    print_binary(state->memory);
+    print_registers(state
+                            ->registers);
+    print_binary(state
+                         ->memory);
 
     return EXIT_SUCCESS;
 }
