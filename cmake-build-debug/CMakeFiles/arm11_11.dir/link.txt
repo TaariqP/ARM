@@ -1,0 +1,1 @@
+/usr/bin/cc -g   CMakeFiles/arm11_11.dir/src/assemble.c.o CMakeFiles/arm11_11.dir/src/emulate.c.o CMakeFiles/arm11_11.dir/src/emulate_utils/utils.c.o CMakeFiles/arm11_11.dir/src/emulate_utils/decode.c.o CMakeFiles/arm11_11.dir/src/emulate_utils/execute.c.o  -o arm11_11 

@@ -12,9 +12,23 @@
 #define PC 15
 #define CPSR 16
 #define INSTRUCTION_SIZE 32
+#define N 32
+#define Z 31
+#define C 30
+#define V 29
 
+
+typedef enum {
+    DPI,
+    SDT,
+    MUL,
+    BRANCH,
+    ALL_ZERO,
+    NONE
+} instruction_type;
 
 typedef struct {
+    instruction_type type;
     uint8_t cond;
     uint8_t i;
     uint8_t opcode;
@@ -41,5 +55,6 @@ current_state INITIAL_STATE = {
         .memory = {0},
         .registers = {0}
 };
+
 
 #endif //ARM11_11_DEFS_H
