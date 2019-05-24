@@ -30,6 +30,12 @@ void execute(current_state *state) {
     }
 }
 
+void decode(current_state *state){
+    uint32_t fetched_instruction = state->fetched_instruction.binary_value;
+
+    //TODO
+}
+
 int main(int argc, char **argv) {
 
     if (argc != 2) {
