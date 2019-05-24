@@ -116,6 +116,11 @@ void set_register(current_state *state, int reg, int value){
     state->registers[reg] = value;
 }
 
+void set_CPSR_bit(current_state *state, int bit_number){
+    uint32_t cpsr = state->registers[CPSR];
+    state->registers[CPSR] ^= (1 << bit_number);
+}
+
 int ror(uint32_t val, uint32_t num){
     return (val >> num) | val << (32 - num);
 }

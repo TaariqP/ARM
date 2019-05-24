@@ -40,15 +40,23 @@ void execute_dpi(current_state *state) {
         switch (shiftType) {
             case 0:
                 finalOp2 = lsl(rm_value, shiftAmount);
+                //Bit 28 carry out
+                shiftCarry = mask_1_bit(finalOp2, 28);
                 break;
             case 1:
                 finalOp2 = lsr(rm_value, shiftAmount);
+                //Bit 3 carry out
+                shiftCarry = mask_1_bit(finalOp2, 3);
                 break;
             case 2:
                 finalOp2 = asr(rm_value, shiftAmount);
+                //Bit 3 carry out
+                shiftCarry = mask_1_bit(finalOp2, 3);
                 break;
             case 3:
                 finalOp2 = ror(rm_value, (unsigned int) shiftAmount);
+                //Bit 3 carry out
+                shiftCarry = mask_1_bit(finalOp2, 3);
                 break;
             default:
                 printf("Invalid shift type");
@@ -111,14 +119,21 @@ void execute_dpi(current_state *state) {
             break;
     }
 
-    if (opcode != 8 & opcode != 9 & opcode != 10){
+    //tst, teq, cmp do not write to rd
+    if (opcode != 8 & opcode != 9 & opcode != 10) {
         set_register(state, state->decoded_instruction.rd, returnValue);
     }
 
 
+    uint32_t cpsr = state->registers[CPSR];
     //Setting the CPSR
-    if (state->decoded_instruction.s) {
-
+    if (state->decoded_instruction.s){
+        //C (30) bit is carry out
+        set_CPSR_bit(state, C);
+        //Z (31) bit if result is zero
+        set_CPSR_bit(state, Z);
+        //N (32) bit is bit 31 of result
+        set_CPSR_bit(state, N);
     }
 }
 

@@ -12,6 +12,10 @@
 #define PC 15
 #define CPSR 16
 #define INSTRUCTION_SIZE 32
+#define N 32
+#define Z 31
+#define C 30
+#define V 29
 
 
 typedef enum {
