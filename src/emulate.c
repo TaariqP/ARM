@@ -6,6 +6,7 @@
 #include "emulate_utils/utils.h"
 #include "emulate_utils/execute.h"
 #include "emulate_utils/execute.c"
+#include "emulate_utils/decode.c"
 
 
 void execute(current_state *state) {
@@ -59,6 +60,7 @@ int main(int argc, char **argv) {
     binary_file_loader(filename, (char *) state->memory);
 
     decode_dpi(state);
+    execute_dpi(state);
 
     print_registers(state->registers);
     print_binary(state->memory);
