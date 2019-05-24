@@ -63,32 +63,29 @@ void fetch(current_state *state) {
             get_instruct(state, state->registers[PC]);
 }
 
-//initialisation:
-//fetch first instruction, decode it.
-//fetch second instruction,store it.
-//trigger while
-//in the while loop:
-//fetch a new instruction
-//decode previously fetched instruction, and store fetched instruction as fetched
-//execute previously decoded instruction, and store decoded instruction as decoded
-//increment PC by 4
 
 void pipeline_cycle(current_state *state){
-    if (state->fetched_instruction.binary_value == 0){
-        fetch(state);
-        pc_increment(state);
-    } else if (state->decoded_instruction.type == NONE){
-        decode(state);
-        fetch(state);
-        pc_increment(state);
-    } else {
-        while(state->decoded_instruction.type != ALL_ZERO){
+    //infinite loop till halt encountered
+    while(1) {
+        //upon program initialisation
+        if (state->fetched_instruction.binary_value == 0){
+            fetch(state);
+            pc_increment(state);
+        } else if (state->decoded_instruction.type == NONE){
+            decode(state);
+            fetch(state);
+            pc_increment(state);
+        } else if (state->decoded_instruction.type != ALL_ZERO){
             execute(state);
             decode(state);
             fetch(state);
             pc_increment(state);
+        } else {
+            //halt instruction encountered
+            break;
         }
     }
+
 
 }
 
