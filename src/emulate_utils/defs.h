@@ -22,6 +22,7 @@ typedef struct {
     uint8_t rn;
     uint8_t rd;
     uint32_t operand2;
+    uint32_t offset;
 } decoded_instruction;
 
 typedef struct {
