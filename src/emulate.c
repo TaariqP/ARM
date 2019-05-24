@@ -24,8 +24,8 @@ int main(int argc, char **argv) {
     current_state *state = malloc(sizeof(current_state));
     *state = INITIAL_STATE;
 
-    uint8_t memory[NUM_ADDRESSES];
-    binary_file_loader(filename, (char *) memory);
+
+    binary_file_loader(filename, (char*) state->memory);
     print_registers(state->registers);
     print_binary(memory);
 
