@@ -112,11 +112,11 @@ uint32_t get_instruct(current_state *state, int address) {
 
 }
 
-void set_register(current_state *state, int reg, int value){
+void set_register(current_state *state, int reg, int value) {
     state->registers[reg] = value;
 }
 
-void set_CPSR_bit(current_state *state, int bit_number, int val){
+void set_CPSR_bit(current_state *state, int bit_number, int val) {
     uint32_t cpsr = state->registers[CPSR];
     if (val == 0) {
         if (cpsr >> (31 - bit_number) & 0x1) {
@@ -124,11 +124,12 @@ void set_CPSR_bit(current_state *state, int bit_number, int val){
         }
     } else if (val == 1) {
         cpsr = cpsr | (0x1 << 31 - bit_number);
-
+    }
     state->registers[CPSR] = cpsr;
+
 }
 
-int ror(uint32_t val, uint32_t num){
+int ror(uint32_t val, uint32_t num) {
     return (val >> num) | val << (32 - num);
 }
 

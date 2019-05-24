@@ -3,7 +3,7 @@
 #include <printf.h>
 #include <stdint.h>
 #include "emulate_utils/defs.h"
-#include "emulate_utils/utils.c"
+#include "emulate_utils/utils.h"
 #include "emulate_utils/execute.h"
 #include "emulate_utils/execute.c"
 
@@ -55,7 +55,11 @@ int main(int argc, char **argv) {
     *state = INITIAL_STATE;
 
 
+
     binary_file_loader(filename, (char *) state->memory);
+
+    decode_dpi(state);
+
     print_registers(state->registers);
     print_binary(state->memory);
 

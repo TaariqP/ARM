@@ -129,11 +129,13 @@ void execute_dpi(current_state *state) {
     //Setting the CPSR
     if (state->decoded_instruction.s){
         //C (30) bit is carry out
-        set_CPSR_bit(state, C);
+        set_CPSR_bit(state, C, carry);
         //Z (31) bit if result is zero
-        set_CPSR_bit(state, Z);
+        if (returnValue == 0){
+            set_CPSR_bit(state, Z, 1);
+        }
         //N (32) bit is bit 31 of result
-        set_CPSR_bit(state, N);
+        set_CPSR_bit(state, N, returnValue >> 31);
     }
 }
 
