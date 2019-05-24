@@ -78,9 +78,17 @@ void pipeline_cycle(current_state *state){
         fetch(state);
         pc_increment(state);
     } else if (state->decoded_instruction.type == NONE){
-        
+        decode(state);
+        fetch(state);
+        pc_increment(state);
+    } else {
+        while(state->decoded_instruction.type != ALL_ZERO){
+            execute(state);
+            decode(state);
+            fetch(state);
+            pc_increment(state);
+        }
     }
-
 
 }
 
@@ -106,8 +114,7 @@ int main(int argc, char **argv) {
 
     binary_file_loader(filename, (char *) state->memory);
 
-    decode_dpi(state);
-    execute_dpi(state);
+    pipeline_cycle(state);
 
     print_registers(state->registers);
     print_binary(state->memory);
