@@ -9,8 +9,10 @@ void execute_dpi(current_state *state) {
     uint8_t opcode = state->decoded_instruction.opcode;
     uint8_t i = state->decoded_instruction.i;
     uint16_t operand2 = state->decoded_instruction.operand2;
-    int finalOp2;
-    int shiftCarry;
+
+    int finalOp2 = 0;
+    int shiftCarry = 0;
+    int carry = 0;
 
     if (state->decoded_instruction.i) {
         //Immediate constant
@@ -38,7 +40,6 @@ void execute_dpi(current_state *state) {
         switch (shiftType) {
             case 0:
                 finalOp2 = lsl(rm_value, shiftAmount);
-                shiftCarry
                 break;
             case 1:
                 finalOp2 = lsr(rm_value, shiftAmount);
@@ -55,37 +56,63 @@ void execute_dpi(current_state *state) {
     }
 
 
+    int returnValue;
+    int rn = state->decoded_instruction.rn;
+
     switch (opcode) {
         case 0:
             //AND
+            returnValue = rn & finalOp2;
+            carry = shiftCarry;
             break;
         case 1:
             //EOR/XOR
+            returnValue = rn ^ finalOp2;
+            carry = shiftCarry;
             break;
         case 2:
             //SUB
+            returnValue = rn - finalOp2;
+            carry = finalOp2 <= rn;
             break;
         case 3:
             //RSB
+            returnValue = rn - finalOp2;
+            carry = rn <= finalOp2;
             break;
         case 4:
             //ADD
+            returnValue = rn + finalOp2;
             break;
         case 8:
             //TST
+            returnValue = rn & finalOp2;
+            carry = shiftCarry;
             break;
         case 9:
             //TEQ
+            returnValue = rn ^ finalOp2;
+            carry = shiftCarry;
             break;
         case 10:
             //CMP
+            returnValue = rn - finalOp2;
+            carry = finalOp2 <= rn;
             break;
         case 12:
             //OR
+            returnValue = rn | finalOp2;
+            carry = shiftCarry;
             break;
         case 13:
             //MOV
+            returnValue = finalOp2;
+            carry = shiftCarry;
             break;
+    }
+
+    if (opcode != 8 & opcode != 9 & opcode != 10){
+        set_register(state, state->decoded_instruction.rd, returnValue);
     }
 
 

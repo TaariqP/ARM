@@ -112,6 +112,10 @@ uint32_t get_instruct(current_state *state, int address) {
 
 }
 
+void set_register(current_state *state, int reg, int value){
+    state->registers[reg] = value;
+}
+
 int ror(uint32_t val, uint32_t num){
     return (val >> num) | val << (32 - num);
 }
