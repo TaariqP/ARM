@@ -6,6 +6,7 @@
 #define ARM11_11_DEFS_H
 
 #include <stdint.h>
+#include <lzma.h>
 
 #define NUM_ADDRESSES 65536
 #define NUM_REGISTERS 17
@@ -53,7 +54,9 @@ typedef struct {
 
 current_state INITIAL_STATE = {
         .memory = {0},
-        .registers = {0}
+        .registers = {0},
+        .fetched_instruction.binary_value = 0,
+        .decoded_instruction.type = NONE
 };
 
 

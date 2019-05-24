@@ -112,6 +112,10 @@ uint32_t get_instruct(current_state *state, int address) {
 
 }
 
+void pc_increment(current_state *state){
+    state->registers[PC] += 4;
+}
+
 void set_register(current_state *state, int reg, int value) {
     state->registers[reg] = value;
 }
