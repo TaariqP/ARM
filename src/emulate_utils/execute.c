@@ -9,13 +9,15 @@ void execute_dpi(current_state *state) {
     uint8_t opcode = state->decoded_instruction.opcode;
     uint8_t i = state->decoded_instruction.i;
     uint16_t operand2 = state->decoded_instruction.operand2;
-    int final;
+    int finalOp2;
+    int shiftCarry;
+
     if (state->decoded_instruction.i) {
         //Immediate constant
         uint8_t rotate = mask_4_bit(operand2, 8);
         uint8_t imm = operand2 & 0xF;
         //Zero extend to 32 bits and rotate right
-        final = ror((uint32_t) imm, rotate * 2);
+        finalOp2 = ror((uint32_t) imm, rotate * 2);
     } else {
         //Shifted Register
         uint8_t rm = operand2 & 0xF;
@@ -30,6 +32,26 @@ void execute_dpi(current_state *state) {
             uint8_t rs = mask_4_bit(shift, 8);
         }
 
+        uint32_t rm_value = state->registers[rm];
+
+        //SHIFT
+        switch (shiftType) {
+            case 0:
+                finalOp2 = lsl(rm_value, shiftAmount);
+                shiftCarry
+                break;
+            case 1:
+                finalOp2 = lsr(rm_value, shiftAmount);
+                break;
+            case 2:
+                finalOp2 = asr(rm_value, shiftAmount);
+                break;
+            case 3:
+                finalOp2 = ror(rm_value, (unsigned int) shiftAmount);
+                break;
+            default:
+                printf("Invalid shift type");
+        }
     }
 
 
@@ -66,6 +88,8 @@ void execute_dpi(current_state *state) {
             break;
     }
 
+
+    //Setting the CPSR
     if (state->decoded_instruction.s) {
 
     }
