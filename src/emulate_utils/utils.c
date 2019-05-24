@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "defs.h"
 
 //Reads the binary file
@@ -61,6 +62,27 @@ void print_registers(int32_t *registers) {
     printf("CPSR: %10d (0x%08x)\n", registers[CPSR], registers[CPSR]);
 }
 
+
+
+bool check_condition(current_state* state){
+    int32_t value = state->registers[CPSR];
+    int8_t n = mask_1_bit(value, 31);
+    int8_t z = mask_1_bit(value, 30);
+    int8_t c = mask_1_bit(value, 29);
+    int8_t v = mask_1_bit(value, 28);
+    int8_t cond = state->decoded_instruction.cond;
+
+    switch (cond){
+        case 0: return z;
+        case 1: return !z;
+        case 10: return n == v;
+        case 11: return !(n == v);
+        case 12: return !z & (n == v);
+        case 13: return z | !(n == v);
+        case 14: return 1;
+        default: printf("Failed CPSR Check");
+    }
+}
 
 uint32_t get_instruct(current_state *state, int address) {
 

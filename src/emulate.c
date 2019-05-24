@@ -2,9 +2,16 @@
 #include <stdio.h>
 #include <printf.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "emulate_utils/utils.h"
 #include "emulate_utils/defs.h"
 #include "emulate_utils/utils.c"
+
+
+
+
+void execute(current_state *state) {
+}
 
 int main(int argc, char **argv) {
 

@@ -17,7 +17,7 @@ void decode_dpi(current_state *state) {
     state->decoded_instruction.rd = mask_4_bit(value, 12);
     //Get the last 12 bits
         state->decoded_instruction.operand2 = value & 0xFFF;
-    }alue & 0xFFF;
+    }
 
 void decode_sdt(current_state *state) {
 

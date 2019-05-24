@@ -41,4 +41,13 @@ current_state INITIAL_STATE = {
         .registers = {0}
 };
 
+typedef enum {
+    DPI,
+    SDT,
+    MUL,
+    BRA,
+    ALL_ZERO,
+    NONE
+};
+
 #endif //ARM11_11_DEFS_H
