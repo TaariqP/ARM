@@ -3,8 +3,6 @@
 #include <printf.h>
 #include <stdint.h>
 #include "emulate_utils/defs.h"
-#include "emulate_utils/utils.h"
-#include "emulate_utils/execute.h"
 #include "emulate_utils/execute.c"
 #include "emulate_utils/decode.c"
 
@@ -31,10 +29,31 @@ void execute(current_state *state) {
     }
 }
 
-void decode(current_state *state){
+void decode(current_state *state) {
     uint32_t fetched_instruction = state->fetched_instruction.binary_value;
 
-    //TODO
+    if (fetched_instruction == 0) {
+        state->decoded_instruction.type = NONE;
+    } else if (!mask_1_bit(fetched_instruction, 27)) {
+        //DATA PROCESSING
+        state->decoded_instruction.type = DPI;
+        decode_dpi(state);
+    } else if (mask_1_bit(fetched_instruction, 7) && mask_1_bit(fetched_instruction, 4)) {
+        //MULTIPLY
+        state->decoded_instruction.type = MUL;
+        decode_mul(state);
+    } else if (mask_1_bit(fetched_instruction, 26)) {
+        //SDT
+        state->decoded_instruction.type = SDT;
+        decode_sdt(state);
+    } else if (mask_1_bit(fetched_instruction, 27)) {
+        //BRANCH
+        state->decoded_instruction.type = BRANCH;
+        decode_branch(state);
+    } else {
+        state->decoded_instruction.type = DPI;
+        decode_dpi(state);
+    }
 }
 
 int main(int argc, char **argv) {
@@ -54,7 +73,6 @@ int main(int argc, char **argv) {
 
     current_state *state = malloc(sizeof(current_state));
     *state = INITIAL_STATE;
-
 
 
     binary_file_loader(filename, (char *) state->memory);
