@@ -75,7 +75,7 @@ uint32_t get_instruct(current_state *state, int address) {
 }
 
 uint8_t mask_1_bit(int value, int bit) {
-    return (value >> bit) & 0x1;
+    return (value >>  bit) & 0x1;
 }
 
 

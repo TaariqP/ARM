@@ -5,6 +5,8 @@
 #ifndef ARM11_11_DEFS_H
 #define ARM11_11_DEFS_H
 
+#include <stdint.h>
+
 #define NUM_ADDRESSES 65536
 #define NUM_REGISTERS 17
 #define PC 15
@@ -19,7 +21,7 @@ typedef struct {
     uint8_t s;
     uint8_t rn;
     uint8_t rd;
-    uint8_t operand2;
+    uint32_t operand2;
 } decoded_instruction;
 
 typedef struct {
