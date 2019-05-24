@@ -21,8 +21,12 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
+    current_state *state = malloc(sizeof(current_state));
+    *state = INITIAL_STATE;
+
     uint8_t memory[NUM_ADDRESSES];
     binary_file_loader(filename, (char *) memory);
+    print_registers(state->registers);
     print_binary(memory);
 
     return EXIT_SUCCESS;
