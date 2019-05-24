@@ -5,7 +5,17 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "defs.h"
+
+uint8_t mask_1_bit(int value, int bit) {
+    return (value >> bit) & 0x1;
+}
+
+
+uint8_t mask_4_bit(int value, int end_bit) {
+    return (value >> end_bit) & 0xF;
+}
 
 //Reads the binary file
 
@@ -62,6 +72,34 @@ void print_registers(int32_t *registers) {
 }
 
 
+bool check_condition(current_state *state) {
+    uint32_t value = state->registers[CPSR];
+    uint8_t n = mask_1_bit(value, 31);
+    uint8_t z = mask_1_bit(value, 30);
+    uint8_t c = mask_1_bit(value, 29);
+    uint8_t v = mask_1_bit(value, 28);
+    uint8_t cond = state->decoded_instruction.cond;
+
+    switch (cond) {
+        case 0:
+            return z;
+        case 1:
+            return !z;
+        case 10:
+            return n == v;
+        case 11:
+            return !(n == v);
+        case 12:
+            return !z & (n == v);
+        case 13:
+            return z | !(n == v);
+        case 14:
+            return 1;
+        default:
+            printf("Failed CPSR Check");
+    }
+}
+
 uint32_t get_instruct(current_state *state, int address) {
 
     uint8_t value[4];
@@ -73,13 +111,3 @@ uint32_t get_instruct(current_state *state, int address) {
     return instruction;
 
 }
-
-uint8_t mask_1_bit(int value, int bit) {
-    return (value >>  bit) & 0x1;
-}
-
-
-uint8_t mask_4_bit(int value, int end_bit) {
-    return (value >> end_bit) & 0xF;
-}
-

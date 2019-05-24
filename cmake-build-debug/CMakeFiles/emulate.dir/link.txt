@@ -1,1 +1,0 @@
-/usr/bin/cc -g  -rdynamic CMakeFiles/emulate.dir/src/emulate.c.o  -o emulate 

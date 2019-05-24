@@ -14,7 +14,17 @@
 #define INSTRUCTION_SIZE 32
 
 
+typedef enum {
+    DPI,
+    SDT,
+    MUL,
+    BRANCH,
+    ALL_ZERO,
+    NONE
+} instruction_type;
+
 typedef struct {
+    instruction_type type;
     uint8_t cond;
     uint8_t i;
     uint8_t opcode;
@@ -41,5 +51,6 @@ current_state INITIAL_STATE = {
         .memory = {0},
         .registers = {0}
 };
+
 
 #endif //ARM11_11_DEFS_H
