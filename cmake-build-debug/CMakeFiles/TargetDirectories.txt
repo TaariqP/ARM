@@ -1,3 +1,0 @@
-/homes/ss13718/arm11_11/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/homes/ss13718/arm11_11/cmake-build-debug/CMakeFiles/edit_cache.dir
-/homes/ss13718/arm11_11/cmake-build-debug/CMakeFiles/emulate.dir
