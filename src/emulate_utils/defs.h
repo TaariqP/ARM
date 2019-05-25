@@ -6,7 +6,6 @@
 #define ARM11_11_DEFS_H
 
 #include <stdint.h>
-#include <lzma.h>
 
 #define NUM_ADDRESSES 65536
 #define NUM_REGISTERS 17

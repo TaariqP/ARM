@@ -30,7 +30,7 @@ void execute(current_state *state) {
 }
 
 //set decoded instruction
-void decode(current_state *state){
+void decode(current_state *state) {
     uint32_t fetched_instruction = state->fetched_instruction.binary_value;
 
     if (fetched_instruction == 0) {
@@ -64,20 +64,25 @@ void fetch(current_state *state) {
 }
 
 
-void pipeline_cycle(current_state *state){
-    //initialisation
-    fetch(state);
-    pc_increment(state);
-    decode(state);
-    fetch(state);
-    pc_increment(state);
+void pipeline_cycle(current_state *state, int size) {
+
 
     //infinite loop till halt encountered
-    while(state->decoded_instruction.type != ALL_ZERO){
+    while (state->decoded_instruction.type != ALL_ZERO & state->registers[PC] < (size +8)) {
+
+        if (state->decoded_instruction.type != NONE) {
             execute(state);
+        }
+        if (state->fetched_instruction.binary_value != 0) {
             decode(state);
+        } else if (state->decoded_instruction.type != NONE){
+            decode(state);
+        }
+        if (state->registers[PC] < (size + 8)){
             fetch(state);
-            pc_increment(state);
+        }
+
+        pc_increment(state);
     }
 
 
@@ -105,7 +110,9 @@ int main(int argc, char **argv) {
 
     binary_file_loader(filename, (char *) state->memory);
 
-    pipeline_cycle(state);
+    int size = get_file_size(filename);
+
+    pipeline_cycle(state, size);
 
     print_registers(state
                             ->registers);

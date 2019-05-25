@@ -100,6 +100,15 @@ bool check_condition(current_state *state) {
     }
 }
 
+int get_file_size(char *filename) {
+
+    FILE *fp = fopen(filename, "rb");
+    fseek(fp, 0, SEEK_END);
+    int lengthOfFile = (int) ftell(fp);
+    fclose(fp);
+    return lengthOfFile;
+}
+
 uint32_t get_instruct(current_state *state, int address) {
 
     uint8_t value[4];
