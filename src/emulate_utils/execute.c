@@ -7,7 +7,6 @@
 
 void execute_dpi(current_state *state) {
     uint8_t opcode = state->decoded_instruction.opcode;
-    uint8_t i = state->decoded_instruction.i;
     uint16_t operand2 = state->decoded_instruction.operand2;
 
     int finalOp2 = 0;
@@ -17,12 +16,12 @@ void execute_dpi(current_state *state) {
     if (state->decoded_instruction.i) {
         //Immediate constant
         uint8_t rotate = mask_4_bit(operand2, 8);
-        uint8_t imm = operand2 & 0xF;
+        uint8_t imm = operand2 & 0xFF;
         //Zero extend to 32 bits and rotate right
-        finalOp2 = ror((uint32_t) imm, rotate * 2);
+        finalOp2 = ror((uint32_t) imm, (unsigned int) rotate * 2);
     } else {
         //Shifted Register
-        uint8_t rm = operand2 & 0xF;
+        uint8_t rm = mask_4_bit(operand2, 0);
         uint8_t shift = (operand2 >> 4) & 0xFF;
         uint8_t shiftType = (shift >> 1) & 0x3;
         uint8_t shiftAmount = 0;
@@ -128,7 +127,6 @@ void execute_dpi(current_state *state) {
     }
 
 
-    uint32_t cpsr = state->registers[CPSR];
     //Setting the CPSR
     if (state->decoded_instruction.s) {
         //C (30) bit is carry out
@@ -151,7 +149,6 @@ void execute_mul(current_state *state) {
 }
 
 void execute_branch(current_state *state) {
-    //only execute if CSPR condition satisfied
     //manipulating offset appropriately for addition to PC
     uint32_t offset = state->decoded_instruction.offset;
     offset = offset << 2;
