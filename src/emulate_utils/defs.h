@@ -31,6 +31,8 @@ typedef struct {
     instruction_type type;
     uint8_t cond;
     uint8_t i;
+    uint8_t p;
+    uint8_t u;
     uint8_t opcode;
     uint8_t s;
     uint8_t rn;
