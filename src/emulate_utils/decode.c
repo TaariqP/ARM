@@ -31,10 +31,16 @@ void decode_sdt(current_state *state) {
     state->decoded_instruction.rd = mask_4_bit(value, 12);
     //Could replace operand2 inside dpi with offset instead - use one instead of 2!
     state->decoded_instruction.offset = value & 0xFFF;
-
 }
 
 void decode_mul(current_state *state) {
+    uint32_t value = state->fetched_instruction.binary_value;
+    state->decoded_instruction.a = mask_1_bit(value,21);
+    state->decoded_instruction.s = mask_1_bit(value, 20);
+    state->decoded_instruction.rd = mask_4_bit(value, 16);
+    state->decoded_instruction.rn = mask_4_bit(value, 12);
+    state->decoded_instruction.rs = mask_4_bit(value, 8);
+    state->decoded_instruction.rm = value & 0xFFF;
 
 }
 
