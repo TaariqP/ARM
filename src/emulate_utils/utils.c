@@ -21,12 +21,10 @@ uint8_t mask_4_bit(int value, int end_bit) {
 
 void binary_file_loader(char *filename, char *memory) {
 
-    FILE *binaryFile;
-    FILE *fp = fopen(filename, "rb");
-    fseek(fp, 0, SEEK_END);
-    int size = (int) ftell(fp);
-    fclose(fp);
-    binaryFile = fopen(filename, "rb");
+    FILE *binaryFile = fopen(filename, "rb");
+    fseek(binaryFile, 0, SEEK_END);
+    int size = (int) ftell(binaryFile);
+    rewind(binaryFile);
     if (binaryFile) {
         fread(memory, (size_t) size, 1, binaryFile);
     } else {
