@@ -157,5 +157,7 @@ void execute_branch(current_state *state) {
 
     //adding two's complement number
     state->registers[PC] += offset;
+    state->decoded_instruction.type = NONE;
+    state->fetched_instruction.binary_value = 0;
 
 }
