@@ -142,6 +142,14 @@ void set_CPSR_bit(current_state *state, int bit_number, int val) {
 
 }
 
+uint32_t sign_extend_26_to_32(uint32_t value) {
+    uint8_t most_significant_bit = mask_1_bit(value, 25);
+    if (most_significant_bit) {
+        return value | 0xFC000000;
+    }
+    return value;
+}
+
 int ror(uint32_t val, uint32_t num) {
     return (val >> num) | val << (32 - num);
 }

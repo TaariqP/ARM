@@ -148,5 +148,14 @@ void execute_mul(current_state *state) {
 }
 
 void execute_branch(current_state *state) {
-    //TODO
+    //only execute if CSPR condition satisfied
+    if (check_condition(state)) {
+        //manipulating offset appropriately for addition to PC
+        uint32_t offset = state->decoded_instruction.offset;
+        offset = offset << 2;
+        offset = sign_extend_26_to_32(offset);
+
+        //adding two's complement number
+        state->registers[PC] += offset;
+    }
 }
