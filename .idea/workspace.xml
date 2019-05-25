@@ -12,7 +12,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5f73e6e0-cf5f-4646-aeec-ca47d3f8e2bb" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile2" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile2" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/arm11_11.dir/DependInfo.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/arm11_11.dir/DependInfo.cmake" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/arm11_11.dir/build.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/arm11_11.dir/build.make" afterDir="false" />
@@ -22,7 +21,8 @@
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/progress.marks" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/progress.marks" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Makefile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/arm11_11.cbp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/arm11_11.cbp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assemble_utils/utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/assemble_utils/utils.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/assemble_utils/defs.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/assemble_utils/defs.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/emulate.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/emulate.c" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -35,11 +35,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="emulate.c" pinned="false" current-in-tab="false">
+      <file leaf-file-name="emulate.c" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/emulate.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="20" column="35" selection-start-line="20" selection-start-column="35" selection-end-line="20" selection-end-column="35" />
+            <state relative-caret-position="145">
+              <caret line="96" column="40" lean-forward="true" selection-start-line="96" selection-start-column="40" selection-end-line="96" selection-end-column="40" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -67,14 +67,27 @@
       </file>
       <file leaf-file-name="utils.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/assemble_utils/utils.c">
-          <provider selected="true" editor-type-id="text-editor" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="75">
+              <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+            </state>
+          </provider>
         </entry>
       </file>
-      <file leaf-file-name="utils.h" pinned="false" current-in-tab="true">
+      <file leaf-file-name="utils.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/assemble_utils/utils.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+            <state relative-caret-position="60">
+              <caret line="4" column="24" selection-start-line="4" selection-start-column="24" selection-end-line="4" selection-end-column="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="defs.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/assemble_utils/defs.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="75">
+              <caret line="5" column="22" selection-start-line="5" selection-start-column="22" selection-end-line="5" selection-end-column="22" />
             </state>
           </provider>
         </entry>
@@ -88,6 +101,7 @@
       <find>lsl</find>
       <find>lslclae</find>
       <find>two p</find>
+      <find>sym</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -98,12 +112,13 @@
       <list>
         <option value="$PROJECT_DIR$/src/emulate_utils/utils.h" />
         <option value="$PROJECT_DIR$/src/emulate_utils/utils.c" />
-        <option value="$PROJECT_DIR$/src/emulate.c" />
         <option value="$PROJECT_DIR$/src/emulate_utils/defs.h" />
         <option value="$PROJECT_DIR$/src/emulate_utils/decode.c" />
         <option value="$PROJECT_DIR$/src/emulate_utils/execute.c" />
         <option value="$PROJECT_DIR$/src/assemble.c" />
         <option value="$PROJECT_DIR$/src/assemble_utils/utils.h" />
+        <option value="$PROJECT_DIR$/src/assemble_utils/defs.h" />
+        <option value="$PROJECT_DIR$/src/emulate.c" />
       </list>
     </option>
   </component>
@@ -216,7 +231,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="63215000" />
+    <option name="totallyTimeSpent" value="64689000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="30" width="1280" height="1050" extended-state="4" />
@@ -267,13 +282,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/assemble.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="9" selection-start-column="9" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/emulate_utils/decode.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -625,6 +633,34 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/assemble.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="16" selection-start-line="3" selection-start-column="16" selection-end-line="3" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/assemble_utils/utils.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="24" selection-start-line="4" selection-start-column="24" selection-end-line="4" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/assemble_utils/utils.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/assemble_utils/defs.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="22" selection-start-line="5" selection-start-column="22" selection-end-line="5" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/emulate_utils/utils.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="207">
@@ -634,28 +670,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/emulate.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="35" selection-start-line="20" selection-start-column="35" selection-end-line="20" selection-end-column="35" />
+        <state relative-caret-position="145">
+          <caret line="96" column="40" lean-forward="true" selection-start-line="96" selection-start-column="40" selection-end-line="96" selection-end-column="40" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/assemble.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="16" selection-start-line="3" selection-start-column="16" selection-end-line="3" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/assemble_utils/utils.c">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/assemble_utils/utils.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
         </state>
       </provider>
     </entry>

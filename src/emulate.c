@@ -113,6 +113,7 @@ int main(int argc, char **argv) {
 
     print_registers(state->registers);
     print_binary(state->memory);
+    free(state);
 
     return EXIT_SUCCESS;
 }
