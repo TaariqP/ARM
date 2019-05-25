@@ -38,23 +38,24 @@ void decode(current_state *state) {
         //BRANCH
         state->decoded_instruction.type = BRANCH;
         decode_branch(state);
-    } else if (mask_1_bit(fetched_instruction,26)) {
+    } else if (mask_1_bit(fetched_instruction, 26)) {
         //SDT
         state->decoded_instruction.type = SDT;
         decode_sdt(state);
-    } else if (mask_1_bit(fetched_instruction, 25)) {
-        //DPI
-        state->decoded_instruction.type = DPI;
-        decode_dpi(state);
     } else if (mask_4_bit(fetched_instruction, 4) == 9) {
         //MULTIPLY
         state->decoded_instruction.type = MUL;
         decode_mul(state);
+    } else if (!mask_1_bit(fetched_instruction, 27)) {
+        //DPI
+        state->decoded_instruction.type = DPI;
+        decode_dpi(state);
     } else {
         state->decoded_instruction.type = DPI;
         decode_dpi(state);
     }
 }
+
 //set fetched_instruction
 void fetch(current_state *state) {
     state->fetched_instruction.binary_value =
@@ -66,20 +67,17 @@ void pipeline_cycle(current_state *state, int size) {
 
 
     //infinite loop till halt encountered
-    while (state->decoded_instruction.type != ALL_ZERO & state->registers[PC] < (size +8)) {
+    while (state->decoded_instruction.type != ALL_ZERO & state->registers[PC] < (size + 8)) {
 
         if (state->decoded_instruction.type != NONE) {
             execute(state);
         }
         if (state->fetched_instruction.binary_value != 0) {
             decode(state);
-        } else if (state->decoded_instruction.type != NONE){
+        } else if (state->decoded_instruction.type != NONE) {
             decode(state);
         }
-        //is this not redundant because of the while loop condition? - Sats
-        if (state->registers[PC] < (size + 8)){
-            fetch(state);
-        }
+        fetch(state);
 
         pc_increment(state);
     }

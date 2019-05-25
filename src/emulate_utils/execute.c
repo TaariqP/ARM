@@ -20,9 +20,7 @@ void execute_dpi(current_state *state) {
         uint8_t imm = operand2 & 0xF;
         //Zero extend to 32 bits and rotate right
         finalOp2 = ror((uint32_t) imm, rotate * 2);
-        printf("immediate \n");
     } else {
-        printf("register \n");
         //Shifted Register
         uint8_t rm = operand2 & 0xF;
         uint8_t shift = (operand2 >> 4) & 0xFF;
@@ -132,11 +130,11 @@ void execute_dpi(current_state *state) {
 
     uint32_t cpsr = state->registers[CPSR];
     //Setting the CPSR
-    if (state->decoded_instruction.s){
+    if (state->decoded_instruction.s) {
         //C (30) bit is carry out
         set_CPSR_bit(state, C, carry);
         //Z (31) bit if result is zero
-        if (returnValue == 0){
+        if (returnValue == 0) {
             set_CPSR_bit(state, Z, 1);
         }
         //N (32) bit is bit 31 of result
@@ -154,13 +152,12 @@ void execute_mul(current_state *state) {
 
 void execute_branch(current_state *state) {
     //only execute if CSPR condition satisfied
-    if (check_condition(state)) {
-        //manipulating offset appropriately for addition to PC
-        uint32_t offset = state->decoded_instruction.offset;
-        offset = offset << 2;
-        offset = sign_extend_26_to_32(offset);
+    //manipulating offset appropriately for addition to PC
+    uint32_t offset = state->decoded_instruction.offset;
+    offset = offset << 2;
+    offset = sign_extend_26_to_32(offset);
 
-        //adding two's complement number
-        state->registers[PC] += offset;
-    }
+    //adding two's complement number
+    state->registers[PC] += offset;
+
 }
