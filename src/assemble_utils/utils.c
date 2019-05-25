@@ -14,4 +14,5 @@ void binary_file_writer(char *filename, const char *binary_string){
         printf("Error opening file");
     }
     fwrite(filename, 1, sizeof(binary_string),binary_file);
+    fclose(binary_file);
 }
