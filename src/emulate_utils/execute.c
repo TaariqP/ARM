@@ -43,22 +43,22 @@ void execute_dpi(current_state *state) {
             case 0:
                 finalOp2 = lsl(rm_value, shiftAmount);
                 //Bit 28 carry out
-                shiftCarry = mask_1_bit(finalOp2, 28);
+                shiftCarry = mask_1_bit(rm_value, 28);
                 break;
             case 1:
                 finalOp2 = lsr(rm_value, shiftAmount);
                 //Bit 3 carry out
-                shiftCarry = mask_1_bit(finalOp2, 3);
+                shiftCarry = mask_1_bit(rm_value, 3);
                 break;
             case 2:
                 finalOp2 = asr(rm_value, shiftAmount);
                 //Bit 3 carry out
-                shiftCarry = mask_1_bit(finalOp2, 3);
+                shiftCarry = mask_1_bit(rm_value, 3);
                 break;
             case 3:
                 finalOp2 = ror(rm_value, (unsigned int) shiftAmount);
                 //Bit 3 carry out
-                shiftCarry = mask_1_bit(finalOp2, 3);
+                shiftCarry = mask_1_bit(rm_value, 3);
                 break;
             default:
                 printf("Invalid shift type");
@@ -66,7 +66,7 @@ void execute_dpi(current_state *state) {
     }
 
 
-    int returnValue;
+    int returnValue = 0;
     int rn = state->decoded_instruction.rn;
 
     switch (opcode) {
@@ -87,7 +87,7 @@ void execute_dpi(current_state *state) {
             break;
         case 3:
             //RSB
-            returnValue = rn - finalOp2;
+            returnValue = finalOp2 - rn;
             carry = rn <= finalOp2;
             break;
         case 4:
@@ -123,6 +123,7 @@ void execute_dpi(current_state *state) {
 
     //tst, teq, cmp do not write to rd
     if (opcode != 8 && opcode != 9 && opcode != 10) {
+        //printf("Opcode is %d. rn is %d. Finalop2 is %d, Set register %d to %d \n ", opcode, rn, finalOp2, state->decoded_instruction.rd, returnValue);
         set_register(state, state->decoded_instruction.rd, returnValue);
     }
 

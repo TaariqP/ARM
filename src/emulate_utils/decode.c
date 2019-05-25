@@ -13,7 +13,7 @@ void decode_dpi(current_state *state) {
     state->decoded_instruction.i = mask_1_bit(instruction, 25);
     state->decoded_instruction.opcode = mask_4_bit(instruction, 21);
     state->decoded_instruction.s = mask_1_bit(instruction, 20);
-    state->decoded_instruction.rn = mask_4_bit(instruction, 16);
+    state->decoded_instruction.rn = state->registers[mask_4_bit(instruction, 16)];
     state->decoded_instruction.rd = mask_4_bit(instruction, 12);
     //Get the last 12 bits
     state->decoded_instruction.operand2 = instruction & 0xFFF;
