@@ -29,34 +29,32 @@ void execute(current_state *state) {
     }
 }
 
-//set decoded instruction
 void decode(current_state *state) {
     uint32_t fetched_instruction = state->fetched_instruction.binary_value;
 
     if (fetched_instruction == 0) {
         state->decoded_instruction.type = NONE;
-    } else if (!mask_1_bit(fetched_instruction, 27)) {
-        //DATA PROCESSING
-        state->decoded_instruction.type = DPI;
-        decode_dpi(state);
-    } else if (mask_1_bit(fetched_instruction, 7) && mask_1_bit(fetched_instruction, 4)) {
-        //MULTIPLY
-        state->decoded_instruction.type = MUL;
-        decode_mul(state);
-    } else if (mask_1_bit(fetched_instruction, 26)) {
-        //SDT
-        state->decoded_instruction.type = SDT;
-        decode_sdt(state);
     } else if (mask_1_bit(fetched_instruction, 27)) {
         //BRANCH
         state->decoded_instruction.type = BRANCH;
         decode_branch(state);
+    } else if (mask_1_bit(fetched_instruction,26)) {
+        //SDT
+        state->decoded_instruction.type = SDT;
+        decode_sdt(state);
+    } else if (mask_1_bit(fetched_instruction, 25)) {
+        //DPI
+        state->decoded_instruction.type = DPI;
+        decode_dpi(state);
+    } else if (mask_4_bit(fetched_instruction, 4) == 9) {
+        //MULTIPLY
+        state->decoded_instruction.type = MUL;
+        decode_mul(state);
     } else {
         state->decoded_instruction.type = DPI;
         decode_dpi(state);
     }
 }
-
 //set fetched_instruction
 void fetch(current_state *state) {
     state->fetched_instruction.binary_value =
@@ -78,6 +76,7 @@ void pipeline_cycle(current_state *state, int size) {
         } else if (state->decoded_instruction.type != NONE){
             decode(state);
         }
+        //is this not redundant because of the while loop condition? - Sats
         if (state->registers[PC] < (size + 8)){
             fetch(state);
         }
@@ -114,10 +113,8 @@ int main(int argc, char **argv) {
 
     pipeline_cycle(state, size);
 
-    print_registers(state
-                            ->registers);
-    print_binary(state
-                         ->memory);
+    print_registers(state->registers);
+    print_binary(state->memory);
 
     return EXIT_SUCCESS;
 }
