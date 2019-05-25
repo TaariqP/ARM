@@ -20,7 +20,9 @@ void execute_dpi(current_state *state) {
         uint8_t imm = operand2 & 0xF;
         //Zero extend to 32 bits and rotate right
         finalOp2 = ror((uint32_t) imm, rotate * 2);
+        printf("immediate \n");
     } else {
+        printf("register \n");
         //Shifted Register
         uint8_t rm = operand2 & 0xF;
         uint8_t shift = (operand2 >> 4) & 0xFF;
@@ -32,6 +34,9 @@ void execute_dpi(current_state *state) {
         } else {
             //Register amount (Optional)
             uint8_t rs = mask_4_bit(shift, 8);
+            int shiftRegister = (operand2 >> (12 - 4)) & 0x1F;
+            int regVal = state->registers[shiftRegister];
+            shiftAmount = (regVal & 0xFF);
         }
 
         uint32_t rm_value = state->registers[rm];
@@ -120,7 +125,7 @@ void execute_dpi(current_state *state) {
     }
 
     //tst, teq, cmp do not write to rd
-    if (opcode != 8 & opcode != 9 & opcode != 10) {
+    if (opcode != 8 && opcode != 9 && opcode != 10) {
         set_register(state, state->decoded_instruction.rd, returnValue);
     }
 
