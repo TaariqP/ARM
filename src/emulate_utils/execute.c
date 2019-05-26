@@ -270,6 +270,8 @@ void execute_branch(current_state *state) {
     //adding two's complement number
     state->registers[PC] += offset;
     state->fetched_instruction.binary_value = 0;
+
+    /* may or may not need the line below, I can't see any changes to running */
     state->decoded_instruction.type = NONE;
 
 }
