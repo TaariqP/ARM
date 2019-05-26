@@ -12,27 +12,27 @@ void execute(current_state *state) {
     if (check_condition(state)) {
         switch (type) {
             case DPI:
-                printf ("executing DPI \n");
+                //printf ("executing DPI \n");
                 execute_dpi(state);
                 break;
             case SDT:
-                printf ("executing SDT \n");
+                //printf ("executing SDT \n");
                 execute_sdt(state);
                 break;
             case MUL:
-                printf ("executing mul \n");
+                //printf ("executing mul \n");
 
                 execute_mul(state);
                 break;
             case BRANCH:
-                printf("executing branch \n");
+                //printf("executing branch \n");
                 execute_branch(state);
                 break;
             default:
                 printf("Error in execute type");
         }
     } else {
-        printf ("\n not executing the above instruction \n");
+        //printf ("\n not executing the above instruction \n");
     }
 }
 
@@ -43,7 +43,7 @@ void decode(current_state *state) {
         state->decoded_instruction.type = NONE;
     } else if (mask_1_bit(fetched_instruction, 27)) {
         //BRANCH
-        printf("decoding branch \n");
+        //printf("decoding branch \n");
         state->decoded_instruction.type = BRANCH;
         decode_branch(state);
     } else if (mask_1_bit(fetched_instruction, 26)) {
