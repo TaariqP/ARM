@@ -88,6 +88,7 @@ void execute_dpi(current_state *state) {
         case 4:
             //ADD
             returnValue = rn + finalOp2;
+            carry = (rn + finalOp2 < rn);
             break;
         case 8:
             //TST
@@ -126,12 +127,11 @@ void execute_dpi(current_state *state) {
 
     //Setting the CPSR
     if (state->decoded_instruction.s) {
+        int check = returnValue >= 0 ? 0 : 1;
         //C (30) bit is carry out
-        set_CPSR_bit(state, C, carry);
+        set_CPSR_bit(state, C, check);
         //Z (31) bit if result is zero
-        if (returnValue == 0) {
-            set_CPSR_bit(state, Z, 1);
-        }
+        set_CPSR_bit(state, Z, returnValue == 0);
         //N (32) bit is bit 31 of result
         set_CPSR_bit(state, N, mask_1_bit(returnValue, 31));
     }
