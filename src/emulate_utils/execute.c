@@ -142,7 +142,85 @@ void execute_dpi(current_state *state) {
 }
 
 void execute_sdt(current_state *state) {
-    //TODO
+    uint8_t opcode = state->decoded_instruction.opcode;
+    uint16_t offset = state->decoded_instruction.offset;
+
+    int finalOffset = 0;
+    int shiftCarry = 0;
+    int carry = 0;
+
+    if (!state->decoded_instruction.i) {
+        //Immediate constant
+        uint8_t rotate = mask_4_bit(offset, 8);
+        uint8_t imm = offset & 0xFF;
+        //Zero extend to 32 bits and rotate right
+        finalOffset = ror((uint32_t) imm, (unsigned int) rotate * 2);
+    } else {
+        //Shifted Register
+        uint8_t rm = mask_4_bit(offset, 0);
+        uint8_t shift = (offset >> 4) & 0xFF;
+        uint8_t shiftType = (shift >> 1) & 0x3;
+        uint8_t shiftAmount = 0;
+        if (!(shift & 0x1)) {
+            //Constant amount
+            shiftAmount = (shift >> 3) & 0x1F;
+        } else {
+            //Register amount (Optional)
+            uint8_t rs = mask_4_bit(shift, 8);
+            int shiftRegister = (offset >> (12 - 4)) & 0x1F;
+            int regVal = state->registers[shiftRegister];
+            shiftAmount = (regVal & 0xFF);
+        }
+
+        uint32_t rm_value = state->registers[rm];
+
+        //SHIFT
+        switch (shiftType) {
+            case 0:
+                finalOffset = lsl(rm_value, shiftAmount);
+                //Bit 28 carry out
+                shiftCarry = mask_1_bit(rm_value, 28);
+                break;
+            case 1:
+                finalOffset = lsr(rm_value, shiftAmount);
+                //Bit 3 carry out
+                shiftCarry = mask_1_bit(rm_value, 3);
+                break;
+            case 2:
+                finalOffset = asr(rm_value, shiftAmount);
+                //Bit 3 carry out
+                shiftCarry = mask_1_bit(rm_value, 3);
+                break;
+            case 3:
+                finalOffset = ror(rm_value, (unsigned int) shiftAmount);
+                //Bit 3 carry out
+                shiftCarry = mask_1_bit(rm_value, 3);
+                break;
+            default:
+                printf("Invalid shift type");
+        }
+    }
+
+
+    int rn = state->decoded_instruction.rn;
+    int address = 0;
+    int returnValue = 0;
+
+    //if u is set, add offset, otherwise subtract
+    int temprn = state->decoded_instruction.u ? rn + finalOffset : rn - finalOffset;
+
+    //pre-indexing access memory at temprn, post-indexing access at rn
+    address = state->decoded_instruction.p ? temprn : rn;
+
+    //pre-indexing dont modify rn, post-indexing rn becomes temprn
+    rn = state->decoded_instruction.p ? rn : temprn;
+
+    //gets memory value at this address;
+    returnValue = state->memory[address];
+
+    //sets desination register to memory value returned
+    set_register(state, state->decoded_instruction.rd, returnValue);
+
 }
 
 void execute_mul(current_state *state) {
