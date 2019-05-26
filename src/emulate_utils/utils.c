@@ -72,10 +72,10 @@ void print_registers(int32_t *registers) {
 
 bool check_condition(current_state *state) {
     int32_t value = state->registers[CPSR];
-    uint8_t n = mask_1_bit(value, 31);
-    uint8_t z = mask_1_bit(value, 30);
-    uint8_t c = mask_1_bit(value, 29);
-    uint8_t v = mask_1_bit(value, 28);
+    uint8_t n = mask_1_bit(value, N);
+    uint8_t z = mask_1_bit(value, Z);
+    uint8_t c = mask_1_bit(value, C);
+    uint8_t v = mask_1_bit(value, V);
     uint8_t cond = state->decoded_instruction.cond;
 
     switch (cond) {
