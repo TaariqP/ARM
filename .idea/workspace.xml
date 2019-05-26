@@ -11,7 +11,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5f73e6e0-cf5f-4646-aeec-ca47d3f8e2bb" name="Default" comment="" />
+    <list default="true" id="5f73e6e0-cf5f-4646-aeec-ca47d3f8e2bb" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/src/emulate_utils/execute.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/emulate_utils/execute.c" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -65,11 +67,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="decode.c" pinned="false" current-in-tab="true">
+      <file leaf-file-name="decode.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/emulate_utils/decode.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="41" column="57" lean-forward="true" selection-start-line="41" selection-start-column="57" selection-end-line="41" selection-end-column="57" />
+            <state relative-caret-position="280">
+              <caret line="38" column="57" lean-forward="true" selection-start-line="38" selection-start-column="57" selection-end-line="38" selection-end-column="57" />
               <folding>
                 <element signature="e#40#59#0" expanded="true" />
               </folding>
@@ -77,11 +79,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="execute.c" pinned="false" current-in-tab="false">
+      <file leaf-file-name="execute.c" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/emulate_utils/execute.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="371">
-              <caret line="270" column="42" selection-start-line="270" selection-start-column="42" selection-end-line="270" selection-end-column="42" />
+            <state relative-caret-position="295">
+              <caret line="219" column="47" selection-start-line="219" selection-start-column="47" selection-end-line="219" selection-end-column="47" />
               <folding>
                 <element signature="e#40#57#0" expanded="true" />
               </folding>
@@ -111,11 +113,11 @@
         <option value="$PROJECT_DIR$/src/emulate_utils/utils.c" />
         <option value="$PROJECT_DIR$/src/emulate_utils/defs.h" />
         <option value="$PROJECT_DIR$/src/emulate_utils/decode.c" />
-        <option value="$PROJECT_DIR$/src/emulate_utils/execute.c" />
         <option value="$PROJECT_DIR$/src/assemble.c" />
         <option value="$PROJECT_DIR$/src/assemble_utils/utils.h" />
         <option value="$PROJECT_DIR$/src/assemble_utils/defs.h" />
         <option value="$PROJECT_DIR$/src/emulate.c" />
+        <option value="$PROJECT_DIR$/src/emulate_utils/execute.c" />
       </list>
     </option>
   </component>
@@ -228,7 +230,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="64693000" />
+    <option name="totallyTimeSpent" value="64780000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="30" width="1280" height="1050" extended-state="4" />
@@ -589,16 +591,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/emulate_utils/execute.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="371">
-          <caret line="270" column="42" selection-start-line="270" selection-start-column="42" selection-end-line="270" selection-end-column="42" />
-          <folding>
-            <element signature="e#40#57#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/emulate_utils/decode.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -608,8 +600,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/emulate_utils/decode.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="41" column="57" lean-forward="true" selection-start-line="41" selection-start-column="57" selection-end-line="41" selection-end-column="57" />
+        <state relative-caret-position="280">
+          <caret line="38" column="57" lean-forward="true" selection-start-line="38" selection-start-column="57" selection-end-line="38" selection-end-column="57" />
           <folding>
             <element signature="e#40#59#0" expanded="true" />
           </folding>
@@ -674,6 +666,16 @@
           <caret line="67" selection-start-line="67" selection-end-line="67" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/emulate_utils/execute.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="295">
+          <caret line="219" column="47" selection-start-line="219" selection-start-column="47" selection-end-line="219" selection-end-column="47" />
+          <folding>
+            <element signature="e#40#57#0" expanded="true" />
           </folding>
         </state>
       </provider>

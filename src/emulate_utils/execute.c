@@ -217,6 +217,7 @@ void execute_sdt(current_state *state) {
         //post-indexing - access memory at rn and rn becomes temprn
         address = rn;
         rn = temprn;
+        int rm = state->decoded_instruction.rm;
 
         if (rn == rm) {
             //Rm same as Rn is not allowed in post-indexing
