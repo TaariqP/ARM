@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "utils.h"
+#include "defs.h"
 
 
 void binary_file_writer(char *filename, const char *binary_string){
@@ -15,4 +16,11 @@ void binary_file_writer(char *filename, const char *binary_string){
     }
     fwrite(filename, 1, sizeof(binary_string),binary_file);
     fclose(binary_file);
+}
+    
+
+
+
+void two_pass_assembly(){
+    symbol_table *symbol_table;_
 }

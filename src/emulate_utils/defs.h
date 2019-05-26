@@ -37,6 +37,9 @@ typedef struct {
     uint8_t s;
     uint8_t rn;
     uint8_t rd;
+    uint8_t rs;
+    uint8_t rm;
+    uint8_t a;
     uint32_t operand2;
     uint32_t offset;
 } decoded_instruction;
@@ -51,6 +54,8 @@ typedef struct {
     int32_t registers[NUM_REGISTERS];
     fetched_instruction fetched_instruction;
     decoded_instruction decoded_instruction;
+    //needed for sdt
+    int address;
 } current_state;
 
 current_state INITIAL_STATE = {

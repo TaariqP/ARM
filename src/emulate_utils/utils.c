@@ -70,8 +70,10 @@ void print_registers(int32_t *registers) {
 }
 
 
+
+
 bool check_condition(current_state *state) {
-    uint32_t value = state->registers[CPSR];
+    int32_t value = state->registers[CPSR];
     uint8_t n = mask_1_bit(value, 31);
     uint8_t z = mask_1_bit(value, 30);
     uint8_t c = mask_1_bit(value, 29);
@@ -86,15 +88,16 @@ bool check_condition(current_state *state) {
         case 10:
             return n == v;
         case 11:
-            return !(n == v);
+            return (n != v);
         case 12:
-            return !z & (n == v);
+            return !z && (n == v);
         case 13:
-            return z | !(n == v);
+            return z || (n != v);
         case 14:
             return 1;
         default:
             printf("Failed CPSR Check");
+            return 0;
     }
 }
 
@@ -128,7 +131,7 @@ void set_register(current_state *state, int reg, int value) {
 }
 
 void set_CPSR_bit(current_state *state, int bit_number, int val) {
-    uint32_t cpsr = state->registers[CPSR];
+    int32_t cpsr = state->registers[CPSR];
     if (val == 0) {
         if (cpsr >> (31 - bit_number) & 0x1) {
             cpsr = cpsr ^ (0x1 << 31 - bit_number);
@@ -140,8 +143,8 @@ void set_CPSR_bit(current_state *state, int bit_number, int val) {
 
 }
 
-uint32_t sign_extend_26_to_32(uint32_t value) {
-    uint8_t most_significant_bit = mask_1_bit(value, 25);
+int32_t sign_extend_26_to_32(int32_t value) {
+    uint8_t most_significant_bit = mask_1_bit(value, 23);
     if (most_significant_bit) {
         return value | 0xFC000000;
     }
