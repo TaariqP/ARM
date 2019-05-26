@@ -60,6 +60,7 @@ void decode(current_state *state) {
 void fetch(current_state *state) {
     state->fetched_instruction.binary_value =
             get_instruct(state, state->registers[PC]);
+    state->address = state->registers[PC];
 }
 
 

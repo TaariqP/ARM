@@ -51,6 +51,8 @@ typedef struct {
     int32_t registers[NUM_REGISTERS];
     fetched_instruction fetched_instruction;
     decoded_instruction decoded_instruction;
+    //needed for sdt
+    int address;
 } current_state;
 
 current_state INITIAL_STATE = {

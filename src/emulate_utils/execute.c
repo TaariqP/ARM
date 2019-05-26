@@ -209,11 +209,28 @@ void execute_sdt(current_state *state) {
     //if u is set, add offset, otherwise subtract
     int temprn = state->decoded_instruction.u ? rn + finalOffset : rn - finalOffset;
 
-    //pre-indexing access memory at temprn, post-indexing access at rn
-    address = state->decoded_instruction.p ? temprn : rn;
+    if (state->decoded_instruction.p) {
+        //pre-indexing - access memory at temprn and dont modify rn
+        address = temprn;
 
-    //pre-indexing dont modify rn, post-indexing rn becomes temprn
-    rn = state->decoded_instruction.p ? rn : temprn;
+    } else {
+        //post-indexing - access memory at rn and rn becomes temprn
+        address = rn;
+        rn = temprn;
+
+        if (rn == rm) {
+            //Rm same as Rn is not allowed in post-indexing
+            fprintf(stderr, "SDT, rn == rm not allowed in post-indexing\n");
+            return;
+        }
+
+    }
+
+    if (rn == PC && state->registers[PC] != state->address + 8) {
+        //if PC used as base register, must contain instruction's address plus 8 bytes
+        fprintf(stderr, "SDT, PC used as base register but does not contain instruction's address plus 8 bytes\n");
+        return;
+    }
 
     //gets memory value at this address;
     returnValue = state->memory[address];
