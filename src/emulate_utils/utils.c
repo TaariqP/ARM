@@ -70,8 +70,6 @@ void print_registers(int32_t *registers) {
 }
 
 
-
-
 bool check_condition(current_state *state) {
     int32_t value = state->registers[CPSR];
     uint8_t n = mask_1_bit(value, 31);
@@ -122,7 +120,7 @@ uint32_t get_instruct(current_state *state, int address) {
 
 }
 
-void pc_increment(current_state *state){
+void pc_increment(current_state *state) {
     state->registers[PC] += 4;
 }
 
@@ -132,26 +130,27 @@ void set_register(current_state *state, int reg, int value) {
 
 void set_CPSR_bit(current_state *state, int bit_number, int val) {
     int32_t cpsr = state->registers[CPSR];
-    if (val == 0) {
-        if (cpsr >> (31 - bit_number) & 0x1) {
-            cpsr = cpsr ^ (0x1 << 31 - bit_number);
+    if (!val) {
+        if (mask_1_bit(cpsr, bit_number)) {
+            cpsr ^= (0x1 << bit_number);
         }
-    } else if (val == 1) {
-        cpsr = cpsr | (0x1 << 31 - bit_number);
+    } else {
+        cpsr |= (0x1 << bit_number);
     }
+
     state->registers[CPSR] = cpsr;
 
 }
 
 int32_t sign_extend_26_to_32(int32_t value) {
-    uint8_t most_significant_bit = mask_1_bit(value, 23);
+    uint8_t most_significant_bit = mask_1_bit(value, 25);
     if (most_significant_bit) {
         return value | 0xFC000000;
     }
     return value;
 }
 
-int ror(uint32_t val, uint32_t num) {
+int ror(int32_t val, uint32_t num) {
     return (val >> num) | val << (32 - num);
 }
 
