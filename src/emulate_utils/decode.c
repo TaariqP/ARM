@@ -40,7 +40,7 @@ void decode_mul(current_state *state) {
     state->decoded_instruction.rd = mask_4_bit(value, 16);
     state->decoded_instruction.rn = mask_4_bit(value, 12);
     state->decoded_instruction.rs = mask_4_bit(value, 8);
-    state->decoded_instruction.rm = value & 0xFFF;
+    state->decoded_instruction.rm = value & 0xF;
 
 }
 
