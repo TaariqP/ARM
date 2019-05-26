@@ -3,7 +3,8 @@
 //
 
 #include "defs.h"
-#include "utils.c"
+#include "utils.h"
+#include <stdio.h>
 
 void execute_dpi(current_state *state) {
     uint8_t opcode = state->decoded_instruction.opcode;

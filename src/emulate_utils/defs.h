@@ -58,12 +58,7 @@ typedef struct {
     int address;
 } current_state;
 
-current_state INITIAL_STATE = {
-        .memory = {0},
-        .registers = {0},
-        .fetched_instruction.binary_value = 0,
-        .decoded_instruction.type = NONE
-};
+
 
 
 #endif //ARM11_11_DEFS_H
