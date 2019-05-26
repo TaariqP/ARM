@@ -118,7 +118,8 @@ void execute_dpi(current_state *state) {
 
     //tst, teq, cmp do not write to rd
     if (opcode != 8 && opcode != 9 && opcode != 10) {
-        //printf("Opcode is %d. rn is %d. Finalop2 is %d, Set register %d to %d \n ", opcode, rn, finalOp2, state->decoded_instruction.rd, returnValue);
+        //printf("Opcode is %d. rn is %d. Finalop2 is %d, Set register %d to %d \n ", opcode,
+        // rn, finalOp2, state->decoded_instruction.rd, returnValue);
         set_register(state, state->decoded_instruction.rd, returnValue);
     }
 
@@ -132,7 +133,7 @@ void execute_dpi(current_state *state) {
             set_CPSR_bit(state, Z, 1);
         }
         //N (32) bit is bit 31 of result
-        set_CPSR_bit(state, N, returnValue >> 31);
+        set_CPSR_bit(state, N, mask_1_bit(returnValue, 31));
     }
 }
 
