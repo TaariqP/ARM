@@ -267,13 +267,13 @@ void execute_mul(current_state *state) {
 
 void execute_branch(current_state *state) {
     //manipulating offset appropriately for addition to PC
-    uint32_t offset = state->decoded_instruction.offset;
+    int32_t offset = state->decoded_instruction.offset;
     offset = offset << 2;
     offset = sign_extend_26_to_32(offset);
 
     //adding two's complement number
     state->registers[PC] += offset;
-    state->decoded_instruction.type = NONE;
     state->fetched_instruction.binary_value = 0;
+    state->decoded_instruction.type = NONE;
 
 }
