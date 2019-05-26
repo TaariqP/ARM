@@ -31,34 +31,29 @@ void execute_dpi(current_state *state) {
         } else {
             //Register amount (Optional)
             uint8_t rs = mask_4_bit(shift, 8);
-            int shiftRegister = (operand2 >> (12 - 4)) & 0x1F;
-            int regVal = state->registers[shiftRegister];
+            int regVal = state->registers[rs];
             shiftAmount = (regVal & 0xFF);
         }
 
-        uint32_t rm_value = state->registers[rm];
+        int32_t rm_value = state->registers[rm];
 
         //SHIFT
         switch (shiftType) {
             case 0:
                 finalOp2 = lsl(rm_value, shiftAmount);
-                //Bit 28 carry out
-                shiftCarry = mask_1_bit(rm_value, 28);
+                shiftCarry = mask_1_bit(rm_value, 31 - shiftAmount);
                 break;
             case 1:
                 finalOp2 = lsr(rm_value, shiftAmount);
-                //Bit 3 carry out
-                shiftCarry = mask_1_bit(rm_value, 3);
+                shiftCarry = mask_1_bit(rm_value, shiftAmount);
                 break;
             case 2:
                 finalOp2 = asr(rm_value, shiftAmount);
-                //Bit 3 carry out
-                shiftCarry = mask_1_bit(rm_value, 3);
+                shiftCarry = mask_1_bit(rm_value, shiftAmount);
                 break;
             case 3:
                 finalOp2 = ror(rm_value, (unsigned int) shiftAmount);
-                //Bit 3 carry out
-                shiftCarry = mask_1_bit(rm_value, 3);
+                shiftCarry = mask_1_bit(rm_value, shiftAmount);
                 break;
             default:
                 printf("Invalid shift type");

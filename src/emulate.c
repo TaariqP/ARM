@@ -32,8 +32,7 @@ void execute(current_state *state) {
                 printf("Error in execute type");
         }
     } else {
-        printf ("not executing the above instruction");
-
+        printf ("\n not executing the above instruction \n");
     }
 }
 
