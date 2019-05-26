@@ -41,19 +41,27 @@ void execute_dpi(current_state *state) {
         switch (shiftType) {
             case 0:
                 finalOp2 = lsl(rm_value, shiftAmount);
-                shiftCarry = mask_1_bit(rm_value, 32 - shiftAmount);
+                shiftCarry = mask_1_bit(rm_value, 31 - shiftAmount);
+                //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
+
                 break;
             case 1:
                 finalOp2 = lsr(rm_value, shiftAmount);
                 shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
+                //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
+
                 break;
             case 2:
                 finalOp2 = asr(rm_value, shiftAmount);
                 shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
+                //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
+
                 break;
             case 3:
                 finalOp2 = ror(rm_value, (unsigned int) shiftAmount);
                 shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
+                //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
+
                 break;
             default:
                 printf("Invalid shift type");
@@ -63,6 +71,7 @@ void execute_dpi(current_state *state) {
 
     int returnValue = 0;
     int rn = state->decoded_instruction.rn;
+
 
     switch (opcode) {
         case 0:
