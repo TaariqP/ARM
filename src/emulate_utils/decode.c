@@ -2,18 +2,24 @@
 // Created by taariq on 5/22/19.
 //
 
+#include <stdio.h>
 #include <stdint.h>
+#include <printf.h>
 #include "defs.h"
 #include "utils.h"
 
 void decode_dpi(current_state *state) {
     uint32_t instruction = state->fetched_instruction.binary_value;
+    int32_t* registers = state->registers;
     //NOTE: bits 32 - 28 corresponds to 0 to 4 bits; thus mask ending at the 4th bit
     state->decoded_instruction.cond = mask_4_bit(instruction, 28);
     state->decoded_instruction.i = mask_1_bit(instruction, 25);
     state->decoded_instruction.opcode = mask_4_bit(instruction, 21);
     state->decoded_instruction.s = mask_1_bit(instruction, 20);
-    state->decoded_instruction.rn = state->registers[mask_4_bit(instruction, 16)];
+    //printf("NEW DPI INSTRUCTION \n register with operand1 is : $%d \n", mask_4_bit(instruction, 16));
+    int reg = mask_4_bit(instruction, 16);
+    state->decoded_instruction.rn = registers[reg];
+    //printf("value of operand1 is : %d \n", state->decoded_instruction.rn);
     state->decoded_instruction.rd = mask_4_bit(instruction, 12);
     //Get the last 12 bits
     state->decoded_instruction.operand2 = instruction & 0xFFF;

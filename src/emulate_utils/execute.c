@@ -3,22 +3,32 @@
 //
 
 #include "defs.h"
-#include "utils.c"
+#include "utils.h"
+#include <stdio.h>
 
 void execute_dpi(current_state *state) {
     uint8_t opcode = state->decoded_instruction.opcode;
     uint16_t operand2 = state->decoded_instruction.operand2;
+    int32_t rn = state->decoded_instruction.rn;
+    int rd = state->decoded_instruction.rd;
+    //printf("value in this register is : %d \n", rn);
+
 
     int finalOp2 = 0;
     int shiftCarry = 0;
     int carry = 0;
+    int32_t returnValue = 0;
+
+
 
     if (state->decoded_instruction.i) {
         //Immediate constant
         uint8_t rotate = mask_4_bit(operand2, 8);
         uint8_t imm = operand2 & 0xFF;
+        uint32_t imm_32 = imm;
         //Zero extend to 32 bits and rotate right
-        finalOp2 = ror((uint32_t) imm, (unsigned int) rotate * 2);
+        finalOp2 = ror(imm_32, (unsigned int) rotate * 2);
+        //printf("finalop2: %d \n", finalOp2);
     } else {
         //Shifted Register
         uint8_t rm = mask_4_bit(operand2, 0);
@@ -27,6 +37,7 @@ void execute_dpi(current_state *state) {
         uint8_t shiftAmount = 0;
         if (!(shift & 0x1)) {
             //Constant amount
+            //printf("shift type: %d \n", shiftType);
             shiftAmount = (shift >> 3) & 0x1F;
         } else {
             //Register amount (Optional)
@@ -41,19 +52,27 @@ void execute_dpi(current_state *state) {
         switch (shiftType) {
             case 0:
                 finalOp2 = lsl(rm_value, shiftAmount);
-                shiftCarry = mask_1_bit(rm_value, 32 - shiftAmount);
+                shiftCarry = mask_1_bit(rm_value, 31 - shiftAmount);
+                //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
+
                 break;
             case 1:
                 finalOp2 = lsr(rm_value, shiftAmount);
                 shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
+                //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
+
                 break;
             case 2:
                 finalOp2 = asr(rm_value, shiftAmount);
                 shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
+                //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
+
                 break;
             case 3:
                 finalOp2 = ror(rm_value, (unsigned int) shiftAmount);
                 shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
+                //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
+
                 break;
             default:
                 printf("Invalid shift type");
@@ -61,8 +80,7 @@ void execute_dpi(current_state *state) {
     }
 
 
-    int returnValue = 0;
-    int rn = state->decoded_instruction.rn;
+
 
     switch (opcode) {
         case 0:
@@ -78,6 +96,7 @@ void execute_dpi(current_state *state) {
         case 2:
             //SUB
             returnValue = rn - finalOp2;
+            //printf("rn - finalop2 = %d - %d = %d \n", rn, finalOp2, returnValue);
             carry = finalOp2 <= rn;
             break;
         case 3:
@@ -88,6 +107,7 @@ void execute_dpi(current_state *state) {
         case 4:
             //ADD
             returnValue = rn + finalOp2;
+            carry = (rn + finalOp2 < rn);
             break;
         case 8:
             //TST
@@ -115,12 +135,14 @@ void execute_dpi(current_state *state) {
             carry = shiftCarry;
             break;
     }
+    //printf("rd should be 2: %d and return value end of thing: %d \n", state->decoded_instruction.rd, returnValue);
 
     //tst, teq, cmp do not write to rd
     if (opcode != 8 && opcode != 9 && opcode != 10) {
         //printf("Opcode is %d. rn is %d. Finalop2 is %d, Set register %d to %d \n ", opcode,
         // rn, finalOp2, state->decoded_instruction.rd, returnValue);
-        set_register(state, state->decoded_instruction.rd, returnValue);
+        state->registers[rd] = returnValue;
+        //printf("register %d contains %d \n", rd, returnValue);
     }
 
 
@@ -129,12 +151,11 @@ void execute_dpi(current_state *state) {
         //C (30) bit is carry out
         set_CPSR_bit(state, C, carry);
         //Z (31) bit if result is zero
-        if (returnValue == 0) {
-            set_CPSR_bit(state, Z, 1);
-        }
+        set_CPSR_bit(state, Z, returnValue == 0);
         //N (32) bit is bit 31 of result
         set_CPSR_bit(state, N, mask_1_bit(returnValue, 31));
     }
+
 }
 
 void execute_sdt(current_state *state) {
