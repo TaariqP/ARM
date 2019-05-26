@@ -146,19 +146,13 @@ void execute_dpi(current_state *state) {
 }
 
 void execute_sdt(current_state *state) {
-    uint8_t opcode = state->decoded_instruction.opcode;
     uint16_t offset = state->decoded_instruction.offset;
 
     int finalOffset = 0;
-    int shiftCarry = 0;
-    int carry = 0;
 
     if (!state->decoded_instruction.i) {
         //Immediate constant
-        uint8_t rotate = mask_4_bit(offset, 8);
-        uint8_t imm = offset & 0xFF;
-        //Zero extend to 32 bits and rotate right
-        finalOffset = ror((uint32_t) imm, (unsigned int) rotate * 2);
+        finalOffset = offset;
     } else {
         //Shifted Register
         uint8_t rm = mask_4_bit(offset, 0);
@@ -171,34 +165,25 @@ void execute_sdt(current_state *state) {
         } else {
             //Register amount (Optional)
             uint8_t rs = mask_4_bit(shift, 8);
-            int shiftRegister = (offset >> (12 - 4)) & 0x1F;
-            int regVal = state->registers[shiftRegister];
+            int regVal = state->registers[rs];
             shiftAmount = (regVal & 0xFF);
         }
 
-        uint32_t rm_value = state->registers[rm];
+        int32_t rm_value = state->registers[rm];
 
         //SHIFT
         switch (shiftType) {
             case 0:
                 finalOffset = lsl(rm_value, shiftAmount);
-                //Bit 28 carry out
-                shiftCarry = mask_1_bit(rm_value, 28);
                 break;
             case 1:
                 finalOffset = lsr(rm_value, shiftAmount);
-                //Bit 3 carry out
-                shiftCarry = mask_1_bit(rm_value, 3);
                 break;
             case 2:
                 finalOffset = asr(rm_value, shiftAmount);
-                //Bit 3 carry out
-                shiftCarry = mask_1_bit(rm_value, 3);
                 break;
             case 3:
                 finalOffset = ror(rm_value, (unsigned int) shiftAmount);
-                //Bit 3 carry out
-                shiftCarry = mask_1_bit(rm_value, 3);
                 break;
             default:
                 printf("Invalid shift type");
@@ -206,12 +191,13 @@ void execute_sdt(current_state *state) {
     }
 
 
+
     int rn = state->decoded_instruction.rn;
     int address = 0;
     int returnValue = 0;
 
     //if u is set, add offset, otherwise subtract
-    int temprn = state->decoded_instruction.u ? rn + finalOffset : rn - finalOffset;
+    int32_t temprn = state->decoded_instruction.u ? state->registers[rn] + finalOffset : state->registers[rn] - finalOffset;
 
     if (state->decoded_instruction.p) {
         //pre-indexing - access memory at temprn and dont modify rn
@@ -220,28 +206,32 @@ void execute_sdt(current_state *state) {
     } else {
         //post-indexing - access memory at rn and rn becomes temprn
         address = rn;
-        rn = temprn;
-        int rm = state->decoded_instruction.rm;
+        set_register(state, rn, temprn);
+//        if (rn == rm) {
+//            //Rm same as Rn is not allowed in post-indexing
+//            fprintf(stderr, "SDT, rn == rm not allowed in post-indexing\n");
+//            return;
+//        }
 
-        if (rn == rm) {
-            //Rm same as Rn is not allowed in post-indexing
-            fprintf(stderr, "SDT, rn == rm not allowed in post-indexing\n");
-            return;
-        }
 
     }
 
-    if (rn == PC && state->registers[PC] != state->address + 8) {
-        //if PC used as base register, must contain instruction's address plus 8 bytes
-        fprintf(stderr, "SDT, PC used as base register but does not contain instruction's address plus 8 bytes\n");
-        return;
+//    if (rn == PC && state->registers[PC] != state->address + 8) {
+//        //if PC used as base register, must contain instruction's address plus 8 bytes
+//        fprintf(stderr, "SDT, PC used as base register but does not contain instruction's address plus 8 bytes\n");
+//        return;
+//    }
+    if (state->decoded_instruction.s) {
+        //loading from memory to rd
+        returnValue = state->memory[address];
+        set_register(state, state->decoded_instruction.rd, returnValue);
+    } else {
+        //storing from rd to memory
+        int rd = state->decoded_instruction.rd;
+        state->memory[address] = state->registers[rd];
     }
 
-    //gets memory value at this address;
-    returnValue = state->memory[address];
 
-    //sets desination register to memory value returned
-    set_register(state, state->decoded_instruction.rd, returnValue);
 
 }
 
