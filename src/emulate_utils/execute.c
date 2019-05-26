@@ -224,13 +224,12 @@ void execute_sdt(current_state *state) {
 }
 
 void execute_mul(current_state *state) {
-    int8_t set = state->decoded_instruction.s;
     int8_t acc = state->decoded_instruction.a;
     int8_t rm = state->decoded_instruction.rm;
     int8_t rs = state->decoded_instruction.rs;
     int8_t rd = state->decoded_instruction.rd;
     int8_t rn = state->decoded_instruction.rn;
-    int64_t result;
+    int64_t result = 0;
     if (acc) {
         result = state->registers[rm] * state->registers[rs] + state->registers[rn];
     } else {
@@ -238,12 +237,13 @@ void execute_mul(current_state *state) {
     }
     set_register(state, rd, (int32_t) result & 0xFFFFFFFF);
 
-    if (set) {
+    if (state->decoded_instruction.s) {
         if (result == 0) {
             set_CPSR_bit(state, Z, 1);
         }
         //N (32) bit is bit 31 of result
-        set_CPSR_bit(state, N, (int) result >> 31);
+        set_CPSR_bit(state, N, mask_1_bit(result, 31));
+        set_CPSR_bit(state, Z, result == 0);
     }
 }
 

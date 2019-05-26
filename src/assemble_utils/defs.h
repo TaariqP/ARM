@@ -17,7 +17,5 @@ typedef struct {
     mapping mapping;
 } symbol_table;
 
-symbol_table INITIAL_TABLE {
-    symb
-};
+
 #endif //ARM11_11_DEFS_H

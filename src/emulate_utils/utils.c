@@ -86,15 +86,16 @@ bool check_condition(current_state *state) {
         case 10:
             return n == v;
         case 11:
-            return !(n == v);
+            return (n != v);
         case 12:
             return !z & (n == v);
         case 13:
-            return z | !(n == v);
+            return z | (n != v);
         case 14:
             return 1;
         default:
             printf("Failed CPSR Check");
+            return 0;
     }
 }
 
