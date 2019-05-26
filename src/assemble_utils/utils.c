@@ -3,4 +3,10 @@
 //
 
 #include "utils.h"
+#include "defs.h"
 
+
+void two_pass_assembly(){
+    INITIAL
+    symbol_table *symbol_table;_
+}

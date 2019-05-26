@@ -146,7 +146,6 @@ void execute_sdt(current_state *state) {
 }
 
 void execute_mul(current_state *state) {
-    //TODO
     int8_t set = state->decoded_instruction.s;
     int8_t acc = state->decoded_instruction.a;
     int8_t rm = state->decoded_instruction.rm;
@@ -168,7 +167,6 @@ void execute_mul(current_state *state) {
         //N (32) bit is bit 31 of result
         set_CPSR_bit(state, N, (int) result >> 31);
     }
-}
 }
 
 void execute_branch(current_state *state) {
