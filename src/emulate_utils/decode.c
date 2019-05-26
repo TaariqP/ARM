@@ -16,9 +16,10 @@ void decode_dpi(current_state *state) {
     state->decoded_instruction.i = mask_1_bit(instruction, 25);
     state->decoded_instruction.opcode = mask_4_bit(instruction, 21);
     state->decoded_instruction.s = mask_1_bit(instruction, 20);
-    printf("NEW DPI INSTRUCTION \n register with operand1 is : $%d \n", mask_4_bit(instruction, 16));
-    state->decoded_instruction.rn = registers[mask_4_bit(instruction, 16)];
-    printf("value of operand1 is : %d \n", state->decoded_instruction.rn);
+    //printf("NEW DPI INSTRUCTION \n register with operand1 is : $%d \n", mask_4_bit(instruction, 16));
+    int reg = mask_4_bit(instruction, 16);
+    state->decoded_instruction.rn = registers[reg];
+    //printf("value of operand1 is : %d \n", state->decoded_instruction.rn);
     state->decoded_instruction.rd = mask_4_bit(instruction, 12);
     //Get the last 12 bits
     state->decoded_instruction.operand2 = instruction & 0xFFF;

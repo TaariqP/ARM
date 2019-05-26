@@ -3,7 +3,6 @@
 #include <printf.h>
 #include <stdint.h>
 #include "emulate_utils/utils.h"
-#include "emulate_utils/defs.h"
 #include "emulate_utils/execute.h"
 #include "emulate_utils/decode.h"
 
@@ -55,7 +54,8 @@ void decode(current_state *state) {
         //MULTIPLY
         state->decoded_instruction.type = MUL;
         decode_mul(state);
-    } else if (!mask_1_bit(fetched_instruction, 27)) {
+    } else if (!mask_1_bit(fetched_instruction, 27) & !mask_1_bit(fetched_instruction, 26) &
+               mask_1_bit(fetched_instruction, 25)) {
         //DPI
         state->decoded_instruction.type = DPI;
         decode_dpi(state);

@@ -35,7 +35,7 @@ typedef struct {
     uint8_t u;
     uint8_t opcode;
     uint8_t s;
-    uint8_t rn;
+    int32_t rn;
     uint8_t rd;
     uint8_t rs;
     uint8_t rm;

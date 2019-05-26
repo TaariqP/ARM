@@ -9,9 +9,9 @@
 void execute_dpi(current_state *state) {
     uint8_t opcode = state->decoded_instruction.opcode;
     uint16_t operand2 = state->decoded_instruction.operand2;
-    int rn = state->decoded_instruction.rn;
+    int32_t rn = state->decoded_instruction.rn;
     int rd = state->decoded_instruction.rd;
-    printf("value in this register is : %d \n", rn);
+    //printf("value in this register is : %d \n", rn);
 
 
     int finalOp2 = 0;
@@ -28,7 +28,7 @@ void execute_dpi(current_state *state) {
         uint32_t imm_32 = imm;
         //Zero extend to 32 bits and rotate right
         finalOp2 = ror(imm_32, (unsigned int) rotate * 2);
-        printf("finalop2: %d \n", finalOp2);
+        //printf("finalop2: %d \n", finalOp2);
     } else {
         //Shifted Register
         uint8_t rm = mask_4_bit(operand2, 0);
@@ -37,7 +37,7 @@ void execute_dpi(current_state *state) {
         uint8_t shiftAmount = 0;
         if (!(shift & 0x1)) {
             //Constant amount
-            printf("shift type: %d \n", shiftType);
+            //printf("shift type: %d \n", shiftType);
             shiftAmount = (shift >> 3) & 0x1F;
         } else {
             //Register amount (Optional)
@@ -96,7 +96,7 @@ void execute_dpi(current_state *state) {
         case 2:
             //SUB
             returnValue = rn - finalOp2;
-            printf("rn - finalop2 = %d - %d = %d \n", rn, finalOp2, returnValue);
+            //printf("rn - finalop2 = %d - %d = %d \n", rn, finalOp2, returnValue);
             carry = finalOp2 <= rn;
             break;
         case 3:
@@ -142,7 +142,7 @@ void execute_dpi(current_state *state) {
         //printf("Opcode is %d. rn is %d. Finalop2 is %d, Set register %d to %d \n ", opcode,
         // rn, finalOp2, state->decoded_instruction.rd, returnValue);
         state->registers[rd] = returnValue;
-        printf("register %d contains %d \n", rd, returnValue);
+        //printf("register %d contains %d \n", rd, returnValue);
     }
 
 
