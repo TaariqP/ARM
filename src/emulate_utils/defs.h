@@ -16,6 +16,16 @@
 #define Z 30
 #define C 29
 #define V 28
+// 0x2020 0028
+#define GPIO_CLEAR 538968104
+// 0x2020 001C
+#define GPIO_ON 538968092
+//0x20200000
+#define GPIO_0_9  538968064
+//0x2020 0004
+#define GPIO_10_19 538968068
+//0x2020 0008
+#define GPIO_20_29 538968072
 
 
 typedef enum {
@@ -35,6 +45,7 @@ typedef struct {
     uint8_t u;
     uint8_t opcode;
     uint8_t s;
+    uint8_t l;
     int32_t rn;
     uint8_t rd;
     uint8_t rs;

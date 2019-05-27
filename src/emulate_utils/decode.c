@@ -32,7 +32,7 @@ void decode_sdt(current_state *state) {
     state->decoded_instruction.i = mask_1_bit(value, 25);
     state->decoded_instruction.p = mask_1_bit(value, 24);
     state->decoded_instruction.u = mask_1_bit(value, 23);
-    state->decoded_instruction.s = mask_1_bit(value, 20);
+    state->decoded_instruction.l = mask_1_bit(value, 20);
     state->decoded_instruction.rn = mask_4_bit(value, 16);
     state->decoded_instruction.rd = mask_4_bit(value, 12);
     //Could replace operand2 inside dpi with offset instead - use one instead of 2!

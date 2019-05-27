@@ -5,6 +5,7 @@
 #include "emulate_utils/utils.h"
 #include "emulate_utils/execute.h"
 #include "emulate_utils/decode.h"
+#include "emulate_utils/defs.h"
 
 
 void execute(current_state *state) {
@@ -40,7 +41,7 @@ void decode(current_state *state) {
     uint32_t fetched_instruction = state->fetched_instruction.binary_value;
 
     if (fetched_instruction == 0) {
-        state->decoded_instruction.type = NONE;
+        state->decoded_instruction.type = ALL_ZERO;
     } else if (mask_1_bit(fetched_instruction, 27)) {
         //BRANCH
         //printf("decoding branch \n");
@@ -95,7 +96,7 @@ void pipeline_cycle(current_state *state, int size) {
 
 }
 
-/*
+
 int main(int argc, char **argv) {
 
     if (argc != 2) {
@@ -133,4 +134,4 @@ int main(int argc, char **argv) {
 
     return EXIT_SUCCESS;
 }
-*/
+
