@@ -5,6 +5,8 @@
 #include <bits/types/FILE.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdlib.h>
+#include <string.h>
 #include "utils.h"
 #include "defs.h"
 
@@ -22,5 +24,17 @@ void binary_file_writer(char *filename, const char *binary_string){
 
 
 void two_pass_assembly(){
-    symbol_table *symbol_table;_
+
+    //First pass
+    symbol_table *symbol_table = malloc(sizeof(mapping) * LINES);
+
+    /* Second Pass */
+
+}
+
+void tokeniser(char* line){
+    char* label;
+    char* rest;
+    label = strtok(line, ":",);
+
 }
