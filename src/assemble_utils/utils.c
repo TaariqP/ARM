@@ -11,7 +11,7 @@
 char* two_pass_assembly() {
 
     symbol_table symbol_table = {
-            .mappings = malloc(sizeof(struct mapping) * LINES)
+            .mappings = malloc(sizeof(mapping) * LINES)
     };
 
     tokenised_line tokenised_line = {

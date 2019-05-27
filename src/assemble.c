@@ -20,8 +20,8 @@ int main(int argc, char **argv) {
         code[line] = (char *) malloc(sizeof(char) * LINE_LENGTH);
         while (fgets(code[line], LINE_LENGTH, file) != NULL) {
             //Add null terminator at the end of every line
-            code[line][strlen(code[line] - 1)] = '\0';
-            printf("Code line %d: ", line, code[line]);
+            code[line][strlen(code[line]) - 1] = '\0';
+            printf("Code line %d: %s\n", line, code[line]);
             line++;
             code[line] = (char *) malloc(sizeof(char) * LINE_LENGTH);
         }
