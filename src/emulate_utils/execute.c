@@ -36,12 +36,13 @@ void execute_dpi(current_state *state) {
         uint8_t shiftAmount = 0;
         if (!(shift & 0x1)) {
             //Constant amount
-            //printf("shift type: %d \n", shiftType);
+            //printf("constant shift: ");
             shiftAmount = (shift >> 3) & 0x1F;
         } else {
             //Register amount (Optional)
+            //printf("optional register shift: ");
             uint8_t rs = mask_4_bit(shift, 8);
-            int regVal = state->registers[rs];
+            int32_t regVal = state->registers[rs];
             shiftAmount = (regVal & 0xFF);
         }
 
@@ -57,19 +58,19 @@ void execute_dpi(current_state *state) {
                 break;
             case 1:
                 finalOp2 = lsr(rm_value, shiftAmount);
-                shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
-                //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
+                shiftCarry = mask_1_bit(rm_value, shiftAmount - 2);
+                printf("shiftType = %d and shift carry = %d \n", shiftType, shiftCarry);
 
                 break;
             case 2:
                 finalOp2 = asr(rm_value, shiftAmount);
-                shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
+                shiftCarry = mask_1_bit(rm_value, shiftAmount - 2);
                 //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
 
                 break;
             case 3:
                 finalOp2 = ror(rm_value, (unsigned int) shiftAmount);
-                shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
+                shiftCarry = mask_1_bit(rm_value, shiftAmount - 2);
                 //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
 
                 break;
@@ -93,8 +94,8 @@ void execute_dpi(current_state *state) {
         case 2:
             //SUB
             returnValue = rn - finalOp2;
-            //printf("rn - finalop2 = %d - %d = %d \n", rn, finalOp2, returnValue);
             carry = finalOp2 <= rn;
+            printf("rn - finalop2 = %d - %d = %d carry: %d \n", rn, finalOp2, returnValue, carry);
             break;
         case 3:
             //RSB
