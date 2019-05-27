@@ -31,7 +31,7 @@ void execute_dpi(current_state *state) {
     } else {
         //Shifted Register
         uint8_t rm = mask_4_bit(operand2, 0);
-        uint8_t shift = (operand2 >> 4) & 0xFF;
+        uint8_t shift = mask_8_bit(operand2, 4);
         uint8_t shiftType = (shift >> 1) & 0x3;
         uint8_t shiftAmount = 0;
         if (!(shift & 0x1)) {
@@ -41,9 +41,10 @@ void execute_dpi(current_state *state) {
         } else {
             //Register amount (Optional)
             //printf("optional register shift: ");
-            uint8_t rs = mask_4_bit(shift, 8);
+            uint8_t rs = mask_4_bit(operand2, 8);
             int32_t regVal = state->registers[rs];
-            shiftAmount = (regVal & 0xFF);
+            //printf("shift register is: %d \n",rs);
+            shiftAmount = mask_8_bit(state->registers[2], 0);
         }
 
         int32_t rm_value = state->registers[rm];
@@ -58,19 +59,22 @@ void execute_dpi(current_state *state) {
                 break;
             case 1:
                 finalOp2 = lsr(rm_value, shiftAmount);
-                shiftCarry = mask_1_bit(rm_value, shiftAmount - 2);
-                printf("shiftType = %d and shift carry = %d \n", shiftType, shiftCarry);
+                shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
+//                printf("bottom byte of register 2 should be: %d \n", mask_8_bit(state->registers[2], 0));
+//                printf("bottom byte of register 2 (shift amount): %d \n", shiftAmount);
+//                printf("finalop2 value in reg3: %d \n", finalOp2);
+//                printf("shiftType = %d and shift carry = %d \n", shiftType, shiftCarry);
 
                 break;
             case 2:
                 finalOp2 = asr(rm_value, shiftAmount);
-                shiftCarry = mask_1_bit(rm_value, shiftAmount - 2);
+                shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
                 //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
 
                 break;
             case 3:
                 finalOp2 = ror(rm_value, (unsigned int) shiftAmount);
-                shiftCarry = mask_1_bit(rm_value, shiftAmount - 2);
+                shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
                 //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
 
                 break;
@@ -95,7 +99,7 @@ void execute_dpi(current_state *state) {
             //SUB
             returnValue = rn - finalOp2;
             carry = finalOp2 <= rn;
-            printf("rn - finalop2 = %d - %d = %d carry: %d \n", rn, finalOp2, returnValue, carry);
+            //printf("register4 - finalop2 = %d - %d = %d carry: %d \n", rn, finalOp2, returnValue, carry);
             break;
         case 3:
             //RSB
