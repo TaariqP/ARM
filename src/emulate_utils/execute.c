@@ -161,13 +161,12 @@ void execute_dpi(current_state *state) {
 void execute_sdt(current_state *state) {
     uint16_t offset = state->decoded_instruction.offset;
 
-    int finalOffset = 0;
+    int finalOffset;
 
     if (!state->decoded_instruction.i) {
         //Immediate constant
         finalOffset = offset;
     } else {
-        //Shifted Register
         uint8_t rm = mask_4_bit(offset, 0);
         uint8_t shift = (offset >> 4) & 0xFF;
         uint8_t shiftType = (shift >> 1) & 0x3;
@@ -199,6 +198,7 @@ void execute_sdt(current_state *state) {
                 finalOffset = ror(rm_value, (unsigned int) shiftAmount);
                 break;
             default:
+                finalOffset = -1;
                 printf("Invalid shift type");
         }
     }
@@ -206,8 +206,7 @@ void execute_sdt(current_state *state) {
 
 
     int rn = state->decoded_instruction.rn;
-    int address = 0;
-    int returnValue = 0;
+    int32_t address;
 
     //if u is set, add offset, otherwise subtract
     int32_t temprn = state->decoded_instruction.u ? state->registers[rn] + finalOffset : state->registers[rn] - finalOffset;
@@ -220,23 +219,12 @@ void execute_sdt(current_state *state) {
         //post-indexing - access memory at rn and rn becomes temprn
         address = rn;
         set_register(state, rn, temprn);
-//        if (rn == rm) {
-//            //Rm same as Rn is not allowed in post-indexing
-//            fprintf(stderr, "SDT, rn == rm not allowed in post-indexing\n");
-//            return;
-//        }
-
-
     }
 
-//    if (rn == PC && state->registers[PC] != state->address + 8) {
-//        //if PC used as base register, must contain instruction's address plus 8 bytes
-//        fprintf(stderr, "SDT, PC used as base register but does not contain instruction's address plus 8 bytes\n");
-//        return;
-//    }
+    //use letter s instead of letter l
     if (state->decoded_instruction.s) {
         //loading from memory to rd
-        returnValue = state->memory[address];
+        int returnValue = state->memory[address];
         set_register(state, state->decoded_instruction.rd, returnValue);
     } else {
         //storing from rd to memory
