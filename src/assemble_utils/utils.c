@@ -16,7 +16,7 @@ void binary_file_writer(char *filename, const char *binary_string){
     fclose(binary_file);
 }
 
-void extract_branch_cond(char *string, char result[3]){
+void extract_2_char_cond(char *string, char result[3]){
     if (string[1] != ' ') {
         result[0] = string[1];
         result[1] = string[2];
@@ -28,7 +28,12 @@ void extract_branch_cond(char *string, char result[3]){
     }
 }
 
-uint32_t set_4_bits(uint32_t binary, int end_bit, int value){
+/*sets as many bits as necessary to encompass value
+ e.g (if value is <2, only 1 bit is set, if 3 < value < 8 then 3 bits are set
+
+ assumption that bits being set start as 0, as do all bits less significant
+ than end bit. */
+uint32_t set_n_bits(uint32_t binary, int end_bit, int value){
     binary |= (value << end_bit);
     return binary;
 }
