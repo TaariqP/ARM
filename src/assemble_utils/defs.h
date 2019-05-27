@@ -8,13 +8,16 @@
 
 #include <stdint-gcc.h>
 
+#define LINES 50
+#define LINE_LENGTH 511
+
 typedef struct {
     char *label;
     uintptr_t memory_address;
 } mapping;
 
 typedef struct {
-    mapping mapping;
+    mapping* mappings;
 } symbol_table;
 
 
