@@ -8,13 +8,30 @@
 #include "defs.h"
 
 
-void two_pass_assembly() {
+char* two_pass_assembly() {
+
+    symbol_table symbol_table = {
+            .mappings = malloc(sizeof(struct mapping) * LINES)
+    };
+
+    tokenised_line tokenised_line = {
+            .label = malloc(sizeof(char) * LINE_LENGTH),
+            .opcode = malloc(sizeof(char) * OPCODE_LENGTH),
+            .operands = malloc(sizeof(char *) * LINE_LENGTH / OPERAND_LENGTH)
+    };
 
     //First pass
-    symbol_table *symbol_table = malloc(sizeof(mapping) * LINES);
+
+
 
     /* Second Pass */
 
+
+}
+
+void first_pass(){
+    for (int i = 0; i < LINE_LENGTH; ++i) {
+    }
 }
 
 int tokenizer(char *line, tokenised_line tokenised_line) {

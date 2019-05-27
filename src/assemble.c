@@ -10,20 +10,29 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    symbol_table symbol_table = {
-            .mappings = malloc(sizeof(struct mapping) * LINES)
-    };
 
-    tokenised_line tokenised_line = {
-            .label = malloc(sizeof(char) * LINE_LENGTH),
-            .opcode = malloc(sizeof(char) * OPCODE_LENGTH),
-            .operands = malloc(sizeof(char *) * LINE_LENGTH / OPERAND_LENGTH)
-    };
+    FILE *file;
+    char **code = (char **) malloc(sizeof(char *) * LINES);
+    file = fopen(argv[1], "r");
 
-    tokenizer("mov r1 r2", tokenised_line);
-    for (int i = 0; i < tokenised_line.label; ++i) {
-
+    if (file) {
+        int line = 0;
+        code[line] = (char *) malloc(sizeof(char) * LINE_LENGTH);
+        while (fgets(code[line], LINE_LENGTH, file) != NULL) {
+            //Add null terminator at the end of every line
+            code[line][strlen(code[line] - 1)] = '\0';
+            printf("Code line %d: ", line, code[line]);
+            line++;
+            code[line] = (char *) malloc(sizeof(char) * LINE_LENGTH);
+        }
+        fclose(file);
+        char *binary = two_pass_assembly(code, line);
+        //binary_file_writer(binary);
+    } else {
+        printf("Could not open file");
     }
+
+
 
     return EXIT_SUCCESS;
 }
