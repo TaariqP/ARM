@@ -21,12 +21,10 @@ uint8_t mask_4_bit(int value, int end_bit) {
 
 void binary_file_loader(char *filename, char *memory) {
 
-    FILE *binaryFile;
-    FILE *fp = fopen(filename, "rb");
-    fseek(fp, 0, SEEK_END);
-    int size = (int) ftell(fp);
-    fclose(fp);
-    binaryFile = fopen(filename, "rb");
+    FILE *binaryFile = fopen(filename, "rb");
+    fseek(binaryFile, 0, SEEK_END);
+    int size = (int) ftell(binaryFile);
+    rewind(binaryFile);
     if (binaryFile) {
         fread(memory, (size_t) size, 1, binaryFile);
     } else {
@@ -73,11 +71,11 @@ void print_registers(int32_t *registers) {
 
 
 bool check_condition(current_state *state) {
-    uint32_t value = state->registers[CPSR];
-    uint8_t n = mask_1_bit(value, 31);
-    uint8_t z = mask_1_bit(value, 30);
-    uint8_t c = mask_1_bit(value, 29);
-    uint8_t v = mask_1_bit(value, 28);
+    int32_t value = state->registers[CPSR];
+    uint8_t n = mask_1_bit(value, N);
+    uint8_t z = mask_1_bit(value, Z);
+    uint8_t c = mask_1_bit(value, C);
+    uint8_t v = mask_1_bit(value, V);
     uint8_t cond = state->decoded_instruction.cond;
 
     switch (cond) {
@@ -88,15 +86,16 @@ bool check_condition(current_state *state) {
         case 10:
             return n == v;
         case 11:
-            return !(n == v);
+            return (n != v);
         case 12:
-            return !z & (n == v);
+            return !z && (n == v);
         case 13:
-            return z | !(n == v);
+            return z || (n != v);
         case 14:
             return 1;
         default:
             printf("Failed CPSR Check");
+            return 0;
     }
 }
 
@@ -121,7 +120,7 @@ uint32_t get_instruct(current_state *state, int address) {
 
 }
 
-void pc_increment(current_state *state){
+void pc_increment(current_state *state) {
     state->registers[PC] += 4;
 }
 
@@ -130,19 +129,20 @@ void set_register(current_state *state, int reg, int value) {
 }
 
 void set_CPSR_bit(current_state *state, int bit_number, int val) {
-    uint32_t cpsr = state->registers[CPSR];
-    if (val == 0) {
-        if (cpsr >> (31 - bit_number) & 0x1) {
-            cpsr = cpsr ^ (0x1 << 31 - bit_number);
+    int32_t cpsr = state->registers[CPSR];
+    if (!val) {
+        if (mask_1_bit(cpsr, bit_number)) {
+            cpsr ^= (0x1 << bit_number);
         }
-    } else if (val == 1) {
-        cpsr = cpsr | (0x1 << 31 - bit_number);
+    } else {
+        cpsr |= (0x1 << bit_number);
     }
+
     state->registers[CPSR] = cpsr;
 
 }
 
-uint32_t sign_extend_26_to_32(uint32_t value) {
+int32_t sign_extend_26_to_32(int32_t value) {
     uint8_t most_significant_bit = mask_1_bit(value, 25);
     if (most_significant_bit) {
         return value | 0xFC000000;
@@ -150,7 +150,7 @@ uint32_t sign_extend_26_to_32(uint32_t value) {
     return value;
 }
 
-int ror(uint32_t val, uint32_t num) {
+int ror(int32_t val, uint32_t num) {
     return (val >> num) | val << (32 - num);
 }
 

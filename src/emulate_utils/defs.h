@@ -12,10 +12,10 @@
 #define PC 15
 #define CPSR 16
 #define INSTRUCTION_SIZE 32
-#define N 32
-#define Z 31
-#define C 30
-#define V 29
+#define N 31
+#define Z 30
+#define C 29
+#define V 28
 
 
 typedef enum {
@@ -35,7 +35,7 @@ typedef struct {
     uint8_t u;
     uint8_t opcode;
     uint8_t s;
-    uint8_t rn;
+    int32_t rn;
     uint8_t rd;
     uint8_t rs;
     uint8_t rm;
@@ -54,14 +54,11 @@ typedef struct {
     int32_t registers[NUM_REGISTERS];
     fetched_instruction fetched_instruction;
     decoded_instruction decoded_instruction;
+    //needed for sdt
+    int address;
 } current_state;
 
-current_state INITIAL_STATE = {
-        .memory = {0},
-        .registers = {0},
-        .fetched_instruction.binary_value = 0,
-        .decoded_instruction.type = NONE
-};
+
 
 
 #endif //ARM11_11_DEFS_H
