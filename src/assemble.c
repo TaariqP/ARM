@@ -4,7 +4,7 @@
 
 #include "assemble_utils/utils.h"
 #include "assemble_utils/defs.h"
-/*
+
 int main(int argc, char **argv) {
 
     if (argc != 2) {
@@ -38,4 +38,11 @@ int main(int argc, char **argv) {
 
     return EXIT_SUCCESS;
 }
-*/
+
+int main(void){
+    char *result;
+    char *instruction = "bne 0xFFFFFF";
+    get_argument(instruction, 2, result);
+    printf("%s", result);
+    free(result);
+}
