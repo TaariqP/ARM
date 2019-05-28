@@ -12,6 +12,7 @@
 #define LINE_LENGTH 511
 #define OPCODE_LENGTH 3
 #define OPERAND_LENGTH 20
+#define INSTRUCTION_SIZE 32
 
 typedef struct {
     char *label;

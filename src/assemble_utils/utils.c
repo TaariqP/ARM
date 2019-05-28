@@ -35,42 +35,56 @@ uint32_t set_4_bits(uint32_t binary, int end_bit, int value) {
   return binary;
 }
 
-bool isArgument(char c){
-    if (c == ','){
-        return false;
+bool isArgument(char c) {
+  if (c == ',') {
+    return false;
+  }
+  void extract_2_char_cond(char *string, char result[3]) {
+    if (string[1] != ' ') {
+      result[0] = string[1];
+      result[1] = string[2];
+      result[2] = '/0';
+    } else {
+      result[0] = ' ';
+      result[1] = ' ';
+      result[2] = '/0';
     }
-    if (c == ' '){
-        return false;
+    if (c == ' ') {
+      return false;
     }
-    if (c == '\0'){
-        return false;
+    if (c == '\0') {
+      return false;
     }
     return true;
+  }
 }
 
 //gets the specified argument from the instruction
 //e.g: get_argument("mul r1, r2, r3", 2) = "r2";
-void get_argument(char *instruction, int argument_number, char *result){
-    int i = 0;
-    int startpos = 0;
-    int endpos =0;
-    while (i < argument_number) {
-        if (instruction[startpos] == ' '){
-            i++;
-        }
-        startpos++;
+void get_argument(char *instruction, int argument_number, char *result) {
+  int i = 0;
+  int startpos = 0;
+  int endpos = 0;
+  while (i < argument_number) {
+    if (instruction[startpos] == ' ') {
+      i++;
     }
-    endpos = startpos;
-    while (isArgument(instruction[endpos])){
-        endpos++;
+    startpos++;
+  }
+  endpos = startpos;
+  while (isArgument(instruction[endpos])) {
+    endpos++;
+    if (instruction[startpos] == ',') {
+      startpos++;
     }
     int length = endpos - startpos + 1;
-    result = (char *) realloc(result, sizeof(char)*length);
-    for(i = 0; i < length-1; i++){
-        result[i] = instruction[i+startpos];
+    result = (char *) realloc(result, sizeof(char) * length);
+    for (i = 0; i < length - 1; i++) {
+      result[i] = instruction[i + startpos];
     }
-    result[length-1] = '\0';
+    result[length - 1] = '\0';
 
+  }
 }
 
 char *two_pass_assembly() {
@@ -84,18 +98,18 @@ char *two_pass_assembly() {
       .opcode = malloc(sizeof(char) * OPCODE_LENGTH),
       .operands = malloc(sizeof(char *) * LINE_LENGTH / OPERAND_LENGTH)
   };
-
-  //First pass
-
-
-
-  /* Second Pass */
+}
+//First pass
 
 
 
-uint32_t set_n_bits(uint32_t binary, int end_bit, int value){
-    binary |= (value << end_bit);
-    return binary;
+/* Second Pass */
+
+
+
+uint32_t set_n_bits(uint32_t binary, int end_bit, int value) {
+  binary |= (value << end_bit);
+  return binary;
 }
 
 void first_pass() {
@@ -103,7 +117,11 @@ void first_pass() {
   }
 }
 
-
+void add_to_mappings(symbol_table *symbol_table, mapping mapping) {
+  int num_elements = symbol_table->num_elements;
+  symbol_table->num_elements = symbol_table->num_elements + 1;
+  symbol_table->mappings[num_elements] = mapping;
+}
 
 int tokenizer(char *line, tokenised_line tokenised_line) {
 
@@ -133,42 +151,63 @@ int tokenizer(char *line, tokenised_line tokenised_line) {
 }
 
 
-void first_pass(char **code, int line_num, tokenised_line tokenised_line, symbol_table symbol_table) {
-    char *line;
-    for (int i = 0; i < LINE_LENGTH; ++i) {
-        line = code[line_num];
-        int operand_num = tokenizer(line, tokenised_line);
-        if (operand_num == 0){
-            printf("label: %s\n", tokenised_line.label);
-            mapping mapping = {
-                    .label = tokenised_line.label,
-                    .memory_address = &code[line_num+1]
-            };
-            add_to_mappings(&symbol_table, mapping);
-        }
+void first_pass(char **code, tokenised_line tokenised_line, symbol_table symbol_table) {
+  char *line;
+  for (int line_num = 0; line_num < LINES; line_num++) {
+    line = code[line_num];
+    int operand_num = tokenizer(line, tokenised_line);
+    if (operand_num == 0) {
+      printf("label: %s\n", tokenised_line.label);
+      mapping mapping = {
+          .label = tokenised_line.label,
+          .memory_address = &code[line_num + 1]
+      };
+      add_to_mappings(&symbol_table, mapping);
     }
+  }
 }
 
-char* second_pass(){
+char *second_pass(char **code, tokenised_line tokenised_line, symbol_table symbol_table) {
 
+  char *binary = (char *) malloc(INSTRUCTION_SIZE * LINES);
+  binary[0] = '\0';
+  //Read opcode mnemonics + operands for each instruction
+  for (int i = 0; i < LINES; ++i) {
+    int num_of_operands = tokenizer(code[i], tokenised_line);
+
+    //exclude labels
+    if (num_of_operands != 0) {
+      for (int j = 0; j < num_of_operands; ++j) {
+        uintptr_t address;
+
+      }
+    }
+  }
+  return binary;
 }
 
 char *two_pass_assembly(char **code, int line_num) {
 
-    symbol_table symbol_table = {
-            .num_elements = 0,
-            .mappings = malloc(sizeof(mapping) * LINES)
-    };
+  symbol_table symbol_table = {
+      .num_elements = 0,
+      .mappings = malloc(sizeof(mapping) * LINES)
+  };
 
-    tokenised_line tokenised_line = {
-            .label = malloc(sizeof(char) * LINE_LENGTH),
-            .opcode = malloc(sizeof(char) * OPCODE_LENGTH),
-            .operands = malloc(sizeof(char *) * LINE_LENGTH / OPERAND_LENGTH)
-    };
+  tokenised_line tokenised_line = {
+      .label = malloc(sizeof(char) * LINE_LENGTH),
+      .opcode = malloc(sizeof(char) * OPCODE_LENGTH),
+      .operands = malloc(sizeof(char *) * LINE_LENGTH / OPERAND_LENGTH)
+  };
 
-    //First pass assoociates labels with memory addresses.
-    first_pass(code, line_num, tokenised_line, symbol_table);
+  //First pass assoociates labels with memory addresses.
+  first_pass(code, tokenised_line, symbol_table);
 
-    /* Second Pass */
+  /* Second Pass */
+  char *binary = second_pass(code, tokenised_line, symbol_table);
+
+  // REMEMBER TO free variables
+
+  return binary;
 
 }
+

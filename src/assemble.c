@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
             code[line] = (char *) malloc(sizeof(char) * LINE_LENGTH);
         }
         fclose(file);
-        char *binary = two_pass_assembly(code, line);
+        //char *binary = two_pass_assembly(code, line);
         //binary_file_writer(binary);
     } else {
         printf("Could not open file");
