@@ -57,8 +57,10 @@ uint32_t set_n_bits(uint32_t binary, int end_bit, int value) {
 }
 
 void add_to_mappings(symbol_table *symbol_table, mapping mapping) {
+    //Increment number of elements in symbol table
     int num_elements = symbol_table->num_elements;
     symbol_table->num_elements = symbol_table->num_elements + 1;
+    //Add mapping to symbol table
     symbol_table->mappings[num_elements] = mapping;
 }
 
@@ -92,6 +94,7 @@ int tokenizer(char *line, tokenised_line tokenised_line) {
 
 void first_pass(char **code, tokenised_line tokenised_line, symbol_table symbol_table) {
     char *line;
+    //Go through each line of code and get labels and add to symbol table.
     for (int line_num = 0; line_num < LINES; line_num++) {
         line = code[line_num];
         int operand_num = tokenizer(line, tokenised_line);
@@ -114,11 +117,24 @@ char *second_pass(char **code, tokenised_line tokenised_line, symbol_table symbo
     for (int i = 0; i < LINES; ++i) {
         int num_of_operands = tokenizer(code[i], tokenised_line);
 
-        //exclude labels
+        //Labels
+        if (num_of_operands == 0){
+            //TODO
+        }
+
+        //Instructions
         if (num_of_operands != 0) {
+            //Get operands that are labels and use symbol table to get address
             for (int j = 0; j < num_of_operands; ++j) {
                 uintptr_t address;
+                get_address(symbol_table, tokenised_line.operands[j]);
+            }
 
+            //Calls to Instruction_assemble
+            for (int k = 0; k < DPI; ++k) {
+                if (strcmp(tokenised_line.opcode, DPI[k])){
+                    a
+                }
             }
         }
     }
