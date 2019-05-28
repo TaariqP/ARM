@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "defs.h"
 
 void binary_file_writer(char *filename, const char *binary_string) {
@@ -20,17 +21,31 @@ void extract_2_char_cond(char *string, char result[3]) {
     if (string[1] != ' ') {
         result[0] = string[1];
         result[1] = string[2];
-        result[2] = '/0';
+        result[2] = '\0';
     } else {
         result[0] = ' ';
         result[1] = ' ';
-        result[2] = '/0';
+        result[2] = '\0';
     }
+}
+
+
+bool isArgument(char c){
+    if (c == ','){
+        return false;
+    }
+    if (c == ' '){
+        return false;
+    }
+    if (c == '\0'){
+        return false;
+    }
+    return true;
 }
 
 //gets the specified argument from the instruction
 //e.g: get_argument("mul r1, r2, r3", 2) = "r2";
-char *get_argument(char *instruction, int argument_number) {
+void get_argument(char *instruction, int argument_number, char *result){
     int i = 0;
     int startpos = 0;
     int endpos = 0;
@@ -40,10 +55,16 @@ char *get_argument(char *instruction, int argument_number) {
         }
         startpos++;
     }
-    if (instruction[startpos] == ',') {
-        startpos++;
+    endpos = startpos;
+    while (isArgument(instruction[endpos])){
+        endpos++;
     }
-    return "";
+    int length = endpos - startpos + 1;
+    result = (char *) realloc(result, sizeof(char)*length);
+    for(i = 0; i < length-1; i++){
+        result[i] = instruction[i+startpos];
+    }
+    result[length-1] = '\0';
 }
 
 /*sets as many bits as necessary to encompass value

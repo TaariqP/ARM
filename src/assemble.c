@@ -39,3 +39,10 @@ int main(int argc, char **argv) {
     return EXIT_SUCCESS;
 }
 
+int main(void){
+    char *result;
+    char *instruction = "bne 0xFFFFFF";
+    get_argument(instruction, 2, result);
+    printf("%s", result);
+    free(result);
+}
