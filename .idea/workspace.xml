@@ -12,19 +12,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5f73e6e0-cf5f-4646-aeec-ca47d3f8e2bb" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Progress/2" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Progress/3" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Progress/4" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Progress/5" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Progress/6" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Progress/count.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assemble.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/assemble.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/emulate.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/emulate.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/emulate_utils/decode.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/emulate_utils/decode.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/emulate_utils/defs.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/emulate_utils/defs.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/arm11_11.dir/C.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/arm11_11.dir/C.includecache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/arm11_11.dir/depend.internal" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/arm11_11.dir/depend.internal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/arm11_11.dir/depend.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/arm11_11.dir/depend.make" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/emulate_utils/execute.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/emulate_utils/execute.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/emulate_utils/utils.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/emulate_utils/utils.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/emulate_utils/utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/emulate_utils/utils.h" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -40,8 +38,8 @@
       <file leaf-file-name="emulate.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/emulate.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="34" column="12" selection-start-line="34" selection-start-column="12" selection-end-line="34" selection-end-column="12" />
+            <state relative-caret-position="180">
+              <caret line="54" column="18" lean-forward="true" selection-start-line="54" selection-start-column="18" selection-end-line="54" selection-end-column="18" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -52,8 +50,8 @@
       <file leaf-file-name="utils.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/emulate_utils/utils.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="188">
-              <caret line="131" column="5" selection-start-line="131" selection-start-column="5" selection-end-line="131" selection-end-column="5" />
+            <state relative-caret-position="-95">
+              <caret line="134" lean-forward="true" selection-start-line="134" selection-end-line="134" />
               <folding>
                 <element signature="e#41#59#0" expanded="true" />
               </folding>
@@ -64,8 +62,8 @@
       <file leaf-file-name="execute.c" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/emulate_utils/execute.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="385">
-              <caret line="237" column="26" lean-forward="true" selection-start-line="237" selection-start-column="26" selection-end-line="237" selection-end-column="26" />
+            <state relative-caret-position="105">
+              <caret line="54" column="54" lean-forward="true" selection-start-line="54" selection-start-column="54" selection-end-line="54" selection-end-column="54" />
               <folding>
                 <element signature="e#40#57#0" expanded="true" />
               </folding>
@@ -109,6 +107,7 @@
       <find>rn</find>
       <find>INIT</find>
       <find>printf</find>
+      <find>temp</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -213,7 +212,7 @@
   </component>
   <component name="RunManager" selected="Application.arm11_11">
     <configuration name="Build All" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="arm11_11" RUN_TARGET_NAME="arm11_11" EXPLICIT_BUILD_TARGET_NAME="all" />
-    <configuration name="arm11_11" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="$PROJECT_DIR$/../arm11_1819_testsuite/test_cases/ldr01" PASS_PARENT_ENVS_2="true" PROJECT_NAME="arm11_11" TARGET_NAME="arm11_11" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="arm11_11" RUN_TARGET_NAME="arm11_11" />
+    <configuration name="arm11_11" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="$PROJECT_DIR$/../arm11_1819_testsuite/test_cases/opt_add05" PASS_PARENT_ENVS_2="true" PROJECT_NAME="arm11_11" TARGET_NAME="arm11_11" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="arm11_11" RUN_TARGET_NAME="arm11_11" />
     <list>
       <item itemvalue="Application.Build All" />
       <item itemvalue="Application.arm11_11" />
@@ -237,7 +236,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="109575000" />
+    <option name="totallyTimeSpent" value="112510000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="30" width="1280" height="1050" extended-state="4" />
@@ -678,8 +677,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/emulate_utils/utils.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
-          <caret line="131" column="5" selection-start-line="131" selection-start-column="5" selection-end-line="131" selection-end-column="5" />
+        <state relative-caret-position="-95">
+          <caret line="134" lean-forward="true" selection-start-line="134" selection-end-line="134" />
           <folding>
             <element signature="e#41#59#0" expanded="true" />
           </folding>
@@ -688,8 +687,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/emulate.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="34" column="12" selection-start-line="34" selection-start-column="12" selection-end-line="34" selection-end-column="12" />
+        <state relative-caret-position="180">
+          <caret line="54" column="18" lean-forward="true" selection-start-line="54" selection-start-column="18" selection-end-line="54" selection-end-column="18" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>
@@ -698,8 +697,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/emulate_utils/execute.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="385">
-          <caret line="237" column="26" lean-forward="true" selection-start-line="237" selection-start-column="26" selection-end-line="237" selection-end-column="26" />
+        <state relative-caret-position="105">
+          <caret line="54" column="54" lean-forward="true" selection-start-line="54" selection-start-column="54" selection-end-line="54" selection-end-column="54" />
           <folding>
             <element signature="e#40#57#0" expanded="true" />
           </folding>
