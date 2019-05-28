@@ -17,16 +17,19 @@ uint32_t binary = 0;
 //general purpose code for reduced duplication
 int cond_end_bit = 28;
 char cond[3];
-extract_2_char_cond(string, cond);
 
 
-uint32_t assemble_dpi(char *string, uint32_t *binary){
+
+uint32_t assemble_dpi(char *string, uint32_t *binary, char **code, int line, symbol_table *symbol_table){
+    extract_2_char_cond(string, cond);
+
     //set cond to 1110
     binary = set_n_bits(binary, 28, 14);
 }
 
 
-uint32_t assemble_mul(char *string, uint32_t *binary){
+uint32_t assemble_mul(char *string, uint32_t *binary, char **code, int line, symbol_table *symbol_table){
+    extract_2_char_cond(string, cond);
 
     //set cond to 1110
     binary = set_n_bits(binary, cond_end_bit, 14);
@@ -54,12 +57,12 @@ uint32_t assemble_mul(char *string, uint32_t *binary){
 
 }
 
-uint32_t assemble_sdt(char *string, uint32_t *binary){
+uint32_t assemble_sdt(char *string, uint32_t *binary, char **code, int line, symbol_table *symbol_table){
 
 }
 
- uint32_t assemble_branch(char *string, uint32_t *binary){
-
+ uint32_t assemble_branch(char *string, uint32_t *binary, char **code, int line, symbol_table *symbol_table){
+     extract_2_char_cond(string, cond);
 
     //setting cond bits
     switch (cond) {
@@ -113,6 +116,16 @@ uint32_t assemble_sdt(char *string, uint32_t *binary){
 
 
     //TODO: set offset
+    uint32_t current_address = &code[line];
+        //TODO 1: get the exact label from the instruction
+        //TODO 2: extract that exact mapping from the symbol table
+        //TODO 3: find the address for that label from mapping
+        //TODO 4: calculate the offset (destination - current + 8)?
+
+    //label =
+    //uint32_t destination_address =
+
+
 
     return binary;
 }
