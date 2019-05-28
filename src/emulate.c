@@ -4,6 +4,8 @@
 #include "emulate_utils/utils.h"
 #include "emulate_utils/execute.h"
 #include "emulate_utils/decode.h"
+#include "emulate_utils/defs.h"
+
 
 void execute(current_state *state) {
     instruction_type type = state->decoded_instruction.type;
@@ -130,6 +132,4 @@ int main(int argc, char **argv) {
     free(state);
 
     return EXIT_SUCCESS;
-}
-
-*/
+}*/

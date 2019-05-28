@@ -4,6 +4,8 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <memory.h>
 #include <stdlib.h>
 #include "utils.h"
@@ -13,7 +15,6 @@
 uint32_t binary = 0;
 
 //general purpose code for reduced duplication
-int cond_end_bit = 28;
 char cond[3];
 
 
@@ -28,7 +29,68 @@ uint32_t assemble_dpi(char *string, char **code, int line, symbol_table symbol_t
     extract_2_char_cond(string, cond);
 
     //set cond to 1110
-    binary = set_n_bits(binary, cond_end_bit, 14);
+    binary = set_n_bits(binary, COND_END_BIT, 14);
+
+    //bits 27-26 always 0
+
+
+    char *operand2 = tokenised_line[line][2];
+
+    //set I if Operand2 is an immediate value
+    if (operand2[0]=='#'){
+        set_n_bits(binary,25, 1);
+    }
+
+    char *command = tokenised_line->opcode[line];
+    DPI_TYPE type;
+
+
+    //set opcode and type
+    //needs if else ladder because of the way C compares strings :(
+    if (!strcmp(command, "eor")){
+        //EOR
+        set_n_bits(binary, DPI_OPCODE_END_BIT, 1);
+        type = compute_result
+    } else if (!(strcmp(command, "sub"))){
+        //SUB
+        set_n_bits(binary, DPI_OPCODE_END_BIT, 2);
+        type = compute_result
+    } else if (!(strcmp(command, "rsb"))){
+        //RSB
+        set_n_bits(binary, DPI_OPCODE_END_BIT, 3);
+    } else if (!(strcmp(command, "add"))){
+        //ADD
+        set_n_bits(binary, DPI_OPCODE_END_BIT, 4);
+    } else if (!(strcmp(command, "orr"))){
+        //ORR
+        set_n_bits(binary, DPI_OPCODE_END_BIT, 12);
+        type = compute_result
+    } else if (!(strcmp(command, "mov"))){
+        //MOV
+        set_n_bits(binary, DPI_OPCODE_END_BIT, 13);
+        type = single_operand;
+    } else if (!(strcmp(command, "tst"))){
+        //TST
+        set_n_bits(binary, DPI_OPCODE_END_BIT, 8);
+        type = set_CPSR;
+    } else if (!(strcmp(command, "teq"))){
+        //TEQ
+        set_n_bits(binary, DPI_OPCODE_END_BIT, 9);
+        type = set_CPSR;
+    } else if (!(strcmp(command, "cmp"))){
+        //CMP
+        set_n_bits(binary, DPI_OPCODE_END_BIT, 10);
+        type = set_CPSR;
+    } else{
+        //AND (no bits set, they remain 0)
+        type = compute_result;
+    }
+
+    //set S bit if type is set_CPSR
+    if (type == set_CPSR){
+        set_n_bits(binary, 20, 1);
+    }
+
 }
 
 

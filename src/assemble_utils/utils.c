@@ -80,9 +80,9 @@ void get_argument(char *instruction, int argument_number, char *result) {
 
  assumption that bits being set start as 0, as do all bits less significant
  than end bit. */
-uint32_t set_n_bits(uint32_t binary, int end_bit, int value) {
-    binary |= (value << end_bit);
-    return binary;
+uint32_t set_n_bits(uint32_t binary_num, int end_bit, int value) {
+    binary_num |= (value << end_bit);
+    return binary_num;
 }
 
 void add_to_mappings(symbol_table *symbol_table, mapping mapping) {

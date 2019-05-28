@@ -18,7 +18,21 @@
 #define NUMBER_OF_SDT 2
 #define NUMBER_OF_BRANCH 7
 #define NUMBER_OF_SPECIAL 2
+#define COND_END_BIT 28
+#define DPI_OPCODE_END_BIT 21
+// the initial 0 binary that we set depending on the instruction
 
+typedef enum {
+    compute_result,
+    single_operand,
+    set_CPSR
+}DPI_TYPE;
+
+
+char* DPI[] = {"add","sub","rsb","and","eor","orr","mov","tst","teq","cmp"};
+char* SDT[] = {"ldr","str"};
+char* BRANCH[] = {"beq","bne","bge","blt","bgt","ble","b"};
+char* SPECIAL[] = {"lsl","andeq"};
 
 typedef struct {
     char *label;
