@@ -21,16 +21,12 @@ extract_2_char_cond(string, cond);
 
 
 uint32_t assemble_dpi(char *string, uint32_t *binary){
-
+    //set cond to 1110
+    binary = set_n_bits(binary, 28, 14);
 }
 
-uint32_t assemble_sdt(char *string, uint32_t *binary){
-
-}
 
 uint32_t assemble_mul(char *string, uint32_t *binary){
-    char cond[3];
-    extract_2_char_cond(string, cond);
 
     //set cond to 1110
     binary = set_n_bits(binary, cond_end_bit, 14);
@@ -55,6 +51,10 @@ uint32_t assemble_mul(char *string, uint32_t *binary){
 
 
     return binary;
+
+}
+
+uint32_t assemble_sdt(char *string, uint32_t *binary){
 
 }
 
