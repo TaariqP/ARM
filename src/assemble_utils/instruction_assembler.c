@@ -1,16 +1,12 @@
 //
-// Created by ss13718 on 27/05/19.
+// Created by taariq on 5/28/19.
 //
 
-#include <bits/types/FILE.h>
+
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdlib.h>
 #include <string.h>
 #include "utils.h"
-#include "defs.h"
-#include "utils.h"
-#include "instruction_assembler.h"
 
 
 // the initial 0 binary that we set depending on the instruction
@@ -21,8 +17,7 @@ int cond_end_bit = 28;
 char cond[3];
 
 
-
-uint32_t assemble_dpi(char *string, char **code, int line, symbol_table *symbol_table){
+uint32_t assemble_dpi(char *string, char **code, int line, symbol_table *symbol_table) {
     extract_2_char_cond(string, cond);
 
     //set cond to 1110
@@ -30,7 +25,7 @@ uint32_t assemble_dpi(char *string, char **code, int line, symbol_table *symbol_
 }
 
 
-uint32_t assemble_mul(char *string, char **code, int line, symbol_table *symbol_table){
+uint32_t assemble_mul(char *string, char **code, int line, symbol_table *symbol_table) {
     extract_2_char_cond(string, cond);
 
     //set cond to 1110
@@ -63,8 +58,8 @@ uint32_t assemble_sdt(char *string, char **code, int line, symbol_table *symbol_
     return binary;
 }
 
- uint32_t assemble_branch(char *string, char **code, int line, symbol_table *symbol_table){
-     extract_2_char_cond(string, cond);
+uint32_t assemble_branch(char *string, char **code, int line, symbol_table *symbol_table) {
+    extract_2_char_cond(string, cond);
 
     //setting cond bits
     if (strcmp(cond, "eq") == 0){

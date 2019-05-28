@@ -17,7 +17,7 @@ void binary_file_writer(char *filename, const char *binary_string) {
     fclose(binary_file);
 }
 
-void extract_2_char_cond(char *string, char result[3]){
+void extract_2_char_cond(char *string, char result[3]) {
     if (string[1] != ' ') {
         result[0] = string[1];
         result[1] = string[2];
@@ -48,9 +48,9 @@ bool isArgument(char c){
 void get_argument(char *instruction, int argument_number, char *result){
     int i = 0;
     int startpos = 0;
-    int endpos =0;
+    int endpos = 0;
     while (i < argument_number) {
-        if (instruction[startpos] == ' '){
+        if (instruction[startpos] == ' ') {
             i++;
         }
         startpos++;
@@ -72,18 +72,18 @@ void get_argument(char *instruction, int argument_number, char *result){
 
  assumption that bits being set start as 0, as do all bits less significant
  than end bit. */
-uint32_t set_n_bits(uint32_t binary, int end_bit, int value){
-    binary |= (value << end_bit);
-    return binary;
+uint32_t set_n_bits(uint32_t binary_num, int end_bit, int value) {
+    binary_num |= (value << end_bit);
+    return binary_num;
 }
 
-void add_to_mappings(symbol_table* symbol_table, mapping mapping){
+void add_to_mappings(symbol_table *symbol_table, mapping mapping) {
+    //Increment number of elements in symbol table
     int num_elements = symbol_table->num_elements;
     symbol_table->num_elements = symbol_table->num_elements + 1;
+    //Add mapping to symbol table
     symbol_table->mappings[num_elements] = mapping;
 }
-
-
 
 int tokenizer(char *line, tokenised_line tokenised_line) {
 
@@ -113,24 +113,53 @@ int tokenizer(char *line, tokenised_line tokenised_line) {
 }
 
 
-void first_pass(char **code, int line_num, tokenised_line tokenised_line, symbol_table symbol_table) {
+void first_pass(char **code, tokenised_line tokenised_line, symbol_table symbol_table) {
     char *line;
-    for (int i = 0; i < LINE_LENGTH; ++i) {
+    //Go through each line of code and get labels and add to symbol table.
+    for (int line_num = 0; line_num < LINES; line_num++) {
         line = code[line_num];
         int operand_num = tokenizer(line, tokenised_line);
-        if (operand_num == 0){
+        if (operand_num == 0) {
             printf("label: %s\n", tokenised_line.label);
             mapping mapping = {
                     .label = tokenised_line.label,
-                    .memory_address = &code[line_num+1]
+                    .memory_address = &code[line_num + 1]
             };
             add_to_mappings(&symbol_table, mapping);
         }
     }
 }
 
-char* second_pass(){
+char *second_pass(char **code, tokenised_line tokenised_line, symbol_table symbol_table) {
 
+    char *binary = (char *) malloc(INSTRUCTION_SIZE * LINES);
+    binary[0] = '\0';
+    //Read opcode mnemonics + operands for each instruction
+    for (int i = 0; i < LINES; ++i) {
+        int num_of_operands = tokenizer(code[i], tokenised_line);
+
+        //Labels
+        if (num_of_operands == 0){
+            //TODO
+        }
+
+        //Instructions
+        if (num_of_operands != 0) {
+            //Get operands that are labels and use symbol table to get address
+            for (int j = 0; j < num_of_operands; ++j) {
+                uintptr_t address;
+                //get_address(symbol_table, tokenised_line.operands[j]);
+            }
+
+            //Calls to Instruction_assemble
+            for (int k = 0; k < DPI; ++k) {
+                if (strcmp(tokenised_line.opcode, DPI[k])){
+                    //a
+                }
+            }
+        }
+    }
+    return binary;
 }
 
 char *two_pass_assembly(char **code, int line_num) {
@@ -147,8 +176,13 @@ char *two_pass_assembly(char **code, int line_num) {
     };
 
     //First pass assoociates labels with memory addresses.
-    first_pass(code, line_num, tokenised_line, symbol_table);
+    first_pass(code, tokenised_line, symbol_table);
 
     /* Second Pass */
+    char *binary = second_pass(code, tokenised_line, symbol_table);
+
+    // REMEMBER TO free variables
+
+    return binary;
 
 }

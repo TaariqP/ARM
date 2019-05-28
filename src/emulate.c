@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <printf.h>
 #include <stdint.h>
 #include "emulate_utils/utils.h"
 #include "emulate_utils/execute.h"
@@ -99,8 +98,9 @@ void pipeline_cycle(current_state *state, int size) {
 
 }
 
-
-/*int main(int argc, char **argv) {
+/*
+int main(int argc, char **argv) {
+>>>>>>> eb3b18b4e3903b1161e7b793eb21fe89c609fab2
 
     if (argc != 2) {
         printf("Provide an argument!");
@@ -136,4 +136,5 @@ void pipeline_cycle(current_state *state, int size) {
     free(state);
 
     return EXIT_SUCCESS;
+<<<<<<< HEAD
 }*/
