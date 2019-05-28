@@ -17,7 +17,14 @@ int cond_end_bit = 28;
 char cond[3];
 
 
-uint32_t assemble_dpi(char *string, char **code, int line, symbol_table *symbol_table) {
+//TODO
+
+//CHANGE ALL ASSEMBLE FUNCTIONS TO TAKE TOKENISED LINE rather than the whole string
+//ALSO ADD assemble special instructions
+
+
+
+uint32_t assemble_dpi(char *string, char **code, int line, symbol_table symbol_table) {
     extract_2_char_cond(string, cond);
 
     //set cond to 1110
@@ -25,7 +32,7 @@ uint32_t assemble_dpi(char *string, char **code, int line, symbol_table *symbol_
 }
 
 
-uint32_t assemble_mul(char *string, char **code, int line, symbol_table *symbol_table) {
+uint32_t assemble_mul(char *string, char **code, int line, symbol_table symbol_table) {
     extract_2_char_cond(string, cond);
 
     //set cond to 1110
@@ -54,11 +61,11 @@ uint32_t assemble_mul(char *string, char **code, int line, symbol_table *symbol_
 
 }
 
-uint32_t assemble_sdt(char *string, char **code, int line, symbol_table *symbol_table){
+uint32_t assemble_sdt(char *string, char **code, int line, symbol_table symbol_table){
     return binary;
 }
 
-uint32_t assemble_branch(char *string, char **code, int line, symbol_table *symbol_table) {
+uint32_t assemble_branch(char *string, char **code, int line, symbol_table symbol_table) {
     extract_2_char_cond(string, cond);
 
     //setting cond bits
