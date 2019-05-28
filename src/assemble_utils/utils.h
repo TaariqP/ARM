@@ -7,8 +7,9 @@
 #define ARM11_11_UTILS_H
 
 #include <stdint.h>
-#include <stdbool.h>
 #include "defs.h"
+#include <stdbool.h>
+
 
 void binary_file_writer(char *, const char *);
 
