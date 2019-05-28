@@ -7,12 +7,12 @@
 #include <string.h>
 #include "defs.h"
 
-void binary_file_writer(char *filename, const char *binary_string){
+void binary_file_writer(char *filename, const char *binary_string) {
     FILE *binary_file = fopen(filename, "wb");
     if (binary_file == NULL) {
         printf("Error opening file");
     }
-    fwrite(filename, 1, sizeof(binary_string),binary_file);
+    fwrite(filename, 1, sizeof(binary_string), binary_file);
     fclose(binary_file);
 }
 
@@ -38,9 +38,10 @@ uint32_t set_n_bits(uint32_t binary, int end_bit, int value){
     return binary;
 }
 
-char* two_pass_assembly(){
+char *two_pass_assembly(char **code, int line_num) {
 
     symbol_table symbol_table = {
+            .num_elements = 0,
             .mappings = malloc(sizeof(mapping) * LINES)
     };
 
@@ -50,19 +51,41 @@ char* two_pass_assembly(){
             .operands = malloc(sizeof(char *) * LINE_LENGTH / OPERAND_LENGTH)
     };
 
-    //First pass
-
-
+    //First pass assoociates labels with memory addresses.
+    first_pass(code, line_num, tokenised_line, symbol_table);
 
     /* Second Pass */
 
 
+
 }
 
-void first_pass(){
+void add_to_mappings(symbol_table* symbol_table, mapping mapping){
+    int num_elements = symbol_table->num_elements;
+    symbol_table->num_elements = symbol_table->num_elements + 1;
+    symbol_table->mappings[num_elements] = mapping;
+}
+
+void first_pass(char **code, int line_num, tokenised_line tokenised_line, symbol_table symbol_table) {
+    char *line;
     for (int i = 0; i < LINE_LENGTH; ++i) {
+        line = code[line_num];
+        int operand_num = tokenizer(line, tokenised_line);
+        if (operand_num == 0){
+            printf("label: %s\n", tokenised_line.label);
+            mapping mapping = {
+                    .label = tokenised_line.label,
+                    .memory_address = &code[line_num+1]
+            };
+            add_to_mappings(&symbol_table, mapping);
+        }
     }
 }
+
+char* second_pass(){
+
+}
+
 
 int tokenizer(char *line, tokenised_line tokenised_line) {
 
