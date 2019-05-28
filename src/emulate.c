@@ -6,6 +6,9 @@
 #include "emulate_utils/execute.h"
 #include "emulate_utils/decode.h"
 #include "emulate_utils/defs.h"
+#include "emulate_utils/utils.c"
+#include "emulate_utils/execute.c"
+#include "emulate_utils/decode.c"
 
 
 void execute(current_state *state) {
