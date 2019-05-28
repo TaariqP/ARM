@@ -50,8 +50,13 @@ char *two_pass_assembly(char **code, int line_num) {
     first_pass(code, line_num, tokenised_line, symbol_table);
 
     /* Second Pass */
+    char* binary = (char *) malloc(INSTRUCTION_SIZE * LINES);
+    binary[0] = '\0';
 
 
+    // REMEMBER TO free variables
+
+    return binary;
 
 }
 
