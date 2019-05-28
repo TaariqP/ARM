@@ -28,6 +28,24 @@ void extract_2_char_cond(char *string, char result[3]){
     }
 }
 
+//gets the specified argument from the instruction
+//e.g: get_argument("mul r1, r2, r3", 2) = "r2";
+char* get_argument(char *instruction, int argument_number){
+    int i = 0;
+    int startpos = 0;
+    int endpos =0;
+    while (i < argument_number) {
+        if (instruction[startpos] == ' '){
+            i++;
+        }
+        startpos++;
+    }
+    if (instruction[startpos] == ','){
+        startpos++;
+    }
+    return "";
+}
+
 /*sets as many bits as necessary to encompass value
  e.g (if value is <2, only 1 bit is set, if 3 < value < 8 then 3 bits are set
 
@@ -38,53 +56,12 @@ uint32_t set_n_bits(uint32_t binary, int end_bit, int value){
     return binary;
 }
 
-char *two_pass_assembly(char **code, int line_num) {
-
-    symbol_table symbol_table = {
-            .num_elements = 0,
-            .mappings = malloc(sizeof(mapping) * LINES)
-    };
-
-    tokenised_line tokenised_line = {
-            .label = malloc(sizeof(char) * LINE_LENGTH),
-            .opcode = malloc(sizeof(char) * OPCODE_LENGTH),
-            .operands = malloc(sizeof(char *) * LINE_LENGTH / OPERAND_LENGTH)
-    };
-
-    //First pass assoociates labels with memory addresses.
-    first_pass(code, line_num, tokenised_line, symbol_table);
-
-    /* Second Pass */
-
-
-
-}
-
 void add_to_mappings(symbol_table* symbol_table, mapping mapping){
     int num_elements = symbol_table->num_elements;
     symbol_table->num_elements = symbol_table->num_elements + 1;
     symbol_table->mappings[num_elements] = mapping;
 }
 
-void first_pass(char **code, int line_num, tokenised_line tokenised_line, symbol_table symbol_table) {
-    char *line;
-    for (int i = 0; i < LINE_LENGTH; ++i) {
-        line = code[line_num];
-        int operand_num = tokenizer(line, tokenised_line);
-        if (operand_num == 0){
-            printf("label: %s\n", tokenised_line.label);
-            mapping mapping = {
-                    .label = tokenised_line.label,
-                    .memory_address = &code[line_num+1]
-            };
-            add_to_mappings(&symbol_table, mapping);
-        }
-    }
-}
-
-char* second_pass(){
-
-}
 
 
 int tokenizer(char *line, tokenised_line tokenised_line) {
@@ -111,5 +88,46 @@ int tokenizer(char *line, tokenised_line tokenised_line) {
     }
 
     return num_of_operands;
+
+}
+
+
+void first_pass(char **code, int line_num, tokenised_line tokenised_line, symbol_table symbol_table) {
+    char *line;
+    for (int i = 0; i < LINE_LENGTH; ++i) {
+        line = code[line_num];
+        int operand_num = tokenizer(line, tokenised_line);
+        if (operand_num == 0){
+            printf("label: %s\n", tokenised_line.label);
+            mapping mapping = {
+                    .label = tokenised_line.label,
+                    .memory_address = &code[line_num+1]
+            };
+            add_to_mappings(&symbol_table, mapping);
+        }
+    }
+}
+
+char* second_pass(){
+
+}
+
+char *two_pass_assembly(char **code, int line_num) {
+
+    symbol_table symbol_table = {
+            .num_elements = 0,
+            .mappings = malloc(sizeof(mapping) * LINES)
+    };
+
+    tokenised_line tokenised_line = {
+            .label = malloc(sizeof(char) * LINE_LENGTH),
+            .opcode = malloc(sizeof(char) * OPCODE_LENGTH),
+            .operands = malloc(sizeof(char *) * LINE_LENGTH / OPERAND_LENGTH)
+    };
+
+    //First pass assoociates labels with memory addresses.
+    first_pass(code, line_num, tokenised_line, symbol_table);
+
+    /* Second Pass */
 
 }
