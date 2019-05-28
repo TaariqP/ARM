@@ -10,6 +10,8 @@
 #include "utils.h"
 #include "defs.h"
 #include "utils.h"
+#include "instruction_assembler.h"
+
 
 // the initial 0 binary that we set depending on the instruction
 uint32_t binary = 0;
@@ -20,7 +22,7 @@ char cond[3];
 
 
 
-uint32_t assemble_dpi(char *string, uint32_t *binary, char **code, int line, symbol_table *symbol_table){
+uint32_t assemble_dpi(char *string, char **code, int line, symbol_table *symbol_table){
     extract_2_char_cond(string, cond);
 
     //set cond to 1110
@@ -28,7 +30,7 @@ uint32_t assemble_dpi(char *string, uint32_t *binary, char **code, int line, sym
 }
 
 
-uint32_t assemble_mul(char *string, uint32_t *binary, char **code, int line, symbol_table *symbol_table){
+uint32_t assemble_mul(char *string, char **code, int line, symbol_table *symbol_table){
     extract_2_char_cond(string, cond);
 
     //set cond to 1110
@@ -57,11 +59,11 @@ uint32_t assemble_mul(char *string, uint32_t *binary, char **code, int line, sym
 
 }
 
-uint32_t assemble_sdt(char *string, uint32_t *binary, char **code, int line, symbol_table *symbol_table){
+uint32_t assemble_sdt(char *string, char **code, int line, symbol_table *symbol_table){
 
 }
 
- uint32_t assemble_branch(char *string, uint32_t *binary, char **code, int line, symbol_table *symbol_table){
+ uint32_t assemble_branch(char *string, char **code, int line, symbol_table *symbol_table){
      extract_2_char_cond(string, cond);
 
     //setting cond bits
