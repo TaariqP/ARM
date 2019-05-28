@@ -1,9 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <memory.h>
 
 #include "assemble_utils/utils.h"
 #include "assemble_utils/defs.h"
-/*
+
 int main(int argc, char **argv) {
 
     if (argc != 2) {
@@ -37,4 +38,4 @@ int main(int argc, char **argv) {
 
     return EXIT_SUCCESS;
 }
- */
+

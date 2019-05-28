@@ -96,7 +96,7 @@ void pipeline_cycle(current_state *state, int size) {
 
 }
 
-
+/*
 int main(int argc, char **argv) {
 
     if (argc != 2) {
@@ -135,3 +135,4 @@ int main(int argc, char **argv) {
     return EXIT_SUCCESS;
 }
 
+*/
