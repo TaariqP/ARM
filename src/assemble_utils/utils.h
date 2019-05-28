@@ -20,7 +20,6 @@ bool isArgument(char);
 
 char* get_argument(char *, int, char *);
 
-void two_pass_assembly();
 char *second_pass(char **code, tokenised_line tokenised_line, symbol_table symbol_table);
 
 char *two_pass_assembly(char **code, int line_num);

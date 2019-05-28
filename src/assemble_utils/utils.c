@@ -8,6 +8,14 @@
 #include <stdbool.h>
 #include "defs.h"
 
+
+
+char* DPI[] = {"add","sub","rsb","and","eor","orr","mov","tst","teq","cmp"};
+char* MUL[] = {"mul","mla"};
+char* SDT[] = {"ldr","str"};
+char* BRANCH[] = {"beq","bne","bge","blt","bgt","ble","b"};
+char* SPECIAL[] = {"lsl","andeq"};
+
 void binary_file_writer(char *filename, const char *binary_string) {
     FILE *binary_file = fopen(filename, "wb");
     if (binary_file == NULL) {
@@ -148,13 +156,12 @@ char *second_pass(char **code, tokenised_line tokenised_line, symbol_table symbo
             //Get operands that are labels and use symbol table to get address
             for (int j = 0; j < num_of_operands; ++j) {
                 uintptr_t address;
-                get_address(symbol_table, tokenised_line.operands[j]);
+                //get_address(symbol_table, tokenised_line.operands[j]);
             }
 
             //Calls to Instruction_assemble
             for (int k = 0; k < DPI; ++k) {
                 if (strcmp(tokenised_line.opcode, DPI[k])){
-                    a
                 }
             }
         }
