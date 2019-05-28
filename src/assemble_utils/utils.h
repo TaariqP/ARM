@@ -7,16 +7,19 @@
 #define ARM11_11_UTILS_H
 
 #include <stdint.h>
+#include "defs.h"
 
-void binary_file_writer(char*, const char*);
+void binary_file_writer(char *, const char *);
 
-void extract_2_char_cond(char*, char*);
+void extract_2_char_cond(char *, char *);
 
-uint32_t set_n_bits(uint32_t, int , int);
+uint32_t set_n_bits(uint32_t, int, int);
 
-void two_pass_assembly();
+char *second_pass(char **code, tokenised_line tokenised_line, symbol_table symbol_table);
 
-void tokenizer(char *);
+char *two_pass_assembly(char **code, int line_num);
+
+int tokenizer(char *);
 
 
 #endif //ARM11_11_UTILS_H
