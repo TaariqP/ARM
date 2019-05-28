@@ -7,12 +7,17 @@
 #define ARM11_11_UTILS_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 void binary_file_writer(char*, const char*);
 
 void extract_2_char_cond(char*, char*);
 
 uint32_t set_n_bits(uint32_t, int , int);
+
+bool isArgument(char);
+
+char* get_argument(char *, int, char *);
 
 void two_pass_assembly();
 

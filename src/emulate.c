@@ -5,10 +5,7 @@
 #include "emulate_utils/utils.h"
 #include "emulate_utils/execute.h"
 #include "emulate_utils/decode.h"
-<<<<<<< HEAD
-=======
 #include "emulate_utils/defs.h"
->>>>>>> 3955174e1ab513b625a9f1096a318d593dbcb771
 #include "emulate_utils/utils.c"
 #include "emulate_utils/execute.c"
 #include "emulate_utils/decode.c"
@@ -44,34 +41,6 @@ void execute(current_state *state) {
 }
 
 void decode(current_state *state) {
-<<<<<<< HEAD
-  uint32_t fetched_instruction = state->fetched_instruction.binary_value;
-
-  if (fetched_instruction == 0) {
-    state->decoded_instruction.type = NONE;
-  } else if (mask_1_bit(fetched_instruction, 27)) {
-    //BRANCH
-    //printf("decoding branch \n");
-    state->decoded_instruction.type = BRANCH;
-    decode_branch(state);
-  } else if (mask_1_bit(fetched_instruction, 26)) {
-    //SDT
-    state->decoded_instruction.type = SDT;
-    decode_sdt(state);
-  } else if (mask_4_bit(fetched_instruction, 4) == 9) {
-    //MULTIPLY
-    state->decoded_instruction.type = MUL;
-    decode_mul(state);
-  } else if (!mask_1_bit(fetched_instruction, 27) & !mask_1_bit(fetched_instruction, 26) &
-             mask_1_bit(fetched_instruction, 25)) {
-    //DPI
-    state->decoded_instruction.type = DPI;
-    decode_dpi(state);
-  } else {
-    state->decoded_instruction.type = DPI;
-    decode_dpi(state);
-  }
-=======
     uint32_t fetched_instruction = state->fetched_instruction.binary_value;
 
     if (fetched_instruction == 0) {
@@ -98,7 +67,7 @@ void decode(current_state *state) {
         state->decoded_instruction.type = DPI;
         decode_dpi(state);
     }
->>>>>>> 3955174e1ab513b625a9f1096a318d593dbcb771
+
 }
 
 //set fetched_instruction
@@ -130,11 +99,9 @@ void pipeline_cycle(current_state *state, int size) {
 
 }
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 3955174e1ab513b625a9f1096a318d593dbcb771
 int main(int argc, char **argv) {
+
 
   if (argc != 2) {
     printf("Provide an argument!");
@@ -169,10 +136,7 @@ int main(int argc, char **argv) {
   print_binary(state->memory);
   free(state);
 
-<<<<<<< HEAD
-  return EXIT_SUCCESS;
-}
-=======
+
     return EXIT_SUCCESS;
+
 }
->>>>>>> 3955174e1ab513b625a9f1096a318d593dbcb771

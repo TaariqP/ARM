@@ -5,12 +5,12 @@
 #ifndef ARM11_11_INSTRUCTION_ASSEMBLER_H
 #define ARM11_11_INSTRUCTION_ASSEMBLER_H
 
+#include "defs.h"
+
 // the initial 0 binary that we set depending on the instruction
-#define uint32_t binary = 0;
 
 //general purpose code for reduced duplication
-#define int cond_end_bit = 28;
-#define char cond[3];
+
 
 uint32_t assemble_dpi(char*, char **, int, symbol_table *);
 

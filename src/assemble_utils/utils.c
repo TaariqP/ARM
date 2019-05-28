@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "defs.h"
 
 void binary_file_writer(char *filename, const char *binary_string) {
@@ -20,17 +21,56 @@ void extract_branch_cond(char *string, char result[3]) {
   if (string[1] != ' ') {
     result[0] = string[1];
     result[1] = string[2];
-    result[2] = '/0';
+    result[2] = '\0';
   } else {
     result[0] = ' ';
     result[1] = ' ';
-    result[2] = '/0';
+    result[2] = '\0';
   }
 }
+
 
 uint32_t set_4_bits(uint32_t binary, int end_bit, int value) {
   binary |= (value << end_bit);
   return binary;
+}
+
+bool isArgument(char c){
+    if (c == ','){
+        return false;
+    }
+    if (c == ' '){
+        return false;
+    }
+    if (c == '\0'){
+        return false;
+    }
+    return true;
+}
+
+//gets the specified argument from the instruction
+//e.g: get_argument("mul r1, r2, r3", 2) = "r2";
+void get_argument(char *instruction, int argument_number, char *result){
+    int i = 0;
+    int startpos = 0;
+    int endpos =0;
+    while (i < argument_number) {
+        if (instruction[startpos] == ' '){
+            i++;
+        }
+        startpos++;
+    }
+    endpos = startpos;
+    while (isArgument(instruction[endpos])){
+        endpos++;
+    }
+    int length = endpos - startpos + 1;
+    result = (char *) realloc(result, sizeof(char)*length);
+    for(i = 0; i < length-1; i++){
+        result[i] = instruction[i+startpos];
+    }
+    result[length-1] = '\0';
+
 }
 
 char *two_pass_assembly() {

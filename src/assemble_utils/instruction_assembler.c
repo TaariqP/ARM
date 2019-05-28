@@ -67,50 +67,33 @@ uint32_t assemble_sdt(char *string, char **code, int line, symbol_table *symbol_
      extract_2_char_cond(string, cond);
 
     //setting cond bits
-    switch (cond) {
-        case "eq" :
-            //BEQ
-            binary = set_n_bits(binary, cond_end_bit, 0);
-            break;
-
-        case "ne":
-            //BNE
-            binary = set_n_bits(binary, cond_end_bit, 1);
-            break;
-
-        case "ge":
-            //BGE
-            binary = set_n_bits(binary, cond_end_bit, 10);
-            break;
-
-        case "lt":
-            //BLT
-            binary = set_n_bits(binary, cond_end_bit, 11);
-            break;
-
-        case "gt":
-            //BGT
-            binary = set_n_bits(binary, cond_end_bit, 12);
-            break;
-
-        case "le":
-            //BLE
-            binary = set_n_bits(binary, cond_end_bit, 13);
-            break;
-
-        case "al":
-            //UNCONDITIONAL BRANCH
-            binary = set_n_bits(binary, cond_end_bit, 14);
-            break;
-
-        case "  ":
-            //B (NO SUFFIX)
-            binary = set_n_bits(binary, cond_end_bit, 14);
-            break;
-
-        default:
-            //NOT A VALID INSTRUCTION
-            fprintf(stderr, "not a valid branch instruction");
+    if (!strcmp(cond, "eq")){
+        //BEQ
+        binary = set_n_bits(binary, cond_end_bit, 0);
+    } else if (strcmp("ne", cond) == 0){
+        //BNE
+        binary = set_n_bits(binary, cond_end_bit, 1);
+    } else if (strcmp("ge", cond) == 0){
+        //BGE
+        binary = set_n_bits(binary, cond_end_bit, 10);
+    } else if (strcmp("lt", cond) == 0) {
+        //BLT
+        binary = set_n_bits(binary, cond_end_bit, 11);
+    } else if (strcmp("gt", cond) == 0) {
+        //BGT
+        binary = set_n_bits(binary, cond_end_bit, 12);
+    } else if (strcmp("le", cond) == 0){
+        //BLE
+        binary = set_n_bits(binary, cond_end_bit, 13);
+    } else if (strcmp("al", cond) == 0){
+        //UNCONDITIONAL BRANCH
+        binary = set_n_bits(binary, cond_end_bit, 14);
+    } else if (strcmp("  ", cond) == 0){
+        //B (NO SUFFIX)
+        binary = set_n_bits(binary, cond_end_bit, 14);
+    } else {
+        //NOT A VALID INSTRUCTION
+        fprintf(stderr, "not a valid branch instruction");
     }
 
     //set bits 27-24 to be 1010
