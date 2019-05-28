@@ -21,11 +21,11 @@ void extract_2_char_cond(char *string, char result[3]){
     if (string[1] != ' ') {
         result[0] = string[1];
         result[1] = string[2];
-        result[2] = '/0';
+        result[2] = '\0';
     } else {
         result[0] = ' ';
         result[1] = ' ';
-        result[2] = '/0';
+        result[2] = '\0';
     }
 }
 

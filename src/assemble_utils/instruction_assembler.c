@@ -103,14 +103,14 @@ uint32_t assemble_sdt(char *string, char **code, int line, symbol_table *symbol_
     //TODO: set offset
     uint32_t current_address = &code[line];
         //TODO 1: get the exact label from the instruction
+        char *label = malloc(0);
+        get_argument(string, 1, label);
+
         //TODO 2: extract that exact mapping from the symbol table
         //TODO 3: find the address for that label from mapping
         //TODO 4: calculate the offset (destination - current + 8)?
 
-    //label =
     //uint32_t destination_address =
-
-
-
+    
     return binary;
 }
