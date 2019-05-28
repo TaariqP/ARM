@@ -19,7 +19,7 @@ uint32_t set_n_bits(uint32_t, int, int);
 
 bool isArgument(char);
 
-char* get_argument(char *, int, char *);
+void get_argument(char *, int, char *);
 
 char *second_pass(char **code, tokenised_line tokenised_line, symbol_table symbol_table);
 
