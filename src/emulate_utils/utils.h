@@ -18,11 +18,11 @@ void binary_file_loader(char *, char *);
 
 void print_binary(uint8_t *);
 
-void print_registers(int32_t*);
+void print_registers(int32_t *);
 
-bool check_condition(current_state*);
+bool check_condition(current_state *);
 
-int get_file_size(char*);
+int get_file_size(char *);
 
 uint32_t get_instruct(current_state *, int);
 

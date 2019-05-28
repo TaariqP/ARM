@@ -52,12 +52,18 @@ char *two_pass_assembly() {
   /* Second Pass */
 
 
+
+uint32_t set_n_bits(uint32_t binary, int end_bit, int value){
+    binary |= (value << end_bit);
+    return binary;
 }
 
 void first_pass() {
   for (int i = 0; i < LINE_LENGTH; ++i) {
   }
 }
+
+
 
 int tokenizer(char *line, tokenised_line tokenised_line) {
 
@@ -83,5 +89,46 @@ int tokenizer(char *line, tokenised_line tokenised_line) {
   }
 
   return num_of_operands;
+
+}
+
+
+void first_pass(char **code, int line_num, tokenised_line tokenised_line, symbol_table symbol_table) {
+    char *line;
+    for (int i = 0; i < LINE_LENGTH; ++i) {
+        line = code[line_num];
+        int operand_num = tokenizer(line, tokenised_line);
+        if (operand_num == 0){
+            printf("label: %s\n", tokenised_line.label);
+            mapping mapping = {
+                    .label = tokenised_line.label,
+                    .memory_address = &code[line_num+1]
+            };
+            add_to_mappings(&symbol_table, mapping);
+        }
+    }
+}
+
+char* second_pass(){
+
+}
+
+char *two_pass_assembly(char **code, int line_num) {
+
+    symbol_table symbol_table = {
+            .num_elements = 0,
+            .mappings = malloc(sizeof(mapping) * LINES)
+    };
+
+    tokenised_line tokenised_line = {
+            .label = malloc(sizeof(char) * LINE_LENGTH),
+            .opcode = malloc(sizeof(char) * OPCODE_LENGTH),
+            .operands = malloc(sizeof(char *) * LINE_LENGTH / OPERAND_LENGTH)
+    };
+
+    //First pass assoociates labels with memory addresses.
+    first_pass(code, line_num, tokenised_line, symbol_table);
+
+    /* Second Pass */
 
 }

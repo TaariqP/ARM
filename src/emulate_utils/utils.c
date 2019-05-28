@@ -21,6 +21,11 @@ uint8_t mask_8_bit(int value, int end_bit) {
   return (value >> end_bit) & 0xFF;
 }
 
+
+uint8_t mask_8_bit(int value, int end_bit) {
+    return (value >> end_bit) & 0xFF;
+}
+
 //Reads the binary file
 
 void binary_file_loader(char *filename, char *memory) {

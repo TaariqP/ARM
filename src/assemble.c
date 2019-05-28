@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <memory.h>
 
-#include "assemble_utils/utils.c"
+#include "assemble_utils/utils.h"
+#include "assemble_utils/defs.h"
 
 int main(int argc, char **argv) {
 
@@ -36,3 +38,4 @@ int main(int argc, char **argv) {
 
     return EXIT_SUCCESS;
 }
+
