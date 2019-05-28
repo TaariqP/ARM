@@ -39,15 +39,16 @@ bool isArgument(char c) {
   if (c == ',') {
     return false;
   }
+
   void extract_2_char_cond(char *string, char result[3]) {
     if (string[1] != ' ') {
       result[0] = string[1];
       result[1] = string[2];
-      result[2] = '/0';
+      result[2] = '\0';
     } else {
       result[0] = ' ';
       result[1] = ' ';
-      result[2] = '/0';
+      result[2] = '\0';
     }
     if (c == ' ') {
       return false;
@@ -87,18 +88,18 @@ void get_argument(char *instruction, int argument_number, char *result) {
   }
 }
 
-char *two_pass_assembly() {
-
-  symbol_table symbol_table = {
-      .mappings = malloc(sizeof(mapping) * LINES)
-  };
-
-  tokenised_line tokenised_line = {
-      .label = malloc(sizeof(char) * LINE_LENGTH),
-      .opcode = malloc(sizeof(char) * OPCODE_LENGTH),
-      .operands = malloc(sizeof(char *) * LINE_LENGTH / OPERAND_LENGTH)
-  };
-}
+//char *two_pass_assembly() {
+//
+//  symbol_table symbol_table = {
+//      .mappings = malloc(sizeof(mapping) * LINES)
+//  };
+//
+//  tokenised_line tokenised_line = {
+//      .label = malloc(sizeof(char) * LINE_LENGTH),
+//      .opcode = malloc(sizeof(char) * OPCODE_LENGTH),
+//      .operands = malloc(sizeof(char *) * LINE_LENGTH / OPERAND_LENGTH)
+//  };
+//}
 //First pass
 
 
@@ -112,10 +113,6 @@ uint32_t set_n_bits(uint32_t binary, int end_bit, int value) {
   return binary;
 }
 
-void first_pass() {
-  for (int i = 0; i < LINE_LENGTH; ++i) {
-  }
-}
 
 void add_to_mappings(symbol_table *symbol_table, mapping mapping) {
   int num_elements = symbol_table->num_elements;

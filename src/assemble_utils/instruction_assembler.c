@@ -10,8 +10,8 @@
 #include "utils.h"
 #include "defs.h"
 #include "utils.h"
+#include "utils.c"
 #include "instruction_assembler.h"
-
 
 // the initial 0 binary that we set depending on the instruction
 uint32_t binary = 0;
@@ -30,8 +30,8 @@ uint32_t assemble_dpi(char *string, char **code, int line, symbol_table *symbol_
 }
 
 
-uint32_t assemble_mul(char *string, char **code, int line, symbol_table *symbol_table){
-    extract_2_char_cond(string, cond);
+uint32_t assemble_mul(char *instr, char **code, int line, symbol_table *symbol_table){
+    extract_2_char_cond(instr, cond);
 
     //set cond to 1110
     binary = set_n_bits(binary, cond_end_bit, 14);
@@ -39,11 +39,14 @@ uint32_t assemble_mul(char *string, char **code, int line, symbol_table *symbol_
     //bits 27 to 22 are already 0
 
     //set A only if mla
-    if (cond == "la") {
+    if (strcmp(cond,"la")) {
         set_n_bits(binary, 21, 1);
     }
-
+    // S bit already set to 0
     //TODO: set Rd
+    // get arg should return a char*
+//    get_argument(instr,1,1);
+//    set_n_bits(binary,16, )
 
     //TODO: set Rn
 

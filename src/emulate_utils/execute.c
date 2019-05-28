@@ -32,7 +32,7 @@ void execute_dpi(current_state *state) {
   } else {
     //Shifted Register
     uint8_t rm = mask_4_bit(operand2, 0);
-    uint8_t shift = (operand2 >> 4) & 0xFF;
+    uint8_t shift = mask_8_bit(operand2, 4);
     uint8_t shiftType = (shift >> 1) & 0x3;
     uint8_t shiftAmount = 0;
     if (!(shift & 0x1)) {
@@ -41,9 +41,9 @@ void execute_dpi(current_state *state) {
       shiftAmount = (shift >> 3) & 0x1F;
     } else {
       //Register amount (Optional)
-      uint8_t rs = mask_4_bit(shift, 8);
+      uint8_t rs = mask_4_bit(operand2, 8);
       int regVal = state->registers[rs];
-      shiftAmount = (regVal & 0xFF);
+      shiftAmount = mask_8_bit(state->registers[2], 0);
     }
 
     int32_t rm_value = state->registers[rm];
@@ -157,72 +157,109 @@ void execute_dpi(current_state *state) {
 }
 
 void execute_sdt(current_state *state) {
-  int16_t offset = state->decoded_instruction.offset;
-  int8_t immediate = state->decoded_instruction.i;
-  int16_t finalOffset = 0;
-  int shiftCarry = 0;
-  if (!immediate) {
+  int32_t offset = state->decoded_instruction.offset;
+  int32_t finalOffset = 0;
+  if (!state->decoded_instruction.i) {
     //Immediate constant
     finalOffset = offset;
   } else {
-    //Shift Register
+    //Shifted Register
     uint8_t rm = mask_4_bit(offset, 0);
-    uint8_t shift = (uint8_t) ((offset >> 4) & 0xFF);
-    uint8_t shiftType = (uint8_t) ((shift >> 1) & 0x3);
+    uint8_t shift = (offset >> 4) & 0xFF;
+    uint8_t shiftType = (shift >> 1) & 0x3;
     uint8_t shiftAmount = 0;
     if (!(shift & 0x1)) {
       //Constant amount
-      shiftAmount = (uint8_t) ((shift >> 3) & 0x1F);
+      //printf("shift type: %d \n", shiftType);
+      shiftAmount = (shift >> 3) & 0x1F;
     } else {
       //Register amount (Optional)
       uint8_t rs = mask_4_bit(shift, 8);
       int regVal = state->registers[rs];
-      shiftAmount = (uint8_t) (regVal & 0xFF);
+      shiftAmount = (regVal & 0xFF);
     }
+
     int32_t rm_value = state->registers[rm];
 
     //SHIFT
     switch (shiftType) {
       case 0:
-        finalOffset = (int16_t) lsl(rm_value, shiftAmount);
-        shiftCarry = mask_1_bit(rm_value, 31 - shiftAmount);
+        finalOffset = lsl(rm_value, shiftAmount);
+        //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
         break;
       case 1:
-        finalOffset = (int16_t) lsr(rm_value, shiftAmount);
-        shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
+        finalOffset = lsr(rm_value, shiftAmount);
+        //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
         break;
       case 2:
-        finalOffset = (int16_t) asr(rm_value, shiftAmount);
-        shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
+        finalOffset = asr(rm_value, shiftAmount);
+        //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
         break;
       case 3:
-        finalOffset = (int16_t) ror(rm_value, shiftAmount);
-        shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
+        finalOffset = ror(rm_value, (unsigned int) shiftAmount);
+        //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
         break;
       default:
         printf("Invalid shift type");
     }
   }
+
+
   int8_t rn = state->decoded_instruction.rn;
-  int16_t address = finalOffset;
-  int16_t value = finalOffset;
-  if (state->decoded_instruction.u) {
-    value += state->registers[rn];
-  } else {
-    value -= state->registers[rn];
+  int8_t rd = state->decoded_instruction.rd;
+  int32_t address = 0;
+
+  if (!(state->decoded_instruction.u)) {
+    finalOffset = finalOffset * -1;
   }
+
+
   if (state->decoded_instruction.p) {
     //pre-indexing - transferred data after offset altered
-    address = value;
+    address = state->registers[rn] + finalOffset;
   } else {
-    set_register(state, rn, value);
+    //post indexing
+    address = state->registers[rn];
   }
-  if (state->decoded_instruction.s) {
+
+
+  if (address == GPIO_CLEAR) {
+    printf("%s\n", "PIN OFF");
+    return;
+  }
+
+  if (address == GPIO_ON) {
+    printf("%s\n", "PIN ON");
+    return;
+  }
+
+  if (address == GPIO_0_9 | address == GPIO_10_19 | address == GPIO_20_29) {
+    set_register(state, rd, address);
+    switch (address) {
+      case GPIO_0_9:
+        printf("%s\n", "One GPIO pin from 0 to 9 has been accessed");
+        return;
+      case GPIO_10_19:
+        printf("%s\n", "One GPIO pin from 10 to 19 has been accessed");
+        return;
+      case GPIO_20_29:
+        printf("%s\n", "One GPIO pin from 20 to 29 has been accessed");
+        return;
+    }
+  }
+  if (address > NUM_ADDRESSES) {
+    printf("%s%08x\n", "Error: Out of bounds memory access at address 0x", address);
+    return;
+  }
+
+  if (state->decoded_instruction.l) {
     //loading from memory to rd register
-    set_register(state, state->decoded_instruction.rd, get_instruct(state, address));
+    set_register(state, rd, get_instruct(state, address));
+
   } else {
     //storing from register to memory
     uint8_t bytes[4];
+    int32_t value = state->registers[rd];
     bytes[3] = mask_8_bit(value, 0);
     bytes[2] = mask_8_bit(value, 8);
     bytes[1] = mask_8_bit(value, 16);
@@ -232,7 +269,12 @@ void execute_sdt(current_state *state) {
     state->memory[address + 2] = bytes[1];
     state->memory[address + 3] = bytes[0];
   }
+
+  if (!state->decoded_instruction.p) {
+    set_register(state, rn, address + finalOffset);
+  }
 }
+
 
 
 void execute_mul(current_state *state) {

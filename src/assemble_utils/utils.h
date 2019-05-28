@@ -7,6 +7,7 @@
 #define ARM11_11_UTILS_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "defs.h"
 
@@ -18,7 +19,7 @@ uint32_t set_n_bits(uint32_t, int, int);
 
 bool isArgument(char);
 
-char* get_argument(char *, int, char *);
+void get_argument(char *instruction, int argument_number, char *result);
 
 char *second_pass(char **code, tokenised_line tokenised_line, symbol_table symbol_table);
 

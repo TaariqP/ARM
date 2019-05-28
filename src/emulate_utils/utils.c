@@ -2,28 +2,21 @@
 // Created by taariq on 5/22/19.
 //
 
-
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include "defs.h"
 
 uint8_t mask_1_bit(int value, int bit) {
-  return (value >> bit) & 0x1;
+  return (uint8_t) ((value >> bit) & 0x1);
 }
-
 
 uint8_t mask_4_bit(int value, int end_bit) {
-  return (value >> end_bit) & 0xF;
+  return (uint8_t) ((value >> end_bit) & 0xF);
 }
 
 uint8_t mask_8_bit(int value, int end_bit) {
-  return (value >> end_bit) & 0xFF;
-}
-
-
-uint8_t mask_8_bit(int value, int end_bit) {
-    return (value >> end_bit) & 0xFF;
+  return (uint8_t) ((value >> end_bit) & 0xFF);
 }
 
 //Reads the binary file
@@ -40,7 +33,6 @@ void binary_file_loader(char *filename, char *memory) {
     printf("%s", "Could not read\n");
   }
   fclose(binaryFile);
-
 }
 
 void print_binary(uint8_t *memory) {
@@ -61,19 +53,15 @@ void print_binary(uint8_t *memory) {
 
 void print_registers(int32_t *registers) {
   printf("%s\n", "Registers:");
-  printf("$0  : %10d (0x%08x)\n", registers[0], registers[0]);
-  printf("$1  : %10d (0x%08x)\n", registers[1], registers[1]);
-  printf("$2  : %10d (0x%08x)\n", registers[2], registers[2]);
-  printf("$3  : %10d (0x%08x)\n", registers[3], registers[3]);
-  printf("$4  : %10d (0x%08x)\n", registers[4], registers[4]);
-  printf("$5  : %10d (0x%08x)\n", registers[5], registers[5]);
-  printf("$6  : %10d (0x%08x)\n", registers[6], registers[6]);
-  printf("$7  : %10d (0x%08x)\n", registers[7], registers[7]);
-  printf("$8  : %10d (0x%08x)\n", registers[8], registers[8]);
-  printf("$9  : %10d (0x%08x)\n", registers[9], registers[9]);
-  printf("$10 : %10d (0x%08x)\n", registers[10], registers[10]);
-  printf("$11 : %10d (0x%08x)\n", registers[11], registers[11]);
-  printf("$12 : %10d (0x%08x)\n", registers[12], registers[12]);
+  for (int i = 0; i < 13; i++) {
+    char buffer[1000];
+    if (i < 10) {
+      sprintf(buffer, "$%d  : %10d (0x%08x)\n", i, registers[i], registers[i]);
+    } else {
+      sprintf(buffer, "$%d : %10d (0x%08x)\n", i, registers[i], registers[i]);
+    }
+    printf("%s", buffer);
+  }
   printf("PC  : %10d (0x%08x)\n", registers[PC], registers[PC]);
   printf("CPSR: %10d (0x%08x)\n", registers[CPSR], registers[CPSR]);
 }
@@ -146,9 +134,7 @@ void set_CPSR_bit(current_state *state, int bit_number, int val) {
   } else {
     cpsr |= (0x1 << bit_number);
   }
-
   state->registers[CPSR] = cpsr;
-
 }
 
 int32_t sign_extend_26_to_32(int32_t value) {
