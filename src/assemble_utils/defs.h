@@ -18,6 +18,13 @@
 #define NUMBER_OF_SDT 2
 #define NUMBER_OF_BRANCH 7
 #define NUMBER_OF_SPECIAL 2
+// the initial 0 binary that we set depending on the instruction
+#define binary 0
+
+//general purpose code for reduced duplication
+#define cond_end_bit 28
+#define cond[3]
+
 
 char* DPI[] = {"add","sub","rsb","and","eor","orr","mov","tst","teq","cmp"};
 char* MUL[] = {"mul","mla"};
