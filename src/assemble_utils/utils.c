@@ -7,14 +7,14 @@
 #include <string.h>
 #include <stdbool.h>
 #include "defs.h"
+#include "instruction_assembler.h"
 
 
-
-char* DPI[] = {"add","sub","rsb","and","eor","orr","mov","tst","teq","cmp"};
-char* MUL[] = {"mul","mla"};
-char* SDT[] = {"ldr","str"};
-char* BRANCH[] = {"beq","bne","bge","blt","bgt","ble","b"};
-char* SPECIAL[] = {"lsl","andeq"};
+char *DPI[] = {"add", "sub", "rsb", "and", "eor", "orr", "mov", "tst", "teq", "cmp"};
+char *MUL[] = {"mul", "mla"};
+char *SDT[] = {"ldr", "str"};
+char *BRANCH[] = {"beq", "bne", "bge", "blt", "bgt", "ble", "b"};
+char *SPECIAL[] = {"lsl", "andeq"};
 
 void binary_file_writer(char *filename, const char *binary_string) {
     FILE *binary_file = fopen(filename, "wb");
@@ -38,14 +38,14 @@ void extract_2_char_cond(char *string, char result[3]) {
 }
 
 
-bool isArgument(char c){
-    if (c == ','){
+bool isArgument(char c) {
+    if (c == ',') {
         return false;
     }
-    if (c == ' '){
+    if (c == ' ') {
         return false;
     }
-    if (c == '\0'){
+    if (c == '\0') {
         return false;
     }
     return true;
@@ -53,7 +53,7 @@ bool isArgument(char c){
 
 //gets the specified argument from the instruction
 //e.g: get_argument("mul r1, r2, r3", 2) = "r2";
-void get_argument(char *instruction, int argument_number, char *result){
+void get_argument(char *instruction, int argument_number, char *result) {
     int i = 0;
     int startpos = 0;
     int endpos = 0;
@@ -64,15 +64,15 @@ void get_argument(char *instruction, int argument_number, char *result){
         startpos++;
     }
     endpos = startpos;
-    while (isArgument(instruction[endpos])){
+    while (isArgument(instruction[endpos])) {
         endpos++;
     }
     int length = endpos - startpos + 1;
-    result = (char *) realloc(result, sizeof(char)*length);
-    for(i = 0; i < length-1; i++){
-        result[i] = instruction[i+startpos];
+    result = (char *) realloc(result, sizeof(char) * length);
+    for (i = 0; i < length - 1; i++) {
+        result[i] = instruction[i + startpos];
     }
-    result[length-1] = '\0';
+    result[length - 1] = '\0';
 }
 
 /*sets as many bits as necessary to encompass value
@@ -143,11 +143,11 @@ char *second_pass(char **code, tokenised_line tokenised_line, symbol_table symbo
     char *binary = (char *) malloc(INSTRUCTION_SIZE * LINES);
     binary[0] = '\0';
     //Read opcode mnemonics + operands for each instruction
-    for (int i = 0; i < LINES; ++i) {
-        int num_of_operands = tokenizer(code[i], tokenised_line);
+    for (int line_num = 0; line_num < LINES; ++line_num) {
+        int num_of_operands = tokenizer(code[line_num], tokenised_line);
 
         //Labels
-        if (num_of_operands == 0){
+        if (num_of_operands == 0) {
             //TODO
         }
 
@@ -160,9 +160,36 @@ char *second_pass(char **code, tokenised_line tokenised_line, symbol_table symbo
             }
 
             //Calls to Instruction_assemble
+<<<<<<< HEAD
             for (int k = 0; k < DPI; ++k) {
                 if (strcmp(tokenised_line.opcode, DPI[k])){
                     //a
+=======
+
+            for (int k = 0; k < NUMBER_OF_DPI; ++k) {
+                if (strcmp(tokenised_line.opcode, DPI[k]) == 0) {
+                    strcat(binary, assemble_dpi(tokenised_line, code, line_num, symbol_table));
+                }
+            }
+
+            for (int k = 0; k < NUMBER_OF_SDT; ++k) {
+                if (strcmp(tokenised_line.opcode, SDT[k]) == 0) {
+                    strcat(binary, assemble_sdt(tokenised_line, code, line_num, symbol_table));
+                }
+            }
+            for (int k = 0; k < NUMBER_OF_MUL; ++k) {
+                if (strcmp(tokenised_line.opcode, MUL[k]) == 0) {
+                    strcat(binary, assemble_mul(tokenised_line, code, line_num, symbol_table));
+                }
+            }
+            for (int k = 0; k < NUMBER_OF_BRANCH; ++k) {
+                if (strcmp(tokenised_line.opcode, BRANCH[k]) == 0) {
+                    strcat(binary, assemble_branch(tokenised_line, code, line_num, symbol_table));
+                }
+            }
+            for (int k = 0; k < NUMBER_OF_SPECIAL; ++k) {
+                if (strcmp(tokenised_line.opcode, SPECIAL[k]) == 0) {
+>>>>>>> 07bc0201120d847109a872508f172f9cc6b5c4fa
                 }
             }
         }

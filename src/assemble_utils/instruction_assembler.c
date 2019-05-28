@@ -17,8 +17,12 @@ uint32_t binary = 0;
 //general purpose code for reduced duplication
 char cond[3];
 
+//TODO
 
+//CHANGE ALL ASSEMBLE FUNCTIONS TO TAKE TOKENISED LINE rather than the whole string
+//ALSO ADD assemble special instructions
 uint32_t assemble_dpi(char *string, tokenised_line *tokenised_line, int line, symbol_table *symbol_table) {
+
     extract_2_char_cond(string, cond);
 
     //set cond to 1110
@@ -30,6 +34,7 @@ uint32_t assemble_dpi(char *string, tokenised_line *tokenised_line, int line, sy
     char *operand2 = tokenised_line[line][2];
 
     //set I if Operand2 is an immediate value
+    //TODO - replace this, this is incorrect
     if (operand2[0]=='#'){
         set_n_bits(binary,25, 1);
     }
@@ -84,10 +89,15 @@ uint32_t assemble_dpi(char *string, tokenised_line *tokenised_line, int line, sy
         set_n_bits(binary, 20, 1);
     }
 
+    //set Rn
+    if (type == compute_result){
+        char *reg = tokenised_line->operands[1];
+    }
+
 }
 
 
-uint32_t assemble_mul(char *string, char **code, int line, symbol_table *symbol_table) {
+uint32_t assemble_mul(char *string, char **code, int line, symbol_table symbol_table) {
     extract_2_char_cond(string, cond);
 
     //set cond to 1110
@@ -116,11 +126,11 @@ uint32_t assemble_mul(char *string, char **code, int line, symbol_table *symbol_
 
 }
 
-uint32_t assemble_sdt(char *string, char **code, int line, symbol_table *symbol_table){
+uint32_t assemble_sdt(char *string, char **code, int line, symbol_table symbol_table){
     return binary;
 }
 
-uint32_t assemble_branch(char *string, char **code, int line, symbol_table *symbol_table) {
+uint32_t assemble_branch(char *string, char **code, int line, symbol_table symbol_table) {
     extract_2_char_cond(string, cond);
 
     //setting cond bits
