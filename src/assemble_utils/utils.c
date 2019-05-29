@@ -164,7 +164,7 @@ int tokenizer(char *line, tokenised_line* tokenised_line) {
 
     //Get Opcode (e.g mov r1, r2 - this gets mov"
     *tokenised_line->opcode = strtok_r(line_t, " ", &line_t);
-    printf("opcode before: ", tokenised_line->opcode);
+    printf("opcode: %s\n", *tokenised_line->opcode);
 
     //Split into operands (e.g. mov r1,r2 - this gets r1 etc
     int num_of_operands = 0;
@@ -224,29 +224,29 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
             //Calls to Instruction_assemble
 
             for (int k = 0; k < NUMBER_OF_DPI; ++k) {
-                if (strcmp(tokenised_line->opcode, DPI[k]) == 0) {
+                if (strcmp(*tokenised_line->opcode, DPI[k]) == 0) {
                     strcat(binary, assemble_dpi(tokenised_line, line_num));
                     printf("adding binary");
                 }
             }
 
             for (int k = 0; k < NUMBER_OF_SDT; ++k) {
-                if (strcmp(tokenised_line->opcode, SDT[k]) == 0) {
+                if (strcmp(*tokenised_line->opcode, SDT[k]) == 0) {
                     //strcat(binary, assemble_sdt(tokenised_line, line_num));
                 }
             }
             for (int k = 0; k < NUMBER_OF_MUL; ++k) {
-                if (strcmp(tokenised_line->opcode, MUL[k]) == 0) {
+                if (strcmp(*tokenised_line->opcode, MUL[k]) == 0) {
                     //strcat(binary, assemble_mul(tokenised_line, line_num, *symbol_table));
                 }
             }
             for (int k = 0; k < NUMBER_OF_BRANCH; ++k) {
-                if (strcmp(tokenised_line->opcode, BRANCH[k]) == 0) {
+                if (strcmp(*tokenised_line->opcode, BRANCH[k]) == 0) {
                     //strcat(binary, assemble_branch(tokenised_line, line_num, symbol_table));
                 }
             }
             for (int k = 0; k < NUMBER_OF_SPECIAL; ++k) {
-                if (strcmp(tokenised_line->opcode, SPECIAL[k]) == 0) {
+                if (strcmp(*tokenised_line->opcode, SPECIAL[k]) == 0) {
                 }
             }
         }
