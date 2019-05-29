@@ -230,3 +230,16 @@ char *assemble_branch(tokenised_line *tokenised_line, char **code, int line, sym
     toBinaryString(binary, binary_string);
     return binary_string;
 }
+
+char *assemble_special(tokenised_line *tokenised_line, int line){
+    char *opcode = tokenised_line->opcode[line];
+
+    if (!(strcmp("andeq", opcode))){
+        //ALL 0 HALT INSTRUCTION
+        toBinaryString(binary,binary_string);
+        return binary_string;
+    }
+
+    return "";
+
+}
