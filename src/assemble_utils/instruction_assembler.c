@@ -136,8 +136,9 @@ char *assemble_dpi(tokenised_line *tokenised_line, int line) {
 }
 
 
-uint32_t assemble_mul(char *string, char **code, int line, symbol_table symbol_table) {
-    extract_2_char_cond(string, condition);
+uint32_t assemble_mul(tokenised_line *tokenised_line, int line) {
+    //condition is the last 2 letters of the opcode
+    char *condition = tokenised_line->opcode[line] + sizeof(char);
 
     //set cond to 1110
     binary = set_n_bits(binary, COND_END_BIT, 14);
