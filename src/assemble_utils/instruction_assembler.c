@@ -70,3 +70,39 @@ void assemble_branch(char *string, uint32_t *binary){
 
 
 }
+
+uint32_t assemble_sdt(char *string, char **code, int line){
+    char *command = tokenised_line->opcode[line];
+
+    //set bits 27-26 to be 01
+    binary = set_n_bits(binary, 26 ,1);
+
+    uintptr_t current_address = &code[line];
+    uintptr_t  pc = current_address + 8;
+
+    //calculate offset
+    char *label = tokenised_line->label[line];
+    uintptr_t target_address = get_address(label, symbol_table);
+    uint32_t offset = target_address - pc;
+    offset = offset >> 2;
+
+    if (!strcmp(command, "dr")) {
+        binary = set_n_bits(binary, 20 ,1);
+
+        //need to check if expression begins with an =...
+        //how to get <expression>...?
+
+        //check offset valid
+        if(is24bit(offset)){
+
+        }
+
+        }
+
+
+
+
+    return binary;
+}
+
+

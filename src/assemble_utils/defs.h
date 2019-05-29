@@ -6,12 +6,19 @@
 #define ARM11_11_DEFS_H
 
 
-#include <stdint-gcc.h>
+#include <stdint.h>
 
 #define LINES 50
 #define LINE_LENGTH 511
 #define OPCODE_LENGTH 3
 #define OPERAND_LENGTH 20
+
+typedef enum {
+    //if not set, then is post-indexing
+    PRE_INDEXING,
+    CONSTANT,
+
+}SDT_TYPE;
 
 typedef struct {
     char *label;
