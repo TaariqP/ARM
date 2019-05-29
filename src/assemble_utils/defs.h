@@ -29,12 +29,6 @@ typedef enum {
 }DPI_TYPE;
 
 
-char *DPI[] = {"add", "sub", "rsb", "and", "eor", "orr", "mov", "tst", "teq", "cmp"};
-char *MUL[] = {"mul", "mla"};
-char *SDT[] = {"ldr", "str"};
-char *BRANCH[] = {"beq", "bne", "bge", "blt", "bgt", "ble", "b"};
-char *SPECIAL[] = {"lsl", "andeq"};
-
 typedef struct {
     char *label;
     uintptr_t memory_address;
