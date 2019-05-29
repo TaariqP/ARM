@@ -11,11 +11,10 @@
 #include "utils.h"
 
 
-// the initial 0 binary that we set depending on the instruction
+// the variables below will be common to all functions, so have been initialised here. maybe we should pass them in?
 uint32_t binary = 0;
-
-//general purpose code for reduced duplication
-char cond[3];
+char binary_string[32];
+char condition[3];
 
 //TODO
 
@@ -131,7 +130,6 @@ char *assemble_dpi(tokenised_line *tokenised_line, int line) {
         //is shift register
     }
 
-    char binary_string[32];
     toBinaryString(binary, binary_string);
 
     return binary_string;
@@ -139,7 +137,7 @@ char *assemble_dpi(tokenised_line *tokenised_line, int line) {
 
 
 uint32_t assemble_mul(char *string, char **code, int line, symbol_table symbol_table) {
-    extract_2_char_cond(string, cond);
+    extract_2_char_cond(string, condition);
 
     //set cond to 1110
     binary = set_n_bits(binary, COND_END_BIT, 14);
@@ -147,7 +145,7 @@ uint32_t assemble_mul(char *string, char **code, int line, symbol_table symbol_t
     //bits 27 to 22 are already 0
 
     //set A only if mla
-    if (strcmp(cond, "la") == 0) {
+    if (strcmp(condition, "la") == 0) {
         set_n_bits(binary, 21, 1);
     }
 
@@ -171,32 +169,34 @@ uint32_t assemble_sdt(char *string, char **code, int line, symbol_table symbol_t
     return binary;
 }
 
-uint32_t assemble_branch(char *string, char **code, int line, symbol_table symbol_table) {
-    extract_2_char_cond(string, cond);
+char *assemble_branch(tokenised_line *tokenised_line, char **code, int line, symbol_table symbol_table) {
+    //condition is the last two letter of the command
+    char *condition = tokenised_line->opcode[line] + sizeof(char);
 
     //setting cond bits
-    if (strcmp(cond, "eq") == 0){
+    //TODO when all test cases pass, refactor because perhaps all test cases are not actually commands
+    if (strcmp(condition, "eq") == 0){
         //BEQ
         binary = set_n_bits(binary, COND_END_BIT, 0);
-    } else if (strcmp("ne", cond) == 0){
+    } else if (strcmp("ne", condition) == 0){
         //BNE
         binary = set_n_bits(binary, COND_END_BIT, 1);
-    } else if (strcmp("ge", cond) == 0){
+    } else if (strcmp("ge", condition) == 0){
         //BGE
         binary = set_n_bits(binary, COND_END_BIT, 10);
-    } else if (strcmp("lt", cond) == 0) {
+    } else if (strcmp("lt", condition) == 0) {
         //BLT
         binary = set_n_bits(binary, COND_END_BIT, 11);
-    } else if (strcmp("gt", cond) == 0) {
+    } else if (strcmp("gt", condition) == 0) {
         //BGT
         binary = set_n_bits(binary, COND_END_BIT, 12);
-    } else if (strcmp("le", cond) == 0){
+    } else if (strcmp("le", condition) == 0){
         //BLE
         binary = set_n_bits(binary, COND_END_BIT, 13);
-    } else if (strcmp("al", cond) == 0){
+    } else if (strcmp("al", condition) == 0){
         //UNCONDITIONAL BRANCH
         binary = set_n_bits(binary, COND_END_BIT, 14);
-    } else if (strcmp("  ", cond) == 0){
+    } else if (condition[0]== '\0'){
         //B (NO SUFFIX)
         binary = set_n_bits(binary, COND_END_BIT, 14);
     } else {
@@ -208,18 +208,23 @@ uint32_t assemble_branch(char *string, char **code, int line, symbol_table symbo
     binary = set_n_bits(binary, 24, 10);
 
 
-    //TODO: set offset
-    uint32_t current_address = &code[line];
-        //TODO 1: get the exact label from the instruction
-        char *label = (char*) malloc(0);
-        get_argument(string, 1, label);
-        
-        //TODO 2: extract that exact mapping from the symbol table
-        //TODO 3: find the address for that label from mapping
-        //TODO 4: calculate the offset (destination - current + 8)?
+    //calculate offset
+    uintptr_t current_address = &code[line];
+    uintptr_t  pc = current_address + 8;
+    //TODO 1: get the exact label from the instruction
+    char *label = tokenised_line->label[line];
 
-    //uint32_t destination_address =
+    //TODO 2: find the address for that label from symbol table
+    uintptr_t target_address = get_address(label, symbol_table);
 
-     free(label);
-    return binary;
+    //TODO 3: calculate the offset (destination - current + 8)?
+    uint32_t offset = target_address - pc;
+    offset = offset >> 2;
+    if(is24bit(offset)){
+        set_n_bits(binary,0, offset);
+    } else {
+        fprintf(stderr, "invalid offset");
+    }
+    toBinaryString(binary, binary_string);
+    return binary_string;
 }

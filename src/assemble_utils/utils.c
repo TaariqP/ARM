@@ -50,6 +50,10 @@ bool is8bit(int val){
     return (val == (val & 0xFF));
 }
 
+bool is24bit(int val){
+    return (val == (val & 0xFFFFFF));
+}
+
 bool isArgument(char c) {
     if (c == ',') {
         return false;
