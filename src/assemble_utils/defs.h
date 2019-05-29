@@ -46,7 +46,7 @@ typedef struct {
     char* label;
     char** opcode;
     //Array of array of strings
-    char** operands;
+    char*** operands;
 } tokenised_line;
 
 

@@ -149,7 +149,7 @@ void add_to_mappings(symbol_table *symbol_table, mapping mapping) {
     symbol_table->mappings[num_elements] = mapping;
 }
 
-int tokenizer(char *line, tokenised_line* tokenised_line) {
+int tokenizer(char *line, int line_num, tokenised_line* tokenised_line) {
 
     char *line_t = malloc(sizeof(char) * LINE_LENGTH);
     strcpy(line_t, line);
@@ -170,7 +170,7 @@ int tokenizer(char *line, tokenised_line* tokenised_line) {
     int num_of_operands = 0;
     char *operand;
     while (operand = strtok_r(line_t, ",", &line_t)) {
-        (tokenised_line->operands)[num_of_operands] = operand;
+        (tokenised_line->operands)[line_num][num_of_operands] = operand;
         printf("%s\n", operand);
         num_of_operands++;
     }
@@ -185,7 +185,7 @@ void first_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbo
     //Go through each line of code and get labels and add to symbol table.
     for (int line_num = 0; line_num < tokenised_line->num_of_lines; line_num++) {
         line = code[line_num];
-        int operand_num = tokenizer(line, tokenised_line);
+        int operand_num = tokenizer(line, line_num, tokenised_line);
         if (operand_num == 0) {
             printf("label: %s\n", tokenised_line->label);
             mapping mapping = {
@@ -203,7 +203,7 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
     binary[0] = '\0';
     //Read opcode mnemonics + operands for each instruction
     for (int line_num = 0; line_num < LINES; ++line_num) {
-        int num_of_operands = tokenizer(code[line_num], tokenised_line);
+        int num_of_operands = tokenizer(code[line_num], line_num, tokenised_line);
 
         //Labels
         if (num_of_operands == 0) {
@@ -227,6 +227,7 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
                 if (strcmp(*tokenised_line->opcode, DPI[k]) == 0) {
                     strcat(binary, assemble_dpi(tokenised_line, line_num));
                     printf("adding binary");
+                    break;
                 }
             }
 

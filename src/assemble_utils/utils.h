@@ -36,7 +36,7 @@ uintptr_t get_address(char *label, symbol_table *symbol_table);
 
 void add_to_mappings(symbol_table *symbol_table, mapping mapping);
 
-int tokenizer(char *line, tokenised_line tokenised_line);
+int tokenizer(char *line, int, tokenised_line* tokenised_line);
 
 void first_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbol_table);
 
