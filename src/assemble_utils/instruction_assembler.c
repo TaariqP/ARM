@@ -120,7 +120,7 @@ uint32_t assemble_dpi(tokenised_line *tokenised_line, int line) {
         } else {
             //rotate left till is 8 bits, and rotates are even, then store appropriately
             int num_of_rotates = 0;
-            while (!(is8bit(immediate_value)) | (num_of_rotates % 2)){
+            while (!(is8bit(immediate_value) & (num_of_rotates % 2 == 0))){
                 immediate_value = rol(immediate_value);
                 num_of_rotates++;
             }
