@@ -22,25 +22,12 @@ char cond[3];
 
 //CHANGE ALL ASSEMBLE FUNCTIONS TO TAKE TOKENISED LINE rather than the whole string
 //ALSO ADD assemble special instructions
-
-
-
-uint32_t assemble_dpi(char *string, char **code, int line, symbol_table symbol_table) {
-    extract_2_char_cond(string, cond);
+uint32_t assemble_dpi(tokenised_line *tokenised_line, int line, symbol_table *symbol_table) {
 
     //set cond to 1110
     binary = set_n_bits(binary, COND_END_BIT, 14);
 
     //bits 27-26 always 0
-
-
-    char *operand2 = tokenised_line[line][2];
-
-    //set I if Operand2 is an immediate value
-    //TODO - replace this, this is incorrect
-    if (operand2[0]=='#'){
-        set_n_bits(binary,25, 1);
-    }
 
     char *command = tokenised_line->opcode[line];
     DPI_TYPE type;
@@ -51,21 +38,23 @@ uint32_t assemble_dpi(char *string, char **code, int line, symbol_table symbol_t
     if (!strcmp(command, "eor")){
         //EOR
         set_n_bits(binary, DPI_OPCODE_END_BIT, 1);
-        type = compute_result
+        type = compute_result;
     } else if (!(strcmp(command, "sub"))){
         //SUB
         set_n_bits(binary, DPI_OPCODE_END_BIT, 2);
-        type = compute_result
+        type = compute_result;
     } else if (!(strcmp(command, "rsb"))){
         //RSB
         set_n_bits(binary, DPI_OPCODE_END_BIT, 3);
+        type = compute_result;
     } else if (!(strcmp(command, "add"))){
         //ADD
         set_n_bits(binary, DPI_OPCODE_END_BIT, 4);
+        type = compute_result;
     } else if (!(strcmp(command, "orr"))){
         //ORR
         set_n_bits(binary, DPI_OPCODE_END_BIT, 12);
-        type = compute_result
+        type = compute_result;
     } else if (!(strcmp(command, "mov"))){
         //MOV
         set_n_bits(binary, DPI_OPCODE_END_BIT, 13);
@@ -92,11 +81,38 @@ uint32_t assemble_dpi(char *string, char **code, int line, symbol_table symbol_t
         set_n_bits(binary, 20, 1);
     }
 
-    //set Rn
-    if (type == compute_result){
-        char *reg = tokenised_line->operands[1];
+    //set I (can be done after because it is a single bit)
+    int argument;
+    //decide which operand to look at based on type (mov looks at op 2, others at op 3)
+    if(type == single_operand){
+        argument = 1;
+    } else {
+        argument = 2;
+    }
+    //identifying and checking operand2
+    char* operand2 = tokenised_line->operands[line][argument];
+    if (operand2[0]=='#'){
+        set_n_bits(binary,25, 1);
     }
 
+    //set Rn (except for mov)
+    if (type != single_operand){
+        char* rn = tokenised_line->operands[line][1];
+        //move pointer to only consider reg number (remove r from rxx)
+        rn += sizeof(char);
+        int reg_num = (int) strtol(rn, (char **) NULL, 10);
+        set_n_bits(binary, 16, reg_num);
+    }
+
+    //set Rd
+    char* rd = tokenised_line->operands[line][0];
+    rd+= sizeof(char);
+    int reg_num = (int) strtol(rd, (char **) NULL, 10);
+    set_n_bits(binary, 12, reg_num);
+
+
+
+    return binary;
 }
 
 
@@ -104,7 +120,7 @@ uint32_t assemble_mul(char *string, char **code, int line, symbol_table symbol_t
     extract_2_char_cond(string, cond);
 
     //set cond to 1110
-    binary = set_n_bits(binary, cond_end_bit, 14);
+    binary = set_n_bits(binary, COND_END_BIT, 14);
 
     //bits 27 to 22 are already 0
 
@@ -139,28 +155,28 @@ uint32_t assemble_branch(char *string, char **code, int line, symbol_table symbo
     //setting cond bits
     if (strcmp(cond, "eq") == 0){
         //BEQ
-        binary = set_n_bits(binary, cond_end_bit, 0);
+        binary = set_n_bits(binary, COND_END_BIT, 0);
     } else if (strcmp("ne", cond) == 0){
         //BNE
-        binary = set_n_bits(binary, cond_end_bit, 1);
+        binary = set_n_bits(binary, COND_END_BIT, 1);
     } else if (strcmp("ge", cond) == 0){
         //BGE
-        binary = set_n_bits(binary, cond_end_bit, 10);
+        binary = set_n_bits(binary, COND_END_BIT, 10);
     } else if (strcmp("lt", cond) == 0) {
         //BLT
-        binary = set_n_bits(binary, cond_end_bit, 11);
+        binary = set_n_bits(binary, COND_END_BIT, 11);
     } else if (strcmp("gt", cond) == 0) {
         //BGT
-        binary = set_n_bits(binary, cond_end_bit, 12);
+        binary = set_n_bits(binary, COND_END_BIT, 12);
     } else if (strcmp("le", cond) == 0){
         //BLE
-        binary = set_n_bits(binary, cond_end_bit, 13);
+        binary = set_n_bits(binary, COND_END_BIT, 13);
     } else if (strcmp("al", cond) == 0){
         //UNCONDITIONAL BRANCH
-        binary = set_n_bits(binary, cond_end_bit, 14);
+        binary = set_n_bits(binary, COND_END_BIT, 14);
     } else if (strcmp("  ", cond) == 0){
         //B (NO SUFFIX)
-        binary = set_n_bits(binary, cond_end_bit, 14);
+        binary = set_n_bits(binary, COND_END_BIT, 14);
     } else {
         //NOT A VALID INSTRUCTION
         fprintf(stderr, "not a valid branch instruction");

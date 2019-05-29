@@ -5,7 +5,9 @@
 #include "emulate_utils/execute.h"
 #include "emulate_utils/decode.h"
 #include "emulate_utils/defs.h"
-
+//#include "emulate_utils/utils.c"
+//#include "emulate_utils/execute.c"
+//#include "emulate_utils/decode.c"
 
 void execute(current_state *state) {
     instruction_type type = state->decoded_instruction.type;
@@ -133,3 +135,12 @@ int main(int argc, char **argv) {
 
     return EXIT_SUCCESS;
 }*/
+
+//int main(void){
+//    char* string = "r16";
+//    string = string + sizeof(char);
+//
+//    uint8_t result = (uint8_t) strtol(string, (char**) NULL, 10);
+//    printf("%d", result);
+//    return 0;
+//}
