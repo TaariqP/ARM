@@ -137,6 +137,11 @@ char *assemble_dpi(tokenised_line *tokenised_line, int line) {
 }
 
 
+
+uint32_t assemble_sdt(char *string, char **code, int line){
+    return binary;
+}
+
 uint32_t assemble_mul(tokenised_line *tokenised_line, int line) {
     //condition is the last 2 letters of the opcode
     char *condition = tokenised_line->opcode[line] + sizeof(char);
@@ -167,11 +172,8 @@ uint32_t assemble_mul(tokenised_line *tokenised_line, int line) {
 
 }
 
-uint32_t assemble_sdt(char *string, char **code, int line, symbol_table symbol_table){
-    return binary;
-}
 
-char *assemble_branch(tokenised_line *tokenised_line, char **code, int line, symbol_table symbol_table) {
+char *assemble_branch(tokenised_line *tokenised_line, char **code, int line, symbol_table* symbol_table) {
     //condition is the last two letter of the command
     char *condition = tokenised_line->opcode[line] + sizeof(char);
 

@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include "defs.h"
-#include "instruction_assembler.h"
+#include "instruction_assembler.c"
 
 void binary_file_writer(char *filename, const char *binary_string) {
     FILE *binary_file = fopen(filename, "wb");
@@ -35,10 +35,10 @@ uint8_t mask_1_bit(int value, int bit) {
 }
 
 //rotate left once
-int rol(uint32_t val){
+int rol(uint32_t val) {
     int msb = mask_1_bit(val, 31);
     int temp = val << 1;
-    if (msb){
+    if (msb) {
         temp |= msb;
     } else {
         temp &= msb;
@@ -46,11 +46,11 @@ int rol(uint32_t val){
     return temp;
 }
 
-bool is8bit(int val){
+bool is8bit(int val) {
     return (val == (val & 0xFF));
 }
 
-bool is24bit(int val){
+bool is24bit(int val) {
     return (val == (val & 0xFFFFFF));
 }
 
@@ -102,24 +102,35 @@ uint32_t set_n_bits(uint32_t binary_num, int end_bit, int value) {
 }
 
 //converts a 32bit integer to a binary string
-void toBinaryString(uint32_t binary, char *result){
-    for (int i =0; i < 32; i++){
-        result[i] = (char) ((mask_1_bit(binary, 31 - i) +'0'));
+void toBinaryString(uint32_t binary, char *result) {
+    for (int i = 0; i < 32; i++) {
+        result[i] = (char) ((mask_1_bit(binary, 31 - i) + '0'));
     }
     result[32] = '\0';
 }
 
+//Check if label exists in symbol table
+
+int is_in_symbol_table(char *label, symbol_table *symbol_table) {
+    for (int i = 0; i < symbol_table->num_elements; ++i) {
+        if (strcmp(symbol_table->mappings[i].label, label) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 //gets the address of a label
-uintptr_t get_address(char *label, symbol_table symbol_table){
+uintptr_t get_address(char *label, symbol_table *symbol_table) {
     //compare given label to the label of each mapping till found.
     int mapping_number = 0;
-    for (; mapping_number < symbol_table.num_elements; mapping_number++){
-        if (!(strcmp(symbol_table.mappings[mapping_number].label, label))) {
+    for (; mapping_number < symbol_table->num_elements; mapping_number++) {
+        if (!(strcmp(symbol_table->mappings[mapping_number].label, label))) {
             //label found
             break;
         }
     }
-    return symbol_table.mappings[mapping_number].memory_address;
+    return symbol_table->mappings[mapping_number].memory_address;
 }
 
 void add_to_mappings(symbol_table *symbol_table, mapping mapping) {
@@ -158,30 +169,30 @@ int tokenizer(char *line, tokenised_line tokenised_line) {
 }
 
 
-void first_pass(char **code, tokenised_line tokenised_line, symbol_table symbol_table) {
+void first_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbol_table) {
     char *line;
     //Go through each line of code and get labels and add to symbol table.
-    for (int line_num = 0; line_num < LINES; line_num++) {
+    for (int line_num = 0; line_num < tokenised_line->num_of_lines; line_num++) {
         line = code[line_num];
-        int operand_num = tokenizer(line, tokenised_line);
+        int operand_num = tokenizer(line, *tokenised_line);
         if (operand_num == 0) {
-            printf("label: %s\n", tokenised_line.label);
+            printf("label: %s\n", tokenised_line->label);
             mapping mapping = {
-                    .label = tokenised_line.label,
-                    .memory_address = &code[line_num + 1]
+                    .label = tokenised_line->label,
+                    .memory_address = &line[line_num + 1]
             };
-            add_to_mappings(&symbol_table, mapping);
+            add_to_mappings(symbol_table, mapping);
         }
     }
 }
 
-char *second_pass(char **code, tokenised_line tokenised_line, symbol_table symbol_table) {
+char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbol_table) {
 
     char *binary = (char *) malloc(INSTRUCTION_SIZE * LINES);
     binary[0] = '\0';
     //Read opcode mnemonics + operands for each instruction
     for (int line_num = 0; line_num < LINES; ++line_num) {
-        int num_of_operands = tokenizer(code[line_num], tokenised_line);
+        int num_of_operands = tokenizer(code[line_num], *tokenised_line);
 
         //Labels
         if (num_of_operands == 0) {
@@ -193,34 +204,37 @@ char *second_pass(char **code, tokenised_line tokenised_line, symbol_table symbo
             //Get operands that are labels and use symbol table to get address
             for (int j = 0; j < num_of_operands; ++j) {
                 uintptr_t address;
-                //get_address(symbol_table, tokenised_line.operands[j]);
+                if (is_in_symbol_table(tokenised_line->operands[j], symbol_table)){
+                    //not sure how to cast this
+                    // tokenised_line->operands[j] = get_address(tokenised_line->operands[j], symbol_table);
+                }
             }
 
             //Calls to Instruction_assemble
 
             for (int k = 0; k < NUMBER_OF_DPI; ++k) {
-                if (strcmp(tokenised_line.opcode, DPI[k]) == 0) {
-                    strcat(binary, assemble_dpi(&tokenised_line, line_num));
+                if (strcmp(tokenised_line->opcode, DPI[k]) == 0) {
+                    strcat(binary, assemble_dpi(tokenised_line, line_num));
                 }
             }
 
             for (int k = 0; k < NUMBER_OF_SDT; ++k) {
-                if (strcmp(tokenised_line.opcode, SDT[k]) == 0) {
-                    strcat(binary, assemble_sdt(tokenised_line, line_num, symbol_table));
+                if (strcmp(tokenised_line->opcode, SDT[k]) == 0) {
+                    //strcat(binary, assemble_sdt(tokenised_line, line_num));
                 }
             }
             for (int k = 0; k < NUMBER_OF_MUL; ++k) {
-                if (strcmp(tokenised_line.opcode, MUL[k]) == 0) {
-                    strcat(binary, assemble_mul(tokenised_line, line_num, *symbol_table));
+                if (strcmp(tokenised_line->opcode, MUL[k]) == 0) {
+                    //strcat(binary, assemble_mul(tokenised_line, line_num, *symbol_table));
                 }
             }
             for (int k = 0; k < NUMBER_OF_BRANCH; ++k) {
-                if (strcmp(tokenised_line.opcode, BRANCH[k]) == 0) {
-                    strcat(binary, assemble_branch(tokenised_line, line_num, symbol_table));
+                if (strcmp(tokenised_line->opcode, BRANCH[k]) == 0) {
+                    //strcat(binary, assemble_branch(tokenised_line, line_num, symbol_table));
                 }
             }
             for (int k = 0; k < NUMBER_OF_SPECIAL; ++k) {
-                if (strcmp(tokenised_line.opcode, SPECIAL[k]) == 0) {
+                if (strcmp(tokenised_line->opcode, SPECIAL[k]) == 0) {
                 }
             }
         }
@@ -228,28 +242,25 @@ char *second_pass(char **code, tokenised_line tokenised_line, symbol_table symbo
     return binary;
 }
 
-char *two_pass_assembly(char **code, int line_num) {
+char *two_pass_assembly(char **code, int num_of_lines) {
 
+    symbol_table *symbol_table = malloc((sizeof(symbol_table)));
+    symbol_table->num_elements = 0;
+    symbol_table->mappings = malloc(sizeof(mapping) * LINES);
 
-    //SHould this be a pointer?
-    symbol_table symbol_table = {
-            .num_elements = 0,
-            .mappings = malloc(sizeof(mapping) * LINES)
-    };
+    tokenised_line *tokenised_line = malloc(sizeof(tokenised_line));
+    tokenised_line->num_of_lines = num_of_lines;
+    tokenised_line->label = malloc(sizeof(char) * LINE_LENGTH);
+    tokenised_line->opcode = malloc(sizeof(char) * OPCODE_LENGTH);
+    tokenised_line->operands = malloc(sizeof(char *) * LINE_LENGTH / OPERAND_LENGTH);
 
-    tokenised_line tokenised_line = {
-            .label = malloc(sizeof(char) * LINE_LENGTH),
-            .opcode = malloc(sizeof(char) * OPCODE_LENGTH),
-            .operands = malloc(sizeof(char *) * LINE_LENGTH / OPERAND_LENGTH)
-    };
-
-    //First pass assoociates labels with memory addresses.
+//First pass assoociates labels with memory addresses.
     first_pass(code, tokenised_line, symbol_table);
 
-    /* Second Pass */
+/* Second Pass */
     char *binary = second_pass(code, tokenised_line, symbol_table);
 
-    // REMEMBER TO free variables
+// REMEMBER TO free variables
 
     return binary;
 

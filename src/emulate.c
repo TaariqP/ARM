@@ -97,7 +97,7 @@ void pipeline_cycle(current_state *state, int size) {
 
 }
 
-/*
+
 int main(int argc, char **argv) {
 
     if (argc != 2) {
@@ -134,13 +134,4 @@ int main(int argc, char **argv) {
     free(state);
 
     return EXIT_SUCCESS;
-}*/
-
-//int main(void){
-//    char* string = "r16";
-//    string = string + sizeof(char);
-//
-//    uint8_t result = (uint8_t) strtol(string, (char**) NULL, 10);
-//    printf("%d", result);
-//    return 0;
-//}
+}

@@ -48,11 +48,11 @@ typedef struct {
 typedef struct {
     //Array of strings
     //? to keep line_num??
-    int line_num;
-    char** label;
+    int num_of_lines;
+    char* label;
     char** opcode;
     //Array of array of strings
-    char*** operands;
+    char** operands;
 } tokenised_line;
 
 

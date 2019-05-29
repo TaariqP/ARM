@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <memory.h>
 
-#include "assemble_utils/utils.h"
+#include "assemble_utils/utils.c"
 
 int main(int argc, char **argv) {
 
@@ -27,7 +27,8 @@ int main(int argc, char **argv) {
             code[line] = (char *) malloc(sizeof(char) * LINE_LENGTH);
         }
         fclose(file);
-        //char *binary = two_pass_assembly(code, line);
+        char *binary = two_pass_assembly(code, line);
+        printf("%s\n", binary);
         //binary_file_writer(binary);
     } else {
         printf("Could not open file");
@@ -35,4 +36,5 @@ int main(int argc, char **argv) {
 
 
     return EXIT_SUCCESS;
+}
 

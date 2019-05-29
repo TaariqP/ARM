@@ -23,21 +23,18 @@ int rol(uint32_t);
 
 void toBinaryString(uint32_t, char *);
 
-uintptr_t get_address(char *, symbol_table);
-
 bool is8bit(int);
 
 bool is24bit(int);
 
 bool isArgument(char);
 
-void get_argument(char *, int, char *);
+uintptr_t get_address(char *, symbol_table *);
 
-char *second_pass(char **code, tokenised_line tokenised_line, symbol_table symbol_table);
+char *second_pass(char **, tokenised_line *, symbol_table *);
 
-char *two_pass_assembly(char **code, int line_num);
+char *two_pass_assembly(char **, int);
 
-int tokenizer(char *);
-
+int tokenizer(char *, tokenised_line);
 
 #endif //ARM11_11_UTILS_H
