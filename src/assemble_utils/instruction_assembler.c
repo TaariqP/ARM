@@ -8,6 +8,7 @@
 #include <string.h>
 #include <memory.h>
 #include <stdlib.h>
+#include "defs.h"
 #include "utils.h"
 
 
