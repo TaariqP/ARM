@@ -23,6 +23,8 @@ int rol(uint32_t);
 
 void toBinaryString(uint32_t, char *);
 
+uintptr_t get_address(char *, symbol_table)
+
 bool is8bit(int);
 
 bool isArgument(char);

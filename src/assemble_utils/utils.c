@@ -105,6 +105,19 @@ void toBinaryString(uint32_t binary, char *result){
     result[32] = '\0';
 }
 
+//gets the address of a label
+uintptr_t get_address(char *label, symbol_table symbol_table){
+    //compare given label to the label of each mapping till found.
+    int mapping_number = 0;
+    for (; mapping_number < symbol_table.num_elements; mapping_number++){
+        if (!(strcmp(symbol_table.mappings[mapping_number].label, label))) {
+            //label found
+            break;
+        }
+    }
+    return symbol_table.mappings[mapping_number].memory_address;
+}
+
 void add_to_mappings(symbol_table *symbol_table, mapping mapping) {
     //Increment number of elements in symbol table
     int num_elements = symbol_table->num_elements;
