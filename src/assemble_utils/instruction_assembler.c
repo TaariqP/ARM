@@ -37,6 +37,7 @@ uint32_t assemble_dpi(char *string, char **code, int line, symbol_table symbol_t
     char *operand2 = tokenised_line[line][2];
 
     //set I if Operand2 is an immediate value
+    //TODO - replace this, this is incorrect
     if (operand2[0]=='#'){
         set_n_bits(binary,25, 1);
     }
@@ -89,6 +90,11 @@ uint32_t assemble_dpi(char *string, char **code, int line, symbol_table symbol_t
     //set S bit if type is set_CPSR
     if (type == set_CPSR){
         set_n_bits(binary, 20, 1);
+    }
+
+    //set Rn
+    if (type == compute_result){
+        char *reg = tokenised_line->operands[1];
     }
 
 }
