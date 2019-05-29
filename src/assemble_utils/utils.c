@@ -30,13 +30,13 @@ void extract_2_char_cond(char *string, char result[3]) {
     }
 }
 
-uint8_t mask_1_bit(int value, int bit) {
+uint8_t mask_1_bit_assemble(int value, int bit) {
     return (value >> bit) & 0x1;
 }
 
 //rotate left once
 int rol(uint32_t val) {
-    int msb = mask_1_bit(val, 31);
+    int msb = mask_1_bit_assemble(val, 31);
     int temp = val << 1;
     if (msb) {
         temp |= msb;
@@ -104,7 +104,7 @@ uint32_t set_n_bits(uint32_t binary_num, int end_bit, int value) {
 //converts a 32bit integer to a binary string
 void toBinaryString(uint32_t binary, char *result) {
     for (int i = 0; i < 32; i++) {
-        result[i] = (char) ((mask_1_bit(binary, 31 - i) + '0'));
+        result[i] = (char) ((mask_1_bit_assemble(binary, 31 - i) + '0'));
     }
     result[32] = '\0';
 }
@@ -204,7 +204,7 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
             //Get operands that are labels and use symbol table to get address
             for (int j = 0; j < num_of_operands; ++j) {
                 uintptr_t address;
-                if (is_in_symbol_table(tokenised_line->operands[j], symbol_table)){
+                if (is_in_symbol_table(tokenised_line->operands[j], symbol_table)) {
                     //not sure how to cast this
                     // tokenised_line->operands[j] = get_address(tokenised_line->operands[j], symbol_table);
                 }
