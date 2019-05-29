@@ -17,6 +17,12 @@ void extract_2_char_cond(char *, char *);
 
 uint32_t set_n_bits(uint32_t, int, int);
 
+uint8_t mask_1_bit(int, int);
+
+int rol(uint32_t);
+
+bool is8bit(int);
+
 bool isArgument(char);
 
 void get_argument(char *, int, char *);

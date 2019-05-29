@@ -30,7 +30,25 @@ void extract_2_char_cond(char *string, char result[3]) {
     }
 }
 
+uint8_t mask_1_bit(int value, int bit) {
+    return (value >> bit) & 0x1;
+}
 
+//rotate left once
+int rol(uint32_t val){
+    int msb = mask_1_bit(val, 31);
+    int temp = val << 1;
+    if (msb){
+        temp |= msb;
+    } else {
+        temp &= msb;
+    }
+    return temp;
+}
+
+bool is8bit(int val){
+    return (val == (val & 0xFF));
+}
 bool isArgument(char c) {
     if (c == ',') {
         return false;
