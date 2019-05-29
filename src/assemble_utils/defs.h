@@ -29,10 +29,11 @@ typedef enum {
 }DPI_TYPE;
 
 
-char* DPI[] = {"add","sub","rsb","and","eor","orr","mov","tst","teq","cmp"};
-char* SDT[] = {"ldr","str"};
-char* BRANCH[] = {"beq","bne","bge","blt","bgt","ble","b"};
-char* SPECIAL[] = {"lsl","andeq"};
+char *DPI[] = {"add", "sub", "rsb", "and", "eor", "orr", "mov", "tst", "teq", "cmp"};
+char *MUL[] = {"mul", "mla"};
+char *SDT[] = {"ldr", "str"};
+char *BRANCH[] = {"beq", "bne", "bge", "blt", "bgt", "ble", "b"};
+char *SPECIAL[] = {"lsl", "andeq"};
 
 typedef struct {
     char *label;
@@ -47,7 +48,7 @@ typedef struct {
 typedef struct {
     //Array of strings
     //? to keep line_num??
-    int line_num
+    int line_num;
     char** label;
     char** opcode;
     //Array of array of strings

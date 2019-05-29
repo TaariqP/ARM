@@ -9,13 +9,6 @@
 #include "defs.h"
 #include "instruction_assembler.h"
 
-
-char *DPI[] = {"add", "sub", "rsb", "and", "eor", "orr", "mov", "tst", "teq", "cmp"};
-char *MUL[] = {"mul", "mla"};
-char *SDT[] = {"ldr", "str"};
-char *BRANCH[] = {"beq", "bne", "bge", "blt", "bgt", "ble", "b"};
-char *SPECIAL[] = {"lsl", "andeq"};
-
 void binary_file_writer(char *filename, const char *binary_string) {
     FILE *binary_file = fopen(filename, "wb");
     if (binary_file == NULL) {
@@ -160,36 +153,30 @@ char *second_pass(char **code, tokenised_line tokenised_line, symbol_table symbo
             }
 
             //Calls to Instruction_assemble
-<<<<<<< HEAD
-            for (int k = 0; k < DPI; ++k) {
-                if (strcmp(tokenised_line.opcode, DPI[k])){
-                    //a
-=======
 
             for (int k = 0; k < NUMBER_OF_DPI; ++k) {
                 if (strcmp(tokenised_line.opcode, DPI[k]) == 0) {
-                    strcat(binary, assemble_dpi(tokenised_line, code, line_num, symbol_table));
+                    strcat(binary, assemble_dpi(tokenised_line, line_num, symbol_table));
                 }
             }
 
             for (int k = 0; k < NUMBER_OF_SDT; ++k) {
                 if (strcmp(tokenised_line.opcode, SDT[k]) == 0) {
-                    strcat(binary, assemble_sdt(tokenised_line, code, line_num, symbol_table));
+                    strcat(binary, assemble_sdt(tokenised_line, line_num, symbol_table));
                 }
             }
             for (int k = 0; k < NUMBER_OF_MUL; ++k) {
                 if (strcmp(tokenised_line.opcode, MUL[k]) == 0) {
-                    strcat(binary, assemble_mul(tokenised_line, code, line_num, symbol_table));
+                    strcat(binary, assemble_mul(tokenised_line, line_num, symbol_table));
                 }
             }
             for (int k = 0; k < NUMBER_OF_BRANCH; ++k) {
                 if (strcmp(tokenised_line.opcode, BRANCH[k]) == 0) {
-                    strcat(binary, assemble_branch(tokenised_line, code, line_num, symbol_table));
+                    strcat(binary, assemble_branch(tokenised_line, line_num, symbol_table));
                 }
             }
             for (int k = 0; k < NUMBER_OF_SPECIAL; ++k) {
                 if (strcmp(tokenised_line.opcode, SPECIAL[k]) == 0) {
->>>>>>> 07bc0201120d847109a872508f172f9cc6b5c4fa
                 }
             }
         }
