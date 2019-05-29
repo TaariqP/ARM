@@ -21,6 +21,8 @@ uint8_t mask_1_bit(int, int);
 
 int rol(uint32_t);
 
+void toBinaryString(uint32_t, char *);
+
 bool is8bit(int);
 
 bool isArgument(char);

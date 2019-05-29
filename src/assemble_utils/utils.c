@@ -49,6 +49,7 @@ int rol(uint32_t val){
 bool is8bit(int val){
     return (val == (val & 0xFF));
 }
+
 bool isArgument(char c) {
     if (c == ',') {
         return false;
@@ -94,6 +95,14 @@ void get_argument(char *instruction, int argument_number, char *result) {
 uint32_t set_n_bits(uint32_t binary_num, int end_bit, int value) {
     binary_num |= (value << end_bit);
     return binary_num;
+}
+
+//converts a 32bit integer to a binary string
+void toBinaryString(uint32_t binary, char *result){
+    for (int i =0; i < 32; i++){
+        result[i] = (char) ((mask_1_bit(binary, 31 - i) +'0'));
+    }
+    result[32] = '\0';
 }
 
 void add_to_mappings(symbol_table *symbol_table, mapping mapping) {

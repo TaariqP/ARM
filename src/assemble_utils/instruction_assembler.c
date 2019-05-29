@@ -21,7 +21,7 @@ char cond[3];
 
 //CHANGE ALL ASSEMBLE FUNCTIONS TO TAKE TOKENISED LINE rather than the whole string
 //ALSO ADD assemble special instructions
-uint32_t assemble_dpi(tokenised_line *tokenised_line, int line) {
+char *assemble_dpi(tokenised_line *tokenised_line, int line) {
 
     //set cond to 1110
     binary = set_n_bits(binary, COND_END_BIT, 14);
@@ -130,10 +130,11 @@ uint32_t assemble_dpi(tokenised_line *tokenised_line, int line) {
     } else {
         //is shift register
     }
-    
 
+    char binary_string[32];
+    toBinaryString(binary, binary_string);
 
-    return binary;
+    return binary_string;
 }
 
 
