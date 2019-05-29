@@ -156,7 +156,7 @@ char *second_pass(char **code, tokenised_line tokenised_line, symbol_table symbo
 
             for (int k = 0; k < NUMBER_OF_DPI; ++k) {
                 if (strcmp(tokenised_line.opcode, DPI[k]) == 0) {
-                    strcat(binary, assemble_dpi(tokenised_line, line_num, symbol_table));
+                    strcat(binary, assemble_dpi(&tokenised_line, line_num));
                 }
             }
 

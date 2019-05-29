@@ -11,7 +11,7 @@
 
 
 
-uint32_t assemble_dpi(tokenised_line *, int , symbol_table *);
+uint32_t assemble_dpi(tokenised_line *, int);
 
 uint32_t assemble_sdt(char*, char **, int, symbol_table);
 
