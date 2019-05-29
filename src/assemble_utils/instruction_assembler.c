@@ -21,7 +21,7 @@ char cond[3];
 
 //CHANGE ALL ASSEMBLE FUNCTIONS TO TAKE TOKENISED LINE rather than the whole string
 //ALSO ADD assemble special instructions
-uint32_t assemble_dpi(tokenised_line *tokenised_line, int line, symbol_table *symbol_table) {
+uint32_t assemble_dpi(tokenised_line *tokenised_line, int line) {
 
     //set cond to 1110
     binary = set_n_bits(binary, COND_END_BIT, 14);
@@ -109,6 +109,7 @@ uint32_t assemble_dpi(tokenised_line *tokenised_line, int line, symbol_table *sy
     int reg_num = (int) strtol(rd, (char **) NULL, 10);
     set_n_bits(binary, 12, reg_num);
 
+    
 
 
     return binary;
