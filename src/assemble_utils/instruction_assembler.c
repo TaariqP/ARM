@@ -207,20 +207,18 @@ char *assemble_branch(tokenised_line *tokenised_line, char **code, int line, sym
     //set bits 27-24 to be 1010
     binary = set_n_bits(binary, 24, 10);
 
-
-    //calculate offset
     uintptr_t current_address = &code[line];
     uintptr_t  pc = current_address + 8;
-    //TODO 1: get the exact label from the instruction
+
+    //calculate offset
     char *label = tokenised_line->label[line];
-
-    //TODO 2: find the address for that label from symbol table
     uintptr_t target_address = get_address(label, symbol_table);
-
-    //TODO 3: calculate the offset (destination - current + 8)?
     uint32_t offset = target_address - pc;
     offset = offset >> 2;
+
+    //check offset valid and set offset
     if(is24bit(offset)){
+        //valid offset
         set_n_bits(binary,0, offset);
     } else {
         fprintf(stderr, "invalid offset");
