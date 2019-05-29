@@ -22,7 +22,7 @@ char cond[3];
 
 //CHANGE ALL ASSEMBLE FUNCTIONS TO TAKE TOKENISED LINE rather than the whole string
 //ALSO ADD assemble special instructions
-uint32_t assemble_dpi(tokenised_line *tokenised_line, int line, symbol_table *symbol_table) {
+uint32_t assemble_dpi(tokenised_line *tokenised_line, int line) {
 
     //set cond to 1110
     binary = set_n_bits(binary, COND_END_BIT, 14);
@@ -91,7 +91,8 @@ uint32_t assemble_dpi(tokenised_line *tokenised_line, int line, symbol_table *sy
     }
     //identifying and checking operand2
     char* operand2 = tokenised_line->operands[line][argument];
-    if (operand2[0]=='#'){
+    bool isImmediate = (operand2[0] == '#');
+    if (isImmediate){
         set_n_bits(binary,25, 1);
     }
 
@@ -110,6 +111,27 @@ uint32_t assemble_dpi(tokenised_line *tokenised_line, int line, symbol_table *sy
     int reg_num = (int) strtol(rd, (char **) NULL, 10);
     set_n_bits(binary, 12, reg_num);
 
+    //calculate offset
+    if (isImmediate){
+        operand2 += sizeof(char);
+        int immediate_value = (int) strtol(operand2, (char **) NULL, 10);
+        if (immediate_value <= 256) {
+            //can be stored directly in last 8 bits without need for rotate
+            set_n_bits(binary, 0, immediate_value);
+        } else {
+            //rotate left till is 8 bits, and rotates are even, then store appropriately
+            int num_of_rotates = 0;
+            while (!(is8bit(immediate_value)) | (num_of_rotates % 2)){
+                immediate_value = rol(immediate_value);
+                num_of_rotates++;
+            }
+            set_n_bits(binary, 8, (num_of_rotates/2));
+            set_n_bits(binary, 0, immediate_value);
+        }
+    } else {
+        //is shift register
+    }
+    
 
 
     return binary;
