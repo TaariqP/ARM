@@ -149,7 +149,7 @@ void add_to_mappings(symbol_table *symbol_table, mapping mapping) {
     symbol_table->mappings[num_elements] = mapping;
 }
 
-int tokenizer(char *line, tokenised_line tokenised_line) {
+int tokenizer(char *line, tokenised_line* tokenised_line) {
 
     char *line_t = malloc(sizeof(char) * LINE_LENGTH);
     strcpy(line_t, line);
@@ -157,18 +157,21 @@ int tokenizer(char *line, tokenised_line tokenised_line) {
 
     //Get label (if its just a label) (e.g. wait: this gets wait)
     if (strchr(line, ':') != NULL) {
-        *tokenised_line.label = strtok_r(line_t, ":", &line_t);
+        tokenised_line->label = strtok_r(line_t, ":", &line_t);
+        printf("label: %s\n", *tokenised_line->label);
         return 0;
     }
 
     //Get Opcode (e.g mov r1, r2 - this gets mov"
-    *tokenised_line.opcode = strtok_r(line_t, " ", &line_t);
+    *tokenised_line->opcode = strtok_r(line_t, " ", &line_t);
+    printf("opcode: %s\n", *tokenised_line->opcode);
 
     //Split into operands (e.g. mov r1,r2 - this gets r1 etc
     int num_of_operands = 0;
     char *operand;
     while (operand = strtok_r(line_t, ",", &line_t)) {
-        (*tokenised_line.operands)[num_of_operands] = operand;
+        (tokenised_line->operands)[num_of_operands] = operand;
+        printf("%s\n", operand);
         num_of_operands++;
     }
 
@@ -182,7 +185,7 @@ void first_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbo
     //Go through each line of code and get labels and add to symbol table.
     for (int line_num = 0; line_num < tokenised_line->num_of_lines; line_num++) {
         line = code[line_num];
-        int operand_num = tokenizer(line, *tokenised_line);
+        int operand_num = tokenizer(line, tokenised_line);
         if (operand_num == 0) {
             printf("label: %s\n", tokenised_line->label);
             mapping mapping = {
@@ -200,7 +203,7 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
     binary[0] = '\0';
     //Read opcode mnemonics + operands for each instruction
     for (int line_num = 0; line_num < LINES; ++line_num) {
-        int num_of_operands = tokenizer(code[line_num], *tokenised_line);
+        int num_of_operands = tokenizer(code[line_num], tokenised_line);
 
         //Labels
         if (num_of_operands == 0) {
@@ -221,28 +224,29 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
             //Calls to Instruction_assemble
 
             for (int k = 0; k < NUMBER_OF_DPI; ++k) {
-                if (strcmp(tokenised_line->opcode, DPI[k]) == 0) {
+                if (strcmp(*tokenised_line->opcode, DPI[k]) == 0) {
                     strcat(binary, assemble_dpi(tokenised_line, line_num));
+                    printf("adding binary");
                 }
             }
 
             for (int k = 0; k < NUMBER_OF_SDT; ++k) {
-                if (strcmp(tokenised_line->opcode, SDT[k]) == 0) {
+                if (strcmp(*tokenised_line->opcode, SDT[k]) == 0) {
                     //strcat(binary, assemble_sdt(tokenised_line, line_num));
                 }
             }
             for (int k = 0; k < NUMBER_OF_MUL; ++k) {
-                if (strcmp(tokenised_line->opcode, MUL[k]) == 0) {
+                if (strcmp(*tokenised_line->opcode, MUL[k]) == 0) {
                     //strcat(binary, assemble_mul(tokenised_line, line_num, *symbol_table));
                 }
             }
             for (int k = 0; k < NUMBER_OF_BRANCH; ++k) {
-                if (strcmp(tokenised_line->opcode, BRANCH[k]) == 0) {
+                if (strcmp(*tokenised_line->opcode, BRANCH[k]) == 0) {
                     //strcat(binary, assemble_branch(tokenised_line, line_num, symbol_table));
                 }
             }
             for (int k = 0; k < NUMBER_OF_SPECIAL; ++k) {
-                if (strcmp(tokenised_line->opcode, SPECIAL[k]) == 0) {
+                if (strcmp(*tokenised_line->opcode, SPECIAL[k]) == 0) {
                 }
             }
         }
