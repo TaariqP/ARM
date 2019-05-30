@@ -21,8 +21,7 @@ char condition[3];
 
 //CHANGE ALL ASSEMBLE FUNCTIONS TO TAKE TOKENISED LINE rather than the whole string
 //ALSO ADD assemble special instructions
-char *assemble_dpi(tokenised_line *tokenised_line, int line) {
-    char binary_string[33];
+void assemble_dpi_to(tokenised_line *tokenised_line, int line, char* binary_string) {
     uint32_t binary = 0;
 
     //set cond to 1110
@@ -134,8 +133,6 @@ char *assemble_dpi(tokenised_line *tokenised_line, int line) {
     }
 
     toBinaryString(binary, binary_string);
-
-    return binary_string;
 }
 
 
@@ -179,9 +176,8 @@ uint32_t assemble_mul(tokenised_line *tokenised_line, int line) {
 }
 
 
-char *assemble_branch(tokenised_line *tokenised_line, char **code, int line, symbol_table* symbol_table) {
+void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, symbol_table* symbol_table, char* binary_string) {
     //condition is the last two letter of the command
-    char binary_string[33];
     uint32_t binary = 0;
     char *condition = tokenised_line->opcode[line] + sizeof(char);
 
@@ -238,20 +234,16 @@ char *assemble_branch(tokenised_line *tokenised_line, char **code, int line, sym
         fprintf(stderr, "invalid offset");
     }
     toBinaryString(binary, binary_string);
-    return binary_string;
 }
 
-char *assemble_special(tokenised_line *tokenised_line, int line){
-    char binary_string[33];
+void assemble_special_to(tokenised_line *tokenised_line, int line, char* binary_string){
     uint32_t binary = 0;
     char *opcode = tokenised_line->opcode[line];
 
     if (!(strcmp("andeq", opcode))){
         //ALL 0 HALT INSTRUCTION
         toBinaryString(binary,binary_string);
-        return binary_string;
     }
 
-    return "";
 
 }
