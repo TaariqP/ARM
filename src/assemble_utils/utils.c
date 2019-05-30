@@ -118,9 +118,8 @@ void get_argument(char *instruction, int argument_number, char *result) {
 
  assumption that bits being set start as 0, as do all bits less significant
  than end bit. */
-uint32_t set_n_bits(uint32_t binary_num, int end_bit, int value) {
-    binary_num |= (value << end_bit);
-    return binary_num;
+void set_n_bits(uint32_t *binary_num, int end_bit, int value) {
+    *binary_num |= (value << end_bit);
 }
 
 //converts a 32bit integer to a binary string
