@@ -13,7 +13,6 @@
 
 
 // the variables below will be common to all functions, so have been initialised here. maybe we should pass them in?
-uint32_t binary = 0;
 char binary_string[32];
 char condition[3];
 
@@ -23,6 +22,8 @@ char condition[3];
 //CHANGE ALL ASSEMBLE FUNCTIONS TO TAKE TOKENISED LINE rather than the whole string
 //ALSO ADD assemble special instructions
 char *assemble_dpi(tokenised_line *tokenised_line, int line) {
+
+    uint32_t binary = 0;
 
     //set cond to 1110
     binary = set_n_bits(binary, COND_END_BIT, 14);
@@ -140,12 +141,16 @@ char *assemble_dpi(tokenised_line *tokenised_line, int line) {
 
 
 uint32_t assemble_sdt(char *string, char **code, int line){
+    uint32_t binary = 0;
+
     return binary;
 }
 
 uint32_t assemble_mul(tokenised_line *tokenised_line, int line) {
     //condition is the last 2 letters of the opcode
     char *condition = tokenised_line->opcode[line] + sizeof(char);
+
+    uint32_t binary = 0;
 
     //set cond to 1110
     binary = set_n_bits(binary, COND_END_BIT, 14);
@@ -177,6 +182,8 @@ uint32_t assemble_mul(tokenised_line *tokenised_line, int line) {
 char *assemble_branch(tokenised_line *tokenised_line, char **code, int line, symbol_table* symbol_table) {
     //condition is the last two letter of the command
     char *condition = tokenised_line->opcode[line] + sizeof(char);
+    uint32_t binary = 0;
+
 
     //setting cond bits
     //TODO when all test cases pass, refactor because perhaps all test cases are not actually commands

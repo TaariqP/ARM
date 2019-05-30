@@ -32,7 +32,7 @@ typedef enum {
 
 typedef struct {
     char *label;
-    uintptr_t memory_address;
+    int memory_address;
 } mapping;
 
 typedef struct {
