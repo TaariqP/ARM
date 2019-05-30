@@ -13,7 +13,7 @@
 
 
 // the variables below will be common to all functions, so have been initialised here. maybe we should pass them in?
-char binary_string[32];
+
 char condition[3];
 
 
@@ -24,9 +24,10 @@ char condition[3];
 char *assemble_dpi(tokenised_line *tokenised_line, int line) {
 
     uint32_t binary = 0;
+    char binary_string[32];
 
     //set cond to 1110
-    binary = set_n_bits(binary, COND_END_BIT, 14);
+    set_n_bits(&binary, COND_END_BIT, 14);
 
     //bits 27-26 always 0
 
@@ -38,23 +39,23 @@ char *assemble_dpi(tokenised_line *tokenised_line, int line) {
     //needs if else ladder because of the way C compares strings :(
     if (!strcmp(command, "eor")){
         //EOR
-        set_n_bits(binary, DPI_OPCODE_END_BIT, 1);
+        set_n_bits(&binary, DPI_OPCODE_END_BIT, 1);
         type = compute_result;
     } else if (!(strcmp(command, "sub"))){
         //SUB
-        set_n_bits(binary, DPI_OPCODE_END_BIT, 2);
+        set_n_bits(&binary, DPI_OPCODE_END_BIT, 2);
         type = compute_result;
     } else if (!(strcmp(command, "rsb"))){
         //RSB
-        set_n_bits(binary, DPI_OPCODE_END_BIT, 3);
+        set_n_bits(&binary, DPI_OPCODE_END_BIT, 3);
         type = compute_result;
     } else if (!(strcmp(command, "add"))){
         //ADD
-        set_n_bits(binary, DPI_OPCODE_END_BIT, 4);
+        set_n_bits(&binary, DPI_OPCODE_END_BIT, 4);
         type = compute_result;
     } else if (!(strcmp(command, "orr"))){
         //ORR
-        set_n_bits(binary, DPI_OPCODE_END_BIT, 12);
+        set_n_bits(&binary, DPI_OPCODE_END_BIT, 12);
         type = compute_result;
     } else if (!(strcmp(command, "mov"))){
         //MOV
@@ -62,15 +63,15 @@ char *assemble_dpi(tokenised_line *tokenised_line, int line) {
         type = single_operand;
     } else if (!(strcmp(command, "tst"))){
         //TST
-        set_n_bits(binary, DPI_OPCODE_END_BIT, 8);
+        set_n_bits(&binary, DPI_OPCODE_END_BIT, 8);
         type = set_CPSR;
     } else if (!(strcmp(command, "teq"))){
         //TEQ
-        set_n_bits(binary, DPI_OPCODE_END_BIT, 9);
+        set_n_bits(&binary, DPI_OPCODE_END_BIT, 9);
         type = set_CPSR;
     } else if (!(strcmp(command, "cmp"))){
         //CMP
-        set_n_bits(binary, DPI_OPCODE_END_BIT, 10);
+        set_n_bits(&binary, DPI_OPCODE_END_BIT, 10);
         type = set_CPSR;
     } else{
         //AND (no bits set, they remain 0)
@@ -79,7 +80,7 @@ char *assemble_dpi(tokenised_line *tokenised_line, int line) {
 
     //set S bit if type is set_CPSR
     if (type == set_CPSR){
-        set_n_bits(binary, 20, 1);
+        set_n_bits(&binary, 20, 1);
     }
 
     //set I (can be done after because it is a single bit)
@@ -94,7 +95,7 @@ char *assemble_dpi(tokenised_line *tokenised_line, int line) {
     char* operand2 = tokenised_line->operands[line][argument];
     bool isImmediate = (operand2[0] == '#');
     if (isImmediate){
-        set_n_bits(binary,25, 1);
+        set_n_bits(&binary,25, 1);
     }
 
     //set Rn (except for mov)
@@ -103,14 +104,14 @@ char *assemble_dpi(tokenised_line *tokenised_line, int line) {
         //move pointer to only consider reg number (remove r from rxx)
         rn += sizeof(char);
         int reg_num = (int) strtol(rn, (char **) NULL, 10);
-        set_n_bits(binary, 16, reg_num);
+        set_n_bits(&binary, 16, reg_num);
     }
 
     //set Rd
     char* rd = tokenised_line->operands[line][0];
     rd+= sizeof(char);
     int reg_num = (int) strtol(rd, (char **) NULL, 10);
-    set_n_bits(binary, 12, reg_num);
+    set_n_bits(&binary, 12, reg_num);
 
     //calculate offset
     if (isImmediate){
@@ -118,7 +119,7 @@ char *assemble_dpi(tokenised_line *tokenised_line, int line) {
         int immediate_value = (int) strtol(operand2, (char **) NULL, 10);
         if (immediate_value <= 256) {
             //can be stored directly in last 8 bits without need for rotate
-            set_n_bits(binary, 0, immediate_value);
+            set_n_bits(&binary, 0, immediate_value);
         } else {
             //rotate left till is 8 bits, and rotates are even, then store appropriately
             int num_of_rotates = 0;
@@ -126,8 +127,8 @@ char *assemble_dpi(tokenised_line *tokenised_line, int line) {
                 immediate_value = rol(immediate_value);
                 num_of_rotates++;
             }
-            set_n_bits(binary, 8, (num_of_rotates/2));
-            set_n_bits(binary, 0, immediate_value);
+            set_n_bits(&binary, 8, (num_of_rotates/2));
+            set_n_bits(&binary, 0, immediate_value);
         }
     } else {
         //is shift register
@@ -153,13 +154,13 @@ uint32_t assemble_mul(tokenised_line *tokenised_line, int line) {
     uint32_t binary = 0;
 
     //set cond to 1110
-    binary = set_n_bits(binary, COND_END_BIT, 14);
+    set_n_bits(&binary, COND_END_BIT, 14);
 
     //bits 27 to 22 are already 0
 
     //set A only if mla
     if (strcmp(condition, "la") == 0) {
-        set_n_bits(binary, 21, 1);
+        set_n_bits(&binary, 21, 1);
     }
 
     //TODO: set Rd
@@ -169,7 +170,7 @@ uint32_t assemble_mul(tokenised_line *tokenised_line, int line) {
     //TODO: set Rs
 
     //set bits 7-4 to be 1001
-    binary = set_n_bits(binary, 4, 9);
+    set_n_bits(&binary, 4, 9);
 
     //TODO: set Rm
 
@@ -181,43 +182,45 @@ uint32_t assemble_mul(tokenised_line *tokenised_line, int line) {
 
 char *assemble_branch(tokenised_line *tokenised_line, char **code, int line, symbol_table* symbol_table) {
     //condition is the last two letter of the command
-    char *condition = tokenised_line->opcode[line] + sizeof(char);
+    char binary_string[32];
     uint32_t binary = 0;
+    char *condition = tokenised_line->opcode[line] + sizeof(char);
+
 
 
     //setting cond bits
     //TODO when all test cases pass, refactor because perhaps all test cases are not actually commands
     if (strcmp(condition, "eq") == 0){
         //BEQ
-        binary = set_n_bits(binary, COND_END_BIT, 0);
+        set_n_bits(&binary, COND_END_BIT, 0);
     } else if (strcmp("ne", condition) == 0){
         //BNE
-        binary = set_n_bits(binary, COND_END_BIT, 1);
+        set_n_bits(&binary, COND_END_BIT, 1);
     } else if (strcmp("ge", condition) == 0){
         //BGE
-        binary = set_n_bits(binary, COND_END_BIT, 10);
+        set_n_bits(&binary, COND_END_BIT, 10);
     } else if (strcmp("lt", condition) == 0) {
         //BLT
-        binary = set_n_bits(binary, COND_END_BIT, 11);
+        set_n_bits(&binary, COND_END_BIT, 11);
     } else if (strcmp("gt", condition) == 0) {
         //BGT
-        binary = set_n_bits(binary, COND_END_BIT, 12);
+        set_n_bits(&binary, COND_END_BIT, 12);
     } else if (strcmp("le", condition) == 0){
         //BLE
-        binary = set_n_bits(binary, COND_END_BIT, 13);
+        set_n_bits(&binary, COND_END_BIT, 13);
     } else if (strcmp("al", condition) == 0){
         //UNCONDITIONAL BRANCH
-        binary = set_n_bits(binary, COND_END_BIT, 14);
+        set_n_bits(&binary, COND_END_BIT, 14);
     } else if (condition[0]== '\0'){
         //B (NO SUFFIX)
-        binary = set_n_bits(binary, COND_END_BIT, 14);
+        set_n_bits(&binary, COND_END_BIT, 14);
     } else {
         //NOT A VALID INSTRUCTION
         fprintf(stderr, "not a valid branch instruction");
     }
 
     //set bits 27-24 to be 1010
-    binary = set_n_bits(binary, 24, 10);
+    set_n_bits(&binary, 24, 10);
 
     uintptr_t current_address = &code[line];
     uintptr_t  pc = current_address + 8;
@@ -231,10 +234,25 @@ char *assemble_branch(tokenised_line *tokenised_line, char **code, int line, sym
     //check offset valid and set offset
     if(is24bit(offset)){
         //valid offset
-        set_n_bits(binary,0, offset);
+        set_n_bits(&binary,0, offset);
     } else {
         fprintf(stderr, "invalid offset");
     }
     toBinaryString(binary, binary_string);
     return binary_string;
+}
+
+char *assemble_special(tokenised_line *tokenised_line, int line){
+    char binary_string[32];
+    uint32_t binary = 0;
+    char *opcode = tokenised_line->opcode[line];
+
+    if (!(strcmp("andeq", opcode))){
+        //ALL 0 HALT INSTRUCTION
+        toBinaryString(binary,binary_string);
+        return binary_string;
+    }
+
+    return "";
+
 }

@@ -26,7 +26,7 @@ bool isArgument(char);
 
 void get_argument(char *, int, char *);
 
-uint32_t set_n_bits(uint32_t, int, int);
+void set_n_bits(uint32_t *, int, int);
 
 void toBinaryString(uint32_t binary, char *result);
 

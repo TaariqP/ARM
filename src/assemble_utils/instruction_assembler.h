@@ -17,4 +17,6 @@ uint32_t assemble_mul(tokenised_line *, int);
 
 char *assemble_branch(tokenised_line *, char **, int, symbol_table *);
 
+char *assemble_special(tokenised_line *, int);
+
 #endif //ARM11_11_INSTRUCTION_ASSEMBLE_H
