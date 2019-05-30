@@ -35,7 +35,7 @@ void binary_file_writer(char *filename, const char *binary_string) {
         }
 
         fwrite(&bytes, sizeof(bytes), 1, binary_file);
-        fclose(binary_file);
+//        fclose(binary_file);
     } else {
         printf("could not write to binary file");
     }
