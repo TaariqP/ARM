@@ -3,8 +3,6 @@
 #include <memory.h>
 
 #include "assemble_utils/utils.h"
-#include "assemble_utils/defs.h"
-#include "assemble_utils/instruction_assembler.h"
 
 
 int main(int argc, char **argv) {
@@ -32,11 +30,19 @@ int main(int argc, char **argv) {
         fclose(file);
         char *binary = two_pass_assembly(code, line);
         //printf("%s\n", binary);
-                printf("%s\n", argv[2]);
-        binary_file_writer(argv[2], binary);
+        printf("%s\n", argv[2]);
+        //binary_file_writer(argv[2], binary);
+        for (int i = 0; i <= line; ++i) {
+            free(code[i]);
+        }
+
+
     } else {
         printf("Could not open file");
     }
+
+
+    free(code);
 
     return EXIT_SUCCESS;
 }
