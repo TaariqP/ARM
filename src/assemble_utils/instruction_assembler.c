@@ -22,9 +22,8 @@ char condition[3];
 //CHANGE ALL ASSEMBLE FUNCTIONS TO TAKE TOKENISED LINE rather than the whole string
 //ALSO ADD assemble special instructions
 char *assemble_dpi(tokenised_line *tokenised_line, int line) {
-
+    char binary_string[33];
     uint32_t binary = 0;
-    char binary_string[32];
 
     //set cond to 1110
     set_n_bits(&binary, COND_END_BIT, 14);
@@ -182,7 +181,7 @@ uint32_t assemble_mul(tokenised_line *tokenised_line, int line) {
 
 char *assemble_branch(tokenised_line *tokenised_line, char **code, int line, symbol_table* symbol_table) {
     //condition is the last two letter of the command
-    char binary_string[32];
+    char binary_string[33];
     uint32_t binary = 0;
     char *condition = tokenised_line->opcode[line] + sizeof(char);
 
@@ -243,7 +242,7 @@ char *assemble_branch(tokenised_line *tokenised_line, char **code, int line, sym
 }
 
 char *assemble_special(tokenised_line *tokenised_line, int line){
-    char binary_string[32];
+    char binary_string[33];
     uint32_t binary = 0;
     char *opcode = tokenised_line->opcode[line];
 
