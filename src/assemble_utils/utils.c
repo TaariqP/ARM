@@ -18,27 +18,24 @@ char *SPECIAL[] = {"lsl", "andeq"};
 
 void binary_file_writer(char *filename, const char *binary_string) {
     FILE *binary_file = fopen(filename, "wb+");
-    if (binary_file == NULL) {
-        printf("Error opening file");
-    }
     if (binary_file) {
+        //number of bytes (32 = 4 bytes)
+        int no_of_bytes = (int) strlen(binary_string) / 32;
+        int bytes[no_of_bytes];
 
-        int size = (int) strlen(binary_string) / 32;
+        //32 bits + null terminator
+        char final_instruction[33];
 
-        char instruction[32 + 1];
-        int binaryInts[size];
-
-        for (int i = 0; i < size; i++) {
-            memset(instruction, '\0', sizeof(instruction));
-            strncpy(instruction, &binary_string[i * 32], 32);
-            binaryInts[i] = (int) strtol(instruction, NULL, 2);
+        for (int i = 0; i < no_of_bytes; ++i) {
+            memset(final_instruction, '\0', sizeof(final_instruction));
+            strncpy(final_instruction, &binary_string[i * 32], 32);
+            bytes[i] = (int) strtol(final_instruction, NULL, 2);
         }
 
-        fwrite(&binaryInts, sizeof(binaryInts), 1, binary_string);
-        fclose(binary_string);
-
+        fwrite(filename, sizeof(bytes), 1, binary_file);
+        fclose(binary_file);
     } else {
-        printf("%s\n", "Error in writing binary file");
+        printf("could not write to binary file");
     }
 
 }
@@ -146,7 +143,7 @@ int is_in_symbol_table(char *label, symbol_table *symbol_table) {
 }
 
 //gets the address of a label
-uintptr_t get_address(char *label, symbol_table *symbol_table) {
+int get_address(char *label, symbol_table *symbol_table) {
     //compare given label to the label of each mapping till found.
     int mapping_number = 0;
     for (; mapping_number < symbol_table->num_elements; mapping_number++) {
@@ -230,10 +227,10 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
         if (num_of_operands != 0) {
             //Get operands that are labels and use symbol table to get address
             for (int j = 0; j < num_of_operands; ++j) {
-                uintptr_t address;
+                int address;
                 if (is_in_symbol_table(tokenised_line->operands[j], symbol_table)) {
-                    //not sure how to cast this
-                    // tokenised_line->operands[j] = get_address(tokenised_line->operands[j], symbol_table);
+                     address =  get_address(tokenised_line->operands[j], symbol_table);
+                     sprintf(tokenised_line->operands[j], "%d", address);
                 }
             }
 
@@ -243,7 +240,7 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
                 if (strcmp(*tokenised_line->opcode, DPI[k]) == 0) {
                     char *binaryToAdd = assemble_dpi(tokenised_line, line_num);
                     strcat(binary, binaryToAdd);
-                    //printf("%s\n", binary);
+                    printf("%s\n", binaryToAdd);
                     break;
                 }
             }
