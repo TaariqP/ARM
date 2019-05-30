@@ -4,6 +4,8 @@
 
 #include "assemble_utils/utils.h"
 #include "assemble_utils/defs.h"
+#include "assemble_utils/instruction_assembler.h"
+
 
 int main(int argc, char **argv) {
 
