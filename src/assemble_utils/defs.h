@@ -27,7 +27,7 @@ typedef enum {
     compute_result,
     single_operand,
     set_CPSR
-}DPI_TYPE;
+} DPI_TYPE;
 
 
 typedef struct {
@@ -37,17 +37,17 @@ typedef struct {
 
 typedef struct {
     int num_elements;
-   mapping* mappings;
+    mapping *mappings;
 } symbol_table;
 
 typedef struct {
     //Array of strings
     //? to keep line_num??
     int num_of_lines;
-    char* label;
-    char** opcode;
+    char *label;
+    char **opcode;
     //Array of array of strings
-    char*** operands;
+    char ***operands;
 } tokenised_line;
 
 

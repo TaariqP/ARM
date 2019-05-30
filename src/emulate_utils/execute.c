@@ -12,14 +12,11 @@ void execute_dpi(current_state *state) {
   uint16_t operand2 = state->decoded_instruction.operand2;
   int32_t rn = state->decoded_instruction.rn;
   int rd = state->decoded_instruction.rd;
-  //printf("value in this register is : %d \n", rn);
-
 
   int finalOp2 = 0;
   int shiftCarry = 0;
   int carry = 0;
   int32_t returnValue = 0;
-
 
   if (state->decoded_instruction.i) {
     //Immediate constant
@@ -28,7 +25,6 @@ void execute_dpi(current_state *state) {
     uint32_t imm_32 = imm;
     //Zero extend to 32 bits and rotate right
     finalOp2 = ror(imm_32, (unsigned int) rotate * 2);
-    //printf("finalop2: %d \n", finalOp2);
   } else {
     //Shifted Register
     uint8_t rm = mask_4_bit(operand2, 0);
@@ -37,7 +33,6 @@ void execute_dpi(current_state *state) {
     uint8_t shiftAmount = 0;
     if (!(shift & 0x1)) {
       //Constant amount
-      //printf("shift type: %d \n", shiftType);
       shiftAmount = (shift >> 3) & 0x1F;
     } else {
       //Register amount (Optional)
@@ -45,7 +40,6 @@ void execute_dpi(current_state *state) {
       int regVal = state->registers[rs];
       shiftAmount = mask_8_bit(state->registers[2], 0);
     }
-
     int32_t rm_value = state->registers[rm];
 
     //SHIFT
@@ -53,32 +47,23 @@ void execute_dpi(current_state *state) {
       case 0:
         finalOp2 = lsl(rm_value, shiftAmount);
         shiftCarry = mask_1_bit(rm_value, 31 - shiftAmount);
-        //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
-
         break;
       case 1:
         finalOp2 = lsr(rm_value, shiftAmount);
         shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
-        //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
-
         break;
       case 2:
         finalOp2 = asr(rm_value, shiftAmount);
         shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
-        //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
-
         break;
       case 3:
         finalOp2 = ror(rm_value, (unsigned int) shiftAmount);
         shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
-        //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
-
         break;
       default:
         printf("Invalid shift type");
     }
   }
-
 
   switch (opcode) {
     case 0:
@@ -94,7 +79,6 @@ void execute_dpi(current_state *state) {
     case 2:
       //SUB
       returnValue = rn - finalOp2;
-      //printf("rn - finalop2 = %d - %d = %d \n", rn, finalOp2, returnValue);
       carry = finalOp2 <= rn;
       break;
     case 3:
@@ -133,16 +117,11 @@ void execute_dpi(current_state *state) {
       carry = shiftCarry;
       break;
   }
-  //printf("rd should be 2: %d and return value end of thing: %d \n", state->decoded_instruction.rd, returnValue);
 
   //tst, teq, cmp do not write to rd
   if (opcode != 8 && opcode != 9 && opcode != 10) {
-    //printf("Opcode is %d. rn is %d. Finalop2 is %d, Set register %d to %d \n ", opcode,
-    // rn, finalOp2, state->decoded_instruction.rd, returnValue);
     state->registers[rd] = returnValue;
-    //printf("register %d contains %d \n", rd, returnValue);
   }
-
 
   //Setting the CPSR
   if (state->decoded_instruction.s) {
@@ -153,7 +132,6 @@ void execute_dpi(current_state *state) {
     //N (32) bit is bit 31 of result
     set_CPSR_bit(state, N, mask_1_bit(returnValue, 31));
   }
-
 }
 
 void execute_sdt(current_state *state) {
@@ -170,7 +148,6 @@ void execute_sdt(current_state *state) {
     uint8_t shiftAmount = 0;
     if (!(shift & 0x1)) {
       //Constant amount
-      //printf("shift type: %d \n", shiftType);
       shiftAmount = (shift >> 3) & 0x1F;
     } else {
       //Register amount (Optional)
@@ -178,26 +155,21 @@ void execute_sdt(current_state *state) {
       int regVal = state->registers[rs];
       shiftAmount = (regVal & 0xFF);
     }
-
     int32_t rm_value = state->registers[rm];
 
     //SHIFT
     switch (shiftType) {
       case 0:
         finalOffset = lsl(rm_value, shiftAmount);
-        //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
         break;
       case 1:
         finalOffset = lsr(rm_value, shiftAmount);
-        //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
         break;
       case 2:
         finalOffset = asr(rm_value, shiftAmount);
-        //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
         break;
       case 3:
         finalOffset = ror(rm_value, (unsigned int) shiftAmount);
-        //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
         break;
       default:
         printf("Invalid shift type");
@@ -212,8 +184,6 @@ void execute_sdt(current_state *state) {
   if (!(state->decoded_instruction.u)) {
     finalOffset = finalOffset * -1;
   }
-
-
   if (state->decoded_instruction.p) {
     //pre-indexing - transferred data after offset altered
     address = state->registers[rn] + finalOffset;
@@ -222,12 +192,10 @@ void execute_sdt(current_state *state) {
     address = state->registers[rn];
   }
 
-
   if (address == GPIO_CLEAR) {
     printf("%s\n", "PIN OFF");
     return;
   }
-
   if (address == GPIO_ON) {
     printf("%s\n", "PIN ON");
     return;
@@ -260,6 +228,8 @@ void execute_sdt(current_state *state) {
     //storing from register to memory
     uint8_t bytes[4];
     int32_t value = state->registers[rd];
+    /*storing value by splitting into 4 bytes - each memory location is 4 bytes
+     in size (32 bits), reversed since words are presented in little-endian order.*/
     bytes[3] = mask_8_bit(value, 0);
     bytes[2] = mask_8_bit(value, 8);
     bytes[1] = mask_8_bit(value, 16);
@@ -274,8 +244,6 @@ void execute_sdt(current_state *state) {
     set_register(state, rn, address + finalOffset);
   }
 }
-
-
 
 void execute_mul(current_state *state) {
   int8_t acc = state->decoded_instruction.a;
@@ -306,12 +274,8 @@ void execute_branch(current_state *state) {
   int32_t offset = state->decoded_instruction.offset;
   offset = offset << 2;
   offset = sign_extend_26_to_32(offset);
-
   //adding two's complement number
   state->registers[PC] += offset;
   state->fetched_instruction.binary_value = 0;
-
-  /* may or may not need the line below, I can't see any changes to running */
   state->decoded_instruction.type = NONE;
-
 }

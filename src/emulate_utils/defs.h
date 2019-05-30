@@ -1,7 +1,6 @@
 //
 // Created by taariq on 5/22/19.
 //
-
 #ifndef ARM11_11_DEFS_H
 #define ARM11_11_DEFS_H
 
@@ -26,7 +25,6 @@
 #define GPIO_10_19 538968068
 //0x2020 0008
 #define GPIO_20_29 538968072
-
 
 typedef enum {
     DPI,
@@ -68,8 +66,5 @@ typedef struct {
     //needed for sdt
     int address;
 } current_state;
-
-
-
 
 #endif //ARM11_11_DEFS_H
