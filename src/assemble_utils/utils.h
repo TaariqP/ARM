@@ -32,7 +32,7 @@ void toBinaryString(uint32_t binary, char *result);
 
 int is_in_symbol_table(char *label, symbol_table *symbol_table);
 
-uintptr_t get_address(char *label, symbol_table *symbol_table);
+uintptr_t get_address(char *, symbol_table *);
 
 void add_to_mappings(symbol_table *symbol_table, mapping mapping);
 
