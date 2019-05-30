@@ -7,8 +7,8 @@
 
 int main(int argc, char **argv) {
 
-    if (argc != 2) {
-        printf("Provide an argument!");
+    if (argc != 3) {
+        printf("Provide 2 argument!");
         return EXIT_FAILURE;
     }
 
@@ -30,12 +30,11 @@ int main(int argc, char **argv) {
         fclose(file);
         char *binary = two_pass_assembly(code, line);
         //printf("%s\n", binary);
-        //binary_file_writer(binary);
+                printf("%s\n", argv[2]);
+        binary_file_writer(argv[2], binary);
     } else {
         printf("Could not open file");
     }
-
-    //free(code);
 
     return EXIT_SUCCESS;
 }

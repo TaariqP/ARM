@@ -17,12 +17,30 @@ char *BRANCH[] = {"beq", "bne", "bge", "blt", "bgt", "ble", "b"};
 char *SPECIAL[] = {"lsl", "andeq"};
 
 void binary_file_writer(char *filename, const char *binary_string) {
-    FILE *binary_file = fopen(filename, "wb");
+    FILE *binary_file = fopen(filename, "wb+");
     if (binary_file == NULL) {
         printf("Error opening file");
     }
-    fwrite(filename, 1, sizeof(binary_string), binary_file);
-    fclose(binary_file);
+    if (binary_file) {
+
+        int size = (int) strlen(binary_string) / 32;
+
+        char instruction[32 + 1];
+        int binaryInts[size];
+
+        for (int i = 0; i < size; i++) {
+            memset(instruction, '\0', sizeof(instruction));
+            strncpy(instruction, &binary_string[i * 32], 32);
+            binaryInts[i] = (int) strtol(instruction, NULL, 2);
+        }
+
+        fwrite(&binaryInts, sizeof(binaryInts), 1, binary_string);
+        fclose(binary_string);
+
+    } else {
+        printf("%s\n", "Error in writing binary file");
+    }
+
 }
 
 void extract_2_char_cond(char *string, char result[3]) {
@@ -273,9 +291,6 @@ char *two_pass_assembly(char **code, int num_of_lines) {
     char *binary = second_pass(code, tokenised_line, symbol_table);
 
 // REMEMBER TO free variables
-
-//    free(symbol_table);
-//    free(tokenised_line);
     return binary;
 
 }
