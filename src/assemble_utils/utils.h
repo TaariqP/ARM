@@ -28,6 +28,8 @@ void get_argument(char *, int, char *);
 
 void set_n_bits(uint32_t *, int, int);
 
+void set_operand(uint32_t  binary, int line, int arg_num, int end_bit, tokenised_line *tokenised_line);
+
 void toBinaryString(uint32_t binary, char *result);
 
 int is_in_symbol_table(char *label, symbol_table *symbol_table);

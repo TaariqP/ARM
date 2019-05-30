@@ -153,28 +153,18 @@ uint32_t assemble_mul(tokenised_line *tokenised_line, int line) {
   }
   // S bit already set to 0
   //TODO: set Rd
-  char *rd = tokenised_line->operands[line][0];
-  rd += sizeof(char);
-  int reg_rd = (int) strtol(rd, (char **) NULL, 10);
-  set_n_bits(&binary, 16, reg_rd);
+  set_operand(binary, line, 0, 16, tokenised_line);
   //TODO: set Rn
-  char* rn = tokenised_line->operands[line][3];
-  rn += sizeof(char);
-  int reg_rn = (int) strtol(rn, (char **) NULL, 10);
-  set_n_bits(&binary, 12, reg_rn);
+  if (strcmp(condition, "la") == 0) {
+    set_operand(binary, line, 3, 12, tokenised_line);
+  }
   //TODO: set Rs
-  char* rs = tokenised_line->operands[line][2];
-  rs += sizeof(char);
-  int reg_rs = (int) strtol(rs, (char **) NULL, 10);
-  set_n_bits(&binary, 16, reg_rs);
+  set_operand(binary,line,2,8,tokenised_line);
   //set bits 7-4 to be 1001
   set_n_bits(&binary, 4, 9);
 
   //TODO: set Rm
-  char* rm = tokenised_line->operands[line][1];
-  rm += sizeof(char);
-  int reg_rm = (int) strtol(rm, (char **) NULL, 10);
-  set_n_bits(&binary, 16, reg_rm);
+  set_operand(binary,line,1,0);
 
   return binary;
 }
