@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 #include "defs.h"
 #include "instruction_assembler.h"
 
@@ -18,10 +19,6 @@ char *SPECIAL[] = {"lsl", "andeq"};
 
 void binary_file_writer(char *filename, const char *binary_string) {
     FILE *binary_file = fopen(filename, "wb+");
-    if (binary_file == NULL) {
-        printf("no file");
-        return;
-    }
     if (binary_file) {
         //number of bytes (32 = 4 bytes)
         int no_of_instructions = (int) strlen(binary_string) / 32;
@@ -45,17 +42,25 @@ void binary_file_writer(char *filename, const char *binary_string) {
 
 }
 
-void extract_2_char_cond(char *string, char result[3]) {
-    if (string[1] != ' ') {
-        result[0] = string[1];
-        result[1] = string[2];
-        result[2] = '\0';
-    } else {
-        result[0] = ' ';
-        result[1] = ' ';
-        result[2] = '\0';
-    }
+//void extract_2_char_cond(char *string, char result[3]) {
+//    if (string[1] != ' ') {
+//        result[0] = string[1];
+//        result[1] = string[2];
+//        result[2] = '\0';
+//    } else {
+//        result[0] = ' ';
+//        result[1] = ' ';
+//        result[2] = '\0';
+//    }
+//}
+
+char *trim_whitespace(char *str) {
+    while (isspace((unsigned char) *str)) str++;
+    if (*str == 0)
+        return str;
+    return str;
 }
+
 
 uint8_t mask_1_bit_assemble(int value, int bit) {
     return (value >> bit) & 0x1;
@@ -169,29 +174,43 @@ void add_to_mappings(symbol_table *symbol_table, mapping mapping) {
 
 int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
 
-    char *line_t = malloc(128);
+    char *line_t = malloc(COMMAND_LENGTH);
     strcpy(line_t, line);
 
 
     //Get label (if its just a label) (e.g. wait: this gets wait)
     if (strchr(line, ':') != NULL) {
-        tokenised_line->label = strtok_r(line_t, ":", &line_t);
+        //tokenised_line->label = strtok_r(line_t, ":", &line_t);
         //printf("label: %s\n", *tokenised_line->label);
         return 0;
     }
 
     //Get Opcode (e.g mov r1, r2 - this gets mov"
-    *tokenised_line->opcode = strtok_r(line_t, " ", &line_t);
-    printf("opcode: %s\n", *tokenised_line->opcode);
+    *(tokenised_line->opcode) = strtok_r(line_t, " ", &line_t);
+    printf("opcode: %s\n", *(tokenised_line->opcode));
 
     //Split into operands (e.g. mov r1,r2 - this gets r1 etc
     int num_of_operands = 0;
     char *operand;
-    while (operand = strtok_r(line_t, ",", &line_t)) {
-        (tokenised_line->operands)[line_num][num_of_operands] = operand;
-        printf("%s\n", operand);
+    if (strchr(line_t, ',') != NULL) {
+        operand = strtok_r(line_t, ",", &line_t);
+        while (operand) {
+            printf("%s\n", operand);
+            //Dereference the char*** to give the first char**
+            (tokenised_line->operands)[line_num][num_of_operands] = operand;
+            num_of_operands++;
+            operand = strtok_r(line_t, ",", &line_t);
+        }
+    } else {
+        *(tokenised_line->operands)[num_of_operands] = line_t;
         num_of_operands++;
     }
+
+//    for (int i = 0; i < num_of_operands; ++i) {
+//        *(tokenised_line->operands)[i] = trim_whitespace(*(tokenised_line->operands)[i]);
+//    }
+
+    //free(line_t);
     return num_of_operands;
 
 }
@@ -204,7 +223,7 @@ void first_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbo
         line = code[line_num];
         int operand_num = tokenizer(line, line_num, tokenised_line);
         if (operand_num == 0) {
-            printf("label: %s\n", tokenised_line->label);
+//            printf("label: %s\n", tokenised_line->label);
 //            mapping* mapping = malloc(sizeof(mapping));
 //            mapping->label = tokenised_line->label;
 //            mapping->memory_address = &line[line_num + 1];
@@ -276,13 +295,27 @@ char *two_pass_assembly(char **code, int num_of_lines) {
 
     symbol_table *symbol_table = malloc((sizeof(symbol_table)));
     symbol_table->num_elements = 0;
-    symbol_table->mappings = malloc(sizeof(mapping) * LINES);
+//    symbol_table->mappings;
 
     tokenised_line *tokenised_line = malloc(sizeof(tokenised_line));
     tokenised_line->num_of_lines = num_of_lines;
-    tokenised_line->label = malloc(sizeof(char) * LINE_LENGTH);
-    tokenised_line->opcode = malloc(sizeof(char) * OPCODE_LENGTH);
-    tokenised_line->operands = malloc(128);
+//    tokenised_line->label;
+
+
+    //char** array of strings
+    //Pointers are 8 bytes (64-bits) long
+    // SIZE OF (char pointer) = 8 bytes
+    //size of char = 1 byte
+    //OPCODE_LENGTH = 3;
+    //char** opcode should be (number of lines * opcode length)
+    tokenised_line->opcode = (char **) malloc(sizeof(char *) * num_of_lines);
+
+    //Char*** = array of array of strings
+    //char** = array of strings
+    //char* = string
+            // MAX_operands = number of lines * (LINELENGTH / OPERAND_LENGTH)
+
+    tokenised_line->operands = (char ***) malloc(sizeof(char **) * num_of_lines * (LINE_LENGTH / OPERAND_LENGTH));
 
 //First pass assoociates labels with memory addresses.
     first_pass(code, tokenised_line, symbol_table);
@@ -292,12 +325,9 @@ char *two_pass_assembly(char **code, int num_of_lines) {
     char *binary = second_pass(code, tokenised_line, symbol_table);
 
 // REMEMBER TO free variables
-    free(symbol_table->mappings);
-    free(tokenised_line->label);
     free(tokenised_line->opcode);
     free(tokenised_line->operands);
     free(symbol_table);
     free(tokenised_line);
     return binary;
-
 }

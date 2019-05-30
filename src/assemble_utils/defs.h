@@ -20,7 +20,7 @@
 #define NUMBER_OF_SPECIAL 2
 #define COND_END_BIT 28
 #define DPI_OPCODE_END_BIT 21
-#define LENGTH 128
+#define COMMAND_LENGTH 128
 // the initial 0 binary that we set depending on the instruction
 
 typedef enum {
