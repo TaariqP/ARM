@@ -35,6 +35,7 @@ int main(int argc, char **argv) {
         printf("Could not open file");
     }
 
+    free(code);
 
     return EXIT_SUCCESS;
 }

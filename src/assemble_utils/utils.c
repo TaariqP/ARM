@@ -10,7 +10,6 @@
 #include "instruction_assembler.h"
 
 
-
 char *DPI[] = {"add", "sub", "rsb", "and", "eor", "orr", "mov", "tst", "teq", "cmp"};
 char *MUL[] = {"mul", "mla"};
 char *SDT[] = {"ldr", "str"};
@@ -149,9 +148,9 @@ void add_to_mappings(symbol_table *symbol_table, mapping mapping) {
     symbol_table->mappings[num_elements] = mapping;
 }
 
-int tokenizer(char *line, int line_num, tokenised_line* tokenised_line) {
+int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
 
-    char *line_t = malloc(sizeof(char) * LINE_LENGTH);
+    char *line_t = malloc(128);
     strcpy(line_t, line);
 
 
@@ -174,7 +173,6 @@ int tokenizer(char *line, int line_num, tokenised_line* tokenised_line) {
         printf("%s\n", operand);
         num_of_operands++;
     }
-
     return num_of_operands;
 
 }
@@ -225,8 +223,9 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
 
             for (int k = 0; k < NUMBER_OF_DPI; ++k) {
                 if (strcmp(*tokenised_line->opcode, DPI[k]) == 0) {
-                    strcat(binary, assemble_dpi(tokenised_line, line_num));
-                    printf("adding binary");
+                    char *binaryToAdd = assemble_dpi(tokenised_line, line_num);
+                    strcat(binary, binaryToAdd);
+                    printf("%s\n", binary);
                     break;
                 }
             }
@@ -275,6 +274,8 @@ char *two_pass_assembly(char **code, int num_of_lines) {
 
 // REMEMBER TO free variables
 
+    free(symbol_table);
+    free(tokenised_line);
     return binary;
 
 }
