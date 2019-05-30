@@ -29,13 +29,13 @@ int main(int argc, char **argv) {
         }
         fclose(file);
         char *binary = two_pass_assembly(code, line);
-        printf("%s\n", binary);
+        //printf("%s\n", binary);
         //binary_file_writer(binary);
     } else {
         printf("Could not open file");
     }
 
-    free(code);
+    //free(code);
 
     return EXIT_SUCCESS;
 }

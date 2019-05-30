@@ -200,7 +200,7 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
     char *binary = (char *) malloc(INSTRUCTION_SIZE * LINES);
     binary[0] = '\0';
     //Read opcode mnemonics + operands for each instruction
-    for (int line_num = 0; line_num < LINES; ++line_num) {
+    for (int line_num = 0; line_num < tokenised_line->num_of_lines; ++line_num) {
         int num_of_operands = tokenizer(code[line_num], line_num, tokenised_line);
 
         //Labels
@@ -225,7 +225,7 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
                 if (strcmp(*tokenised_line->opcode, DPI[k]) == 0) {
                     char *binaryToAdd = assemble_dpi(tokenised_line, line_num);
                     strcat(binary, binaryToAdd);
-                    printf("%s\n", binary);
+                    //printf("%s\n", binary);
                     break;
                 }
             }
@@ -274,8 +274,8 @@ char *two_pass_assembly(char **code, int num_of_lines) {
 
 // REMEMBER TO free variables
 
-    free(symbol_table);
-    free(tokenised_line);
+//    free(symbol_table);
+//    free(tokenised_line);
     return binary;
 
 }
