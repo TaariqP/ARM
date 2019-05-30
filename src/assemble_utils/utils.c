@@ -20,13 +20,13 @@ void binary_file_writer(char *filename, const char *binary_string) {
     FILE *binary_file = fopen(filename, "wb+");
     if (binary_file) {
         //number of bytes (32 = 4 bytes)
-        int no_of_bytes = (int) strlen(binary_string) / 32;
-        int bytes[no_of_bytes];
+        int no_of_instructions = (int) strlen(binary_string) / 32;
+        int bytes[no_of_instructions];
 
         //32 bits + null terminator
         char final_instruction[33];
 
-        for (int i = 0; i < no_of_bytes; ++i) {
+        for (int i = 0; i < no_of_instructions; ++i) {
             memset(final_instruction, '\0', sizeof(final_instruction));
             strncpy(final_instruction, &binary_string[i * 32], 32);
             bytes[i] = (int) strtol(final_instruction, NULL, 2);
