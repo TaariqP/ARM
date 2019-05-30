@@ -26,6 +26,7 @@ Every member has their own branch on git. We could improve by creating branches 
 
 %How you’ve structured your emulator, and what bits you think you will be able to reuse for the assembler.
 
+We have been following the specification as close as we could. Namely, our emulator has a structure called current state which is made up of an array of unsigned one byte integers called memory, an array of signed 32 bit integers called registers, a fetched and a decoded instruction. The last two which are structs of their own. Memory and registers are initialised to zero. Memory is (64KB) 65536 bytes in size as required by the specification. This memory fills up when a binary file containing instructions is opened and read. Each instruction is then fetched, decoded and executed according to the three stage pipelining as per the specification.  
 
 
 %A discussion on implementation tasks that you think you will find difficult / challenging later on, and how you are working to mitigate these.
