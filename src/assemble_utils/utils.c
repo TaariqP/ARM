@@ -172,6 +172,10 @@ void add_to_mappings(symbol_table *symbol_table, mapping mapping) {
     symbol_table->mappings[num_elements] = mapping;
 }
 
+int test_tokenizer(tokenised_line* tokenised_line){
+    printf("Tokenised_lines");
+}
+
 int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
 
     char *line_t = malloc(COMMAND_LENGTH);
@@ -186,8 +190,8 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
     }
 
     //Get Opcode (e.g mov r1, r2 - this gets mov"
-    *(tokenised_line->opcode) = strtok_r(line_t, " ", &line_t);
-    printf("opcode: %s\n", *(tokenised_line->opcode));
+    (tokenised_line->opcode[line_num]) = strtok_r(line_t, " ", &line_t);
+    printf("opcode: %s\n", tokenised_line->opcode[line_num]);
 
     //Split into operands (e.g. mov r1,r2 - this gets r1 etc
     int num_of_operands = 0;
@@ -202,7 +206,7 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
             operand = strtok_r(line_t, ",", &line_t);
         }
     } else {
-        *(tokenised_line->operands)[num_of_operands] = line_t;
+        (tokenised_line->operands)[line_num][num_of_operands] = line_t;
         num_of_operands++;
     }
 
