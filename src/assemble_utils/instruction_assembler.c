@@ -58,7 +58,7 @@ char *assemble_dpi(tokenised_line *tokenised_line, int line) {
         type = compute_result;
     } else if (!(strcmp(command, "mov"))){
         //MOV
-        set_n_bits(binary, DPI_OPCODE_END_BIT, 13);
+        set_n_bits(&binary, DPI_OPCODE_END_BIT, 13);
         type = single_operand;
     } else if (!(strcmp(command, "tst"))){
         //TST
