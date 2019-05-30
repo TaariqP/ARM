@@ -213,7 +213,7 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
         operand = strtok_r(line_t, ",", &line_t);
         while (operand) {
             (tokenised_line->operands)[line_num][num_of_operands] = operand;
-            printf("%s\n", tokenised_line->operands[line_num][num_of_operands]);
+//            printf("%s\n", tokenised_line->operands[line_num][num_of_operands]);
             num_of_operands++;
             operand = strtok_r(line_t, ",", &line_t);
         }

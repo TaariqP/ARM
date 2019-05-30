@@ -111,9 +111,12 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char* binary_stri
     int reg_num = (int) strtol(rd, (char **) NULL, 10);
     set_n_bits(&binary, 12, reg_num);
 
+    //takes off the # or the r, regardless of register or immediate value
+    operand2 += sizeof(char);
+
     //calculate offset
     if (isImmediate){
-        operand2 += sizeof(char);
+
         int immediate_value = (int) strtol(operand2, (char **) NULL, 10);
         if (immediate_value <= 256) {
             //can be stored directly in last 8 bits without need for rotate
@@ -130,6 +133,12 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char* binary_stri
         }
     } else {
         //is shift register
+        //calculate and set shift
+
+        //set Rm
+        int rm = (int) strtol(operand2, (char**) NULL, 10);
+        set_n_bits(&binary, 0, rm);
+
     }
 
     toBinaryString(binary, binary_string);
