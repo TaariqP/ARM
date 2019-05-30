@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include "defs.h"
+#include "instruction_assembler.h"
 
 
 char *DPI[] = {"add", "sub", "rsb", "and", "eor", "orr", "mov", "tst", "teq", "cmp"};
