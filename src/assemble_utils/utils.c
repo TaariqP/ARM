@@ -18,6 +18,10 @@ char *SPECIAL[] = {"lsl", "andeq"};
 
 void binary_file_writer(char *filename, const char *binary_string) {
     FILE *binary_file = fopen(filename, "wb+");
+    if (binary_file == NULL) {
+        printf("no file");
+        return;
+    }
     if (binary_file) {
         //number of bytes (32 = 4 bytes)
         int no_of_instructions = (int) strlen(binary_string) / 32;
@@ -27,12 +31,13 @@ void binary_file_writer(char *filename, const char *binary_string) {
         char final_instruction[33];
 
         for (int i = 0; i < no_of_instructions; ++i) {
-            memset(final_instruction, '\0', sizeof(final_instruction));
+            final_instruction[32] = '\0';
             strncpy(final_instruction, &binary_string[i * 32], 32);
             bytes[i] = (int) strtol(final_instruction, NULL, 2);
+            printf("%s\n", binary_string);
         }
 
-        fwrite(filename, sizeof(bytes), 1, binary_file);
+        fwrite(&bytes, sizeof(bytes), 1, binary_file);
         fclose(binary_file);
     } else {
         printf("could not write to binary file");
@@ -171,7 +176,7 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
     //Get label (if its just a label) (e.g. wait: this gets wait)
     if (strchr(line, ':') != NULL) {
         tokenised_line->label = strtok_r(line_t, ":", &line_t);
-        printf("label: %s\n", *tokenised_line->label);
+        //printf("label: %s\n", *tokenised_line->label);
         return 0;
     }
 
@@ -200,11 +205,10 @@ void first_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbo
         int operand_num = tokenizer(line, line_num, tokenised_line);
         if (operand_num == 0) {
             printf("label: %s\n", tokenised_line->label);
-            mapping mapping = {
-                    .label = tokenised_line->label,
-                    .memory_address = &line[line_num + 1]
-            };
-            add_to_mappings(symbol_table, mapping);
+//            mapping* mapping = malloc(sizeof(mapping));
+//            mapping->label = tokenised_line->label;
+//            mapping->memory_address = &line[line_num + 1];
+//            add_to_mappings(symbol_table, mapping);
         }
     }
 }
@@ -228,8 +232,8 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
             for (int j = 0; j < num_of_operands; ++j) {
                 int address;
                 if (is_in_symbol_table(tokenised_line->operands[j], symbol_table)) {
-                     address =  get_address(tokenised_line->operands[j], symbol_table);
-                     sprintf(tokenised_line->operands[j], "%d", address);
+                    address = get_address(tokenised_line->operands[j], symbol_table);
+                    sprintf(tokenised_line->operands[j], "%d", address);
                 }
             }
 
@@ -278,15 +282,22 @@ char *two_pass_assembly(char **code, int num_of_lines) {
     tokenised_line->num_of_lines = num_of_lines;
     tokenised_line->label = malloc(sizeof(char) * LINE_LENGTH);
     tokenised_line->opcode = malloc(sizeof(char) * OPCODE_LENGTH);
-    tokenised_line->operands = malloc(sizeof(char *) * LINE_LENGTH / OPERAND_LENGTH);
+    tokenised_line->operands = malloc(128);
 
 //First pass assoociates labels with memory addresses.
     first_pass(code, tokenised_line, symbol_table);
 
 /* Second Pass */
+
     char *binary = second_pass(code, tokenised_line, symbol_table);
 
 // REMEMBER TO free variables
+    free(symbol_table->mappings);
+    free(tokenised_line->label);
+    free(tokenised_line->opcode);
+    free(tokenised_line->operands);
+    free(symbol_table);
+    free(tokenised_line);
     return binary;
 
 }
