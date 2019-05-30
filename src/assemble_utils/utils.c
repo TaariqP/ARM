@@ -173,12 +173,25 @@ void add_to_mappings(symbol_table *symbol_table, mapping mapping) {
 }
 
 int test_tokenizer(tokenised_line* tokenised_line){
-    printf("Tokenised_lines");
+    printf("Tokenised_lines\n");
+    printf("Number of lines: %d", tokenised_line->num_of_lines);
+    printf("Opcodes: ");
+    for (int i = 0; i < tokenised_line->num_of_lines; ++i) {
+        printf("%s", tokenised_line->opcode[i]);
+    }
+
+    printf("operands");
+//    for (int j = 0; j < tokenised_line->num_of_lines; ++j) {
+//        for (int i = 0; i < tokenised_line->; ++i) {
+//
+//        }
+//        printf("%s", tokenised_line->operands[])
+//    }
 }
 
 int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
 
-    char *line_t = malloc(COMMAND_LENGTH);
+    char *line_t = malloc(sizeof(char) * COMMAND_LENGTH);
     strcpy(line_t, line);
 
 
@@ -199,9 +212,8 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
     if (strchr(line_t, ',') != NULL) {
         operand = strtok_r(line_t, ",", &line_t);
         while (operand) {
-            printf("%s\n", operand);
-            //Dereference the char*** to give the first char**
             (tokenised_line->operands)[line_num][num_of_operands] = operand;
+            printf("%s\n", tokenised_line->operands[line_num][num_of_operands]);
             num_of_operands++;
             operand = strtok_r(line_t, ",", &line_t);
         }
@@ -209,7 +221,6 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
         (tokenised_line->operands)[line_num][num_of_operands] = line_t;
         num_of_operands++;
     }
-
 //    for (int i = 0; i < num_of_operands; ++i) {
 //        *(tokenised_line->operands)[i] = trim_whitespace(*(tokenised_line->operands)[i]);
 //    }
@@ -329,9 +340,9 @@ char *two_pass_assembly(char **code, int num_of_lines) {
     char *binary = second_pass(code, tokenised_line, symbol_table);
 
 // REMEMBER TO free variables
-    free(tokenised_line->opcode);
-    free(tokenised_line->operands);
-    free(symbol_table);
-    free(tokenised_line);
+//    free(tokenised_line->opcode);
+//    free(tokenised_line->operands);
+//    free(symbol_table);
+//    free(tokenised_line);
     return binary;
 }

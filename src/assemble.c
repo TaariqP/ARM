@@ -31,10 +31,10 @@ int main(int argc, char **argv) {
         char *binary = two_pass_assembly(code, line);
         //printf("%s\n", binary);
         printf("%s\n", argv[2]);
-        //binary_file_writer(argv[2], binary);
-        for (int i = 0; i <= line; ++i) {
-            free(code[i]);
-        }
+        binary_file_writer(argv[2], binary);
+//        for (int i = 0; i <= line; ++i) {
+//            free(code[i]);
+//        }
 
 
     } else {
@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
     }
 
 
-    free(code);
+    //free(code);
 
     return EXIT_SUCCESS;
 }
