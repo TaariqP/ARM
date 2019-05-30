@@ -1,23 +1,22 @@
 //
-// Created by ss13718 on 27/05/19.
+// Created by taariq on 5/28/19.
 //
 
-#ifndef ARM11_11_INSTRUCTION_ASSEMBLER_H
-#define ARM11_11_INSTRUCTION_ASSEMBLER_H
+#ifndef ARM11_11_INSTRUCTION_ASSEMBLE_H
+#define ARM11_11_INSTRUCTION_ASSEMBLE_H
 
+
+#include <stdint.h>
 #include "defs.h"
 
-// the initial 0 binary that we set depending on the instruction
+void assemble_dpi_to(tokenised_line *, int, char*);
 
-//general purpose code for reduced duplication
+uint32_t assemble_sdt(char *, char **, int);
 
+uint32_t assemble_mul(tokenised_line *, int);
 
-uint32_t assemble_dpi(char*, char **, int, symbol_table *);
+void assemble_branch_to(tokenised_line *, char **, int, symbol_table *, char*);
 
-uint32_t assemble_sdt(char*, char **, int, symbol_table *);
+void assemble_special_to(tokenised_line *, int, char*);
 
-uint32_t assemble_mul(char*, char **, int, symbol_table *);
-
-uint32_t assemble_branch(char*, char **, int, symbol_table *);
-
-#endif //ARM11_11_INSTRUCTION_ASSEMBLER_H
+#endif //ARM11_11_INSTRUCTION_ASSEMBLE_H

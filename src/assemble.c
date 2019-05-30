@@ -4,11 +4,13 @@
 
 #include "assemble_utils/utils.h"
 #include "assemble_utils/defs.h"
-/*
+#include "assemble_utils/instruction_assembler.h"
+
+
 int main(int argc, char **argv) {
 
-    if (argc != 2) {
-        printf("Provide an argument!");
+    if (argc != 3) {
+        printf("Provide 2 argument!");
         return EXIT_FAILURE;
     }
 
@@ -28,14 +30,14 @@ int main(int argc, char **argv) {
             code[line] = (char *) malloc(sizeof(char) * LINE_LENGTH);
         }
         fclose(file);
-        //char *binary = two_pass_assembly(code, line);
-        //binary_file_writer(binary);
+        char *binary = two_pass_assembly(code, line);
+        //printf("%s\n", binary);
+                printf("%s\n", argv[2]);
+        binary_file_writer(argv[2], binary);
     } else {
         printf("Could not open file");
     }
 
-
-
     return EXIT_SUCCESS;
 }
-*/
+
