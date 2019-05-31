@@ -21,10 +21,8 @@ char condition[3];
 
 //CHANGE ALL ASSEMBLE FUNCTIONS TO TAKE TOKENISED LINE rather than the whole string
 //ALSO ADD assemble special instructions
-char *assemble_dpi(tokenised_line *tokenised_line, int line) {
-
+void assemble_dpi_to(tokenised_line *tokenised_line, int line, char* binary_string) {
     uint32_t binary = 0;
-    char* binary_string;
 
     //set cond to 1110
     set_n_bits(&binary, COND_END_BIT, 14);
@@ -113,9 +111,12 @@ char *assemble_dpi(tokenised_line *tokenised_line, int line) {
     int reg_num = (int) strtol(rd, (char **) NULL, 10);
     set_n_bits(&binary, 12, reg_num);
 
+    //takes off the # or the r, regardless of register or immediate value
+    operand2 += sizeof(char);
+
     //calculate offset
     if (isImmediate){
-        operand2 += sizeof(char);
+
         int immediate_value = (int) strtol(operand2, (char **) NULL, 10);
         if (immediate_value <= 256) {
             //can be stored directly in last 8 bits without need for rotate
@@ -132,10 +133,15 @@ char *assemble_dpi(tokenised_line *tokenised_line, int line) {
         }
     } else {
         //is shift register
+        //calculate and set shift
+
+        //set Rm
+        int rm = (int) strtol(operand2, (char**) NULL, 10);
+        set_n_bits(&binary, 0, rm);
+
     }
 
     toBinaryString(binary, binary_string);
-    return binary_string;
 }
 
 

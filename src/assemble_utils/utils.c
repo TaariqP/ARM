@@ -272,19 +272,21 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
             //Get operands that are labels and use symbol table to get address
             for (int j = 0; j < num_of_operands; ++j) {
                 int address;
-                if (is_in_symbol_table(tokenised_line->operands[j], symbol_table)) {
-                    address = get_address(tokenised_line->operands[j], symbol_table);
-                    sprintf(tokenised_line->operands[j], "%d", address);
-                }
+//                if (is_in_symbol_table(tokenised_line->operands[j], symbol_table)) {
+//                    address = get_address(tokenised_line->operands[j], symbol_table);
+//                    sprintf(tokenised_line->operands[j], "%d", address);
+//                }
             }
 
             //Calls to Instruction_assemble
 
             for (int k = 0; k < NUMBER_OF_DPI; ++k) {
                 if (strcmp(*tokenised_line->opcode, DPI[k]) == 0) {
-                    char *binaryToAdd = assemble_dpi(tokenised_line, line_num);
+                    char binaryToAdd[33];
+                    assemble_dpi_to(tokenised_line, line_num, binaryToAdd);
                     strcat(binary, binaryToAdd);
                     printf("%s\n", binaryToAdd);
+                    break;
                     break;
                 }
             }
@@ -343,13 +345,13 @@ char *two_pass_assembly(char **code, int num_of_lines) {
     //char* = string
     // MAX_operands = number of lines * (LINELENGTH / OPERAND_LENGTH)
 
-    tokenised_line->operands = (char ***) malloc(sizeof(char **) * LINES);
-    for (size_t i = 0; i < LINES; ++i) {
+    tokenised_line->operands = (char ***) malloc(sizeof(char **) * num_of_lines);
+    for (int i = 0; i < num_of_lines; ++i) {
         // allocate each row (the row cells)
-        tokenised_line->operands[i] = (char **) malloc(LINE_LENGTH / OPERAND_LENGTH * sizeof(char *));
-        for (size_t j = 0; j != LINE_LENGTH / OPERAND_LENGTH; ++j) {
+        tokenised_line->operands[i] = (char **) malloc(sizeof(char *) * MAX_OPERANDS);
+        for (int j = 0; j < MAX_OPERANDS; ++j) {
             // initialize the row cell by allocating the string
-            tokenised_line->operands[i][j]; // (char *) malloc(sizeof(char) * OPERAND_LENGTH);/* allocate string */
+            tokenised_line->operands[i][j] = (char *) malloc(sizeof(char) * (OPERAND_LENGTH + 1));/* allocate string */
         }
     }
 
@@ -367,8 +369,8 @@ char *two_pass_assembly(char **code, int num_of_lines) {
         free(tokenised_line->opcode[l]);
     }
 
-    for (size_t i = 0; i < LINES; ++i) {
-        for (size_t j = 0; j < LINE_LENGTH / OPERAND_LENGTH; ++j) {
+    for (int i = 0; i < num_of_lines; ++i) {
+        for (int j = 0; j < MAX_OPERANDS; ++j) {
             free(tokenised_line->operands[i][j]);  // free the string
         }
         free(tokenised_line->operands[i]);         // free the row
