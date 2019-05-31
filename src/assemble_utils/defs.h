@@ -10,7 +10,7 @@
 
 #define LINES 50
 #define LINE_LENGTH 50
-#define OPCODE_LENGTH 3
+#define OPCODE_LENGTH 5
 #define OPERAND_LENGTH 20
 #define INSTRUCTION_SIZE 32
 #define NUMBER_OF_DPI 10

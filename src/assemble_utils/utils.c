@@ -315,11 +315,11 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
 
 char *two_pass_assembly(char **code, int num_of_lines) {
 
-    symbol_table *symbol_table = malloc(sizeof(symbol_table));
+    symbol_table *symbol_table = malloc(sizeof(*symbol_table));
     symbol_table->num_elements = 0;
 //    symbol_table->mappings;
 
-    tokenised_line *tokenised_line = malloc(sizeof(tokenised_line));
+    tokenised_line *tokenised_line = malloc(sizeof(*tokenised_line) * num_of_lines);
     tokenised_line->num_of_lines = num_of_lines;
 //    tokenised_line->label;
 
@@ -332,10 +332,10 @@ char *two_pass_assembly(char **code, int num_of_lines) {
     //char** opcode should be (number of lines * opcode length)
 
             //TODO: VALGRIND ERROR
-    tokenised_line->opcode = (char **) malloc(sizeof(char *) * 10);
-    for (int k = 0; k < LINES; ++k) {
+    tokenised_line->opcode = (char **) malloc(sizeof(char *) * OPCODE_LENGTH * (num_of_lines));
+    for (int k = 0; k < num_of_lines; ++k) {
         //TODO: VALGRIND ERROR
-        tokenised_line->opcode[k] = (char *) malloc(sizeof(char) * LINE_LENGTH);
+        tokenised_line->opcode[k] = (char *) malloc(sizeof(char) * (OPCODE_LENGTH + 1));
     }
 
     //Char*** = array of array of strings
@@ -363,12 +363,12 @@ char *two_pass_assembly(char **code, int num_of_lines) {
 // REMEMBER TO free
 
 
-    for (int l = 0; l < LINES; ++l) {
+    for (int l = 0; l < num_of_lines; ++l) {
         free(tokenised_line->opcode[l]);
     }
 
-    for (size_t i = 0; i != LINES; ++i) {
-        for (size_t j = 0; j != LINE_LENGTH / OPERAND_LENGTH; ++j) {
+    for (size_t i = 0; i < LINES; ++i) {
+        for (size_t j = 0; j < LINE_LENGTH / OPERAND_LENGTH; ++j) {
             free(tokenised_line->operands[i][j]);  // free the string
         }
         free(tokenised_line->operands[i]);         // free the row
