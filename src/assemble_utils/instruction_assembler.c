@@ -114,18 +114,35 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char* binary_stri
     //takes off the # or the r, regardless of register or immediate value
     operand2 += sizeof(char);
 
+    //Base can be either BASE 10 OR BASE 16
+
+            int base = 0;
+            if (strstr(operand2, "0x")){
+                //Base 16
+                base = 16;
+            }
+            else{
+                //base 10
+                base  = 10;
+            }
+
     //calculate offset
     if (isImmediate){
-        int immediate_value = (int) strtol(operand2, (char **) NULL, 10);
+        int immediate_value = (int) strtol(operand2, NULL, base);
         if (immediate_value <= 256) {
             //can be stored directly in last 8 bits without need for rotate
             set_n_bits(&binary, 0, immediate_value);
         } else {
             //rotate left till is 8 bits, and rotates are even, then store appropriately
             int num_of_rotates = 0;
+            char toPrint[33];
+            toBinaryString((uint32_t) immediate_value, toPrint);
+            printf("before rotate: %s\n", toPrint);
             while (!(is8bit(immediate_value) & (num_of_rotates % 2 == 0))){
-                immediate_value = rol(immediate_value);
+                immediate_value = rol((uint32_t) immediate_value);
                 num_of_rotates++;
+                toBinaryString((uint32_t)immediate_value, toPrint);
+                printf("after rotate number %d: %s\n", num_of_rotates, toPrint);
             }
             set_n_bits(&binary, 8, (num_of_rotates/2));
             set_n_bits(&binary, 0, immediate_value);

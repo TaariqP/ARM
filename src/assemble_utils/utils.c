@@ -79,7 +79,7 @@ int rol(uint32_t val) {
     if (msb) {
         temp |= msb;
     } else {
-        temp &= msb;
+        temp &= 0xFFFFFFFE;
     }
     return temp;
 }
@@ -202,15 +202,22 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
 
 
     //Get label (if its just a label) (e.g. wait: this gets wait)
-    if (strchr(line, ':') != NULL) {
+    if (strchr(line_t, ':') != NULL) {
         //tokenised_line->label = strtok_r(line_t, ":", &line_t);
         //printf("label: %s\n", *tokenised_line->label);
         return 0;
     }
 
     //Get Opcode (e.g mov r1, r2 - this gets mov"
-    (tokenised_line->opcode[line_num]) = strtok_r(line_t, " ", &line_t);
+    char *opcode;
+    //opcode = strtok(line_t, " ");
+    opcode = strtok_r(line_t, " ", &line_t);
+    (tokenised_line->opcode[line_num]) = opcode;
     printf("opcode: %s\n", tokenised_line->opcode[line_num]);
+
+    //NEW TOKENISER
+
+
 
     //Split into operands (e.g. mov r1,r2 - this gets r1 etc
     int num_of_operands = 0;
@@ -227,11 +234,12 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
         (tokenised_line->operands)[line_num][num_of_operands] = line_t;
         num_of_operands++;
     }
-//    for (int i = 0; i < num_of_operands; ++i) {
-//        (tokenised_line->operands)[line_num][i] = trim_whitespace((tokenised_line->operands)[line_num][i]);
-//    }
+    for (int i = 0; i < num_of_operands; ++i) {
+        (tokenised_line->operands)[line_num][i] = trim_whitespace((tokenised_line->operands)[line_num][i]);
+        printf("%s\n", tokenised_line->operands[line_num][i]);
+    }
 
-    free(line_t);
+    //free(line_t);
     return num_of_operands;
 
 }
@@ -281,12 +289,11 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
             //Calls to Instruction_assemble
 
             for (int k = 0; k < NUMBER_OF_DPI; ++k) {
-                if (strcmp(*tokenised_line->opcode, DPI[k]) == 0) {
+                if (strcmp(tokenised_line->opcode[line_num], DPI[k]) == 0) {
                     char binaryToAdd[33];
                     assemble_dpi_to(tokenised_line, line_num, binaryToAdd);
                     strcat(binary, binaryToAdd);
                     printf("%s\n", binaryToAdd);
-                    break;
                     break;
                 }
             }
@@ -333,7 +340,7 @@ char *two_pass_assembly(char **code, int num_of_lines) {
     //OPCODE_LENGTH = 3;
     //char** opcode should be (number of lines * opcode length)
 
-            //TODO: VALGRIND ERROR
+    //TODO: VALGRIND ERROR
     tokenised_line->opcode = (char **) malloc(sizeof(char *) * OPCODE_LENGTH * (num_of_lines));
     for (int k = 0; k < num_of_lines; ++k) {
         //TODO: VALGRIND ERROR
@@ -365,18 +372,18 @@ char *two_pass_assembly(char **code, int num_of_lines) {
 // REMEMBER TO free
 
 
+//    for (int i = 0; i < num_of_lines; ++i) {
+//        for (int j = 0; j < MAX_OPERANDS; ++j) {
+//            //This free is colliding with the malloc in tokeniser
+//            free(tokenised_line->operands[i][j]);  // free the string
+//        }
+//        free(tokenised_line->operands[i]);         // free the row
+//    }
+
     for (int l = 0; l < num_of_lines; ++l) {
         free(tokenised_line->opcode[l]);
     }
     free(tokenised_line->opcode);
-
-    for (int i = 0; i < num_of_lines; ++i) {
-        for (int j = 0; j < MAX_OPERANDS; ++j) {
-            //This free is colliding with the malloc in tokeniser
-            free(tokenised_line->operands[i][j]);  // free the string
-        }
-        free(tokenised_line->operands[i]);         // free the row
-    }
 
     free(tokenised_line->operands);
     free(tokenised_line);
