@@ -234,9 +234,10 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
         (tokenised_line->operands)[line_num][num_of_operands] = line_t;
         num_of_operands++;
     }
-//    for (int i = 0; i < num_of_operands; ++i) {
-//        (tokenised_line->operands)[line_num][i] = trim_whitespace((tokenised_line->operands)[line_num][i]);
-//    }
+    for (int i = 0; i < num_of_operands; ++i) {
+        (tokenised_line->operands)[line_num][i] = trim_whitespace((tokenised_line->operands)[line_num][i]);
+        printf("%s\n", tokenised_line->operands[line_num][i]);
+    }
 
     //free(line_t);
     return num_of_operands;
