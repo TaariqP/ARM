@@ -197,7 +197,7 @@ int test_tokenizer(tokenised_line *tokenised_line) {
 
 int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
 
-    char *line_t = (char *) malloc(sizeof(char) * COMMAND_LENGTH);
+    char *line_t = (char *) malloc(sizeof(char) * LINE_LENGTH);
     strcpy(line_t, line);
 
 
@@ -228,10 +228,10 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
         num_of_operands++;
     }
 //    for (int i = 0; i < num_of_operands; ++i) {
-//        *(tokenised_line->operands)[i] = trim_whitespace(*(tokenised_line->operands)[i]);
+//        (tokenised_line->operands)[line_num][i] = trim_whitespace((tokenised_line->operands)[line_num][i]);
 //    }
 
-    //free(line_t);
+    free(line_t);
     return num_of_operands;
 
 }
@@ -372,6 +372,7 @@ char *two_pass_assembly(char **code, int num_of_lines) {
 
     for (int i = 0; i < num_of_lines; ++i) {
         for (int j = 0; j < MAX_OPERANDS; ++j) {
+            //This free is colliding with the malloc in tokeniser
             free(tokenised_line->operands[i][j]);  // free the string
         }
         free(tokenised_line->operands[i]);         // free the row
