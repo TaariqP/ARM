@@ -136,8 +136,6 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
             while (!(is8bit(immediate_value) & (num_of_rotates % 2 == 0))){
                 immediate_value = rol((uint32_t) immediate_value);
                 num_of_rotates++;
-                toBinaryString((uint32_t)immediate_value, toPrint);
-                printf("after rotate number %d: %s\n", num_of_rotates, toPrint);
             }
 
 

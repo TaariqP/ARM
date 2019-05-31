@@ -18,7 +18,6 @@ char *BRANCH[] = {"beq", "bne", "bge", "blt", "bgt", "ble", "b"};
 char *SPECIAL[] = {"lsl", "andeq"};
 
 
-
 uint8_t mask_1_bit_assemble(int value, int bit) {
     return (value >> bit) & 0x1;
 }
@@ -80,7 +79,6 @@ char *trim_whitespace(char *str) {
         return str;
     return str;
 }
-
 
 
 //rotate left once
@@ -149,7 +147,7 @@ void set_n_bits(uint32_t *binary_num, int end_bit, int value) {
     *binary_num |= (value << end_bit);
 }
 
-void set_operand(uint32_t  *binary, int line, int arg_num, int end_bit, tokenised_line *tokenised_line) {
+void set_operand(uint32_t *binary, int line, int arg_num, int end_bit, tokenised_line *tokenised_line) {
     char *reg = tokenised_line->operands[line][arg_num];
     reg += sizeof(char);
     int reg_num = (int) strtol(reg, (char **) NULL, 10);
@@ -169,14 +167,15 @@ int is_in_symbol_table(char *label, symbol_table *symbol_table) {
 //gets the address of a label
 int get_address(char *label, symbol_table *symbol_table) {
     //compare given label to the label of each mapping till found.
-    int mapping_number = 0;
-    for (; mapping_number < symbol_table->num_elements; mapping_number++) {
-        if (!(strcmp(symbol_table->mappings[mapping_number].label, label))) {
-            //label found
-            break;
+    for (int i = 0; i < symbol_table->num_elements; ++i) {
+        if (label == NULL){
+            continue;
+        }
+        if (strcmp(symbol_table->mappings[i].label, label) == 0) {
+            return symbol_table->mappings[i].memory_address;
         }
     }
-    return symbol_table->mappings[mapping_number].memory_address;
+    return -1;
 }
 
 void add_to_mappings(symbol_table *symbol_table, mapping mapping) {
@@ -185,6 +184,7 @@ void add_to_mappings(symbol_table *symbol_table, mapping mapping) {
     symbol_table->num_elements = symbol_table->num_elements + 1;
     //Add mapping to symbol table
     symbol_table->mappings[num_elements] = mapping;
+    printf("mapping added, label: %s to address: %d\n", mapping.label, mapping.memory_address);
 }
 
 int test_tokenizer(tokenised_line *tokenised_line) {
@@ -212,7 +212,7 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
 
     //Get label (if its just a label) (e.g. wait: this gets wait)
     if (strchr(line_t, ':') != NULL) {
-        //tokenised_line->label = strtok_r(line_t, ":", &line_t);
+        tokenised_line->label[line_num] = strtok_r(line_t, ":", &line_t);
         //printf("label: %s\n", *tokenised_line->label);
         return 0;
     }
@@ -261,11 +261,13 @@ void first_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbo
         line = code[line_num];
         int operand_num = tokenizer(line, line_num, tokenised_line);
         if (operand_num == 0) {
-//            printf("label: %s\n", tokenised_line->label);
-//            mapping* mapping = malloc(sizeof(mapping));
-//            mapping->label = tokenised_line->label;
-//            mapping->memory_address = &line[line_num + 1];
-//            add_to_mappings(symbol_table, mapping);
+            //printf("label: %s\n", tokenised_line->label[line_num]);
+            mapping *mapping = malloc(sizeof(mapping));
+            mapping->label = tokenised_line->label[line_num];
+            mapping->memory_address = 4 * line_num;
+            add_to_mappings(symbol_table, *mapping);
+            printf("label: %s\n", tokenised_line->label[line_num]);
+
         }
     }
 }
@@ -289,10 +291,13 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
             //Get operands that are labels and use symbol table to get address
             for (int j = 0; j < num_of_operands; ++j) {
                 int address;
-//                if (is_in_symbol_table(tokenised_line->operands[j], symbol_table)) {
-//                    address = get_address(tokenised_line->operands[j], symbol_table);
-//                    sprintf(tokenised_line->operands[j], "%d", address);
-//                }
+                if (is_in_symbol_table(tokenised_line->operands[line_num][j], symbol_table)) {
+                    if (tokenised_line->label[line_num] != NULL) {
+                        address = get_address(tokenised_line->label[line_num], symbol_table);
+                        printf("Assigning operand %s to address %d\n", tokenised_line->operands[line_num][j], address);
+                        sprintf(tokenised_line->operands[line_num][j], "%d", address);
+                    }
+                }
             }
 
             //Calls to Instruction_assemble
@@ -308,7 +313,7 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
             }
 
             for (int k = 0; k < NUMBER_OF_SDT; ++k) {
-                if (strcmp(*tokenised_line->opcode, SDT[k]) == 0) {
+                if (strcmp(tokenised_line->opcode[line_num], SDT[k]) == 0) {
                     //strcat(binary, assemble_sdt(tokenised_line, line_num));
                 }
             }
@@ -322,12 +327,17 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
                 }
             }
             for (int k = 0; k < NUMBER_OF_BRANCH; ++k) {
-                if (strcmp(*tokenised_line->opcode, BRANCH[k]) == 0) {
+                if (strcmp(tokenised_line->opcode[line_num], BRANCH[k]) == 0) {
+                    char binaryToAdd[33];
+                    assemble_branch_to(tokenised_line, code, line_num, symbol_table, binaryToAdd);
+                    strcat(binary, binaryToAdd);
+                    printf("%s\n", binaryToAdd);
+                    break;
                     //strcat(binary, assemble_branch(tokenised_line, line_num, symbol_table));
                 }
             }
             for (int k = 0; k < NUMBER_OF_SPECIAL; ++k) {
-                if (strcmp(*tokenised_line->opcode, SPECIAL[k]) == 0) {
+                if (strcmp(tokenised_line->opcode[line_num], SPECIAL[k]) == 0) {
                 }
             }
         }
@@ -339,11 +349,11 @@ char *two_pass_assembly(char **code, int num_of_lines) {
 
     symbol_table *symbol_table = malloc(sizeof(*symbol_table));
     symbol_table->num_elements = 0;
-    symbol_table->mappings = (mapping*) malloc (sizeof(mapping) * num_of_lines);
+    symbol_table->mappings = (mapping *) malloc(sizeof(mapping) * num_of_lines);
 
     tokenised_line *tokenised_line = malloc(sizeof(*tokenised_line) * num_of_lines);
     tokenised_line->num_of_lines = num_of_lines;
-    tokenised_line->label = (char **) malloc (sizeof(char) * LINE_LENGTH);
+    tokenised_line->label = (char **) malloc(sizeof(char) * LINE_LENGTH);
 
 
     //char** array of strings
