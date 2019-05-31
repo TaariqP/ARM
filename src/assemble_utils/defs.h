@@ -45,7 +45,7 @@ typedef struct {
     //Array of strings
     //? to keep line_num??
     int num_of_lines;
-    char* label;
+    char** label;
     char** opcode;
     //Array of array of strings
     char*** operands;

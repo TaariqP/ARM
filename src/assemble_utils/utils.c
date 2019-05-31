@@ -79,7 +79,7 @@ int rol(uint32_t val) {
     if (msb) {
         temp |= msb;
     } else {
-        temp &= msb;
+        temp &= 0XFFFFFFFE;
     }
     return temp;
 }
@@ -145,6 +145,15 @@ void toBinaryString(uint32_t binary, char *result) {
     }
     result[32] = '\0';
 }
+
+
+void set_operand(uint32_t  binary, int line, int arg_num, int end_bit, tokenised_line *tokenised_line) {
+    char *reg = tokenised_line->operands[line][arg_num];
+    reg += sizeof(char);
+    int reg_num = (int) strtol(reg, (char **) NULL, 10);
+    set_n_bits(&binary, end_bit, reg_num);
+}
+
 
 //Check if label exists in symbol table
 
@@ -326,11 +335,11 @@ char *two_pass_assembly(char **code, int num_of_lines) {
 
     symbol_table *symbol_table = malloc(sizeof(*symbol_table));
     symbol_table->num_elements = 0;
-//    symbol_table->mappings;
+    symbol_table->mappings = (mapping*) malloc (sizeof(mapping) * num_of_lines);
 
     tokenised_line *tokenised_line = malloc(sizeof(*tokenised_line) * num_of_lines);
     tokenised_line->num_of_lines = num_of_lines;
-//    tokenised_line->label;
+    tokenised_line->label = (char **) malloc (sizeof(char) * LINE_LENGTH);
 
 
     //char** array of strings
@@ -384,9 +393,10 @@ char *two_pass_assembly(char **code, int num_of_lines) {
         free(tokenised_line->opcode[l]);
     }
     free(tokenised_line->opcode);
-
+    free(tokenised_line->label);
     free(tokenised_line->operands);
     free(tokenised_line);
+    free(symbol_table->mappings);
     free(symbol_table);
 
     return binary;

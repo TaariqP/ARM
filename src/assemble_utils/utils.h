@@ -33,6 +33,8 @@ void set_n_bits(uint32_t *, int, int);
 
 void toBinaryString(uint32_t binary, char *result);
 
+void set_operand(uint32_t  binary, int line, int arg_num, int end_bit, tokenised_line *tokenised_line);
+
 int is_in_symbol_table(char *label, symbol_table *symbol_table);
 
 uintptr_t get_address(char *label, symbol_table *symbol_table);
