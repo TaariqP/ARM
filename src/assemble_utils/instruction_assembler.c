@@ -82,7 +82,7 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
     //set I (can be done after because it is a single bit)
     int argument;
     //decide which operand to look at based on type (mov looks at op 2, others at op 3)
-    if (type == single_operand) {
+    if (type == single_operand | type == set_CPSR) {
         argument = 1;
     } else {
         argument = 2;
@@ -94,8 +94,10 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
         set_n_bits(&binary, 25, 1);
     }
 
+
+
     //set Rn (except for mov)
-    if (type != single_operand) {
+    if (type != single_operand & type != set_CPSR) {
         char *rn = tokenised_line->operands[line][1];
         //move pointer to only consider reg number (remove r from rxx)
         rn += sizeof(char);
@@ -103,15 +105,29 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
         set_n_bits(&binary, 16, reg_num);
     }
 
+    if (type == set_CPSR){
+        char *rn = tokenised_line->operands[line][0];
+        rn += sizeof(char);
+        int reg_num = (int) strtol(rn, (char **) NULL, 10);
+        set_n_bits(&binary, 16, reg_num);
+    }
+
     //set Rd
-    char *rd = tokenised_line->operands[line][0];
-    rd += sizeof(char);
-    int reg_num = (int) strtol(rd, (char **) NULL, 10);
-    set_n_bits(&binary, 12, reg_num);
+    if (type != set_CPSR) {
+        char *rd = tokenised_line->operands[line][0];
+        rd += sizeof(char);
+        int reg_num = (int) strtol(rd, (char **) NULL, 10);
+        set_n_bits(&binary, 12, reg_num);
+    }
 
     //takes off the # or the r, regardless of register or immediate value
     operand2 += sizeof(char);
 
+
+    if (type == set_CPSR){
+        int op2 = (int) strtol(operand2, (char **) NULL, 10);
+        set_n_bits(&binary, 0, op2);
+    }
     //Base can be either BASE 10 OR BASE 16
 
     int base = 0;
@@ -124,7 +140,7 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
     }
 
     //calculate offset
-    if (isImmediate){
+    if (isImmediate) {
         int immediate_value = (int) strtol(operand2, NULL, base);
         if (immediate_value <= 256) {
             //can be stored directly in last 8 bits without need for rotate
@@ -133,7 +149,7 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
             //rotate left till is 8 bits, and rotates are even, then store appropriately
             int num_of_rotates = 0;
 
-            while (!(is8bit(immediate_value) & (num_of_rotates % 2 == 0))){
+            while (!(is8bit(immediate_value) & (num_of_rotates % 2 == 0))) {
                 immediate_value = rol((uint32_t) immediate_value);
                 num_of_rotates++;
             }
@@ -186,20 +202,21 @@ void assemble_mul_to(tokenised_line *tokenised_line, int line, char *binary_stri
         set_operand(&binary, line, 3, 12, tokenised_line);
     }
     //TODO: set Rs
-    set_operand(&binary,line,2,8,tokenised_line);
+    set_operand(&binary, line, 2, 8, tokenised_line);
 
     //set bits 7-4 to be 1001
     set_n_bits(&binary, 4, 9);
 
     //TODO: set Rm
-    set_operand(&binary,line,1,0, tokenised_line);
+    set_operand(&binary, line, 1, 0, tokenised_line);
 
     toBinaryString(binary, binary_string);
 
 }
 
 
-void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, symbol_table* symbol_table, char* binary_string) {
+void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, symbol_table *symbol_table,
+                        char *binary_string) {
     //condition is the last two letter of the command
     uint32_t binary = 0;
     char *condition = tokenised_line->opcode[line] + sizeof(char);
@@ -240,12 +257,12 @@ void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, s
     //set bits 27-24 to be 1010
     set_n_bits(&binary, 24, 10);
 
-    uintptr_t current_address = &code[line];
-    uintptr_t pc = current_address + 8;
+    uint32_t current_address = &code[line];
+    uint32_t pc = current_address + 8;
 
     //calculate offset
     char *label = tokenised_line->label[line];
-    uintptr_t target_address = get_address(label, symbol_table);
+    uint32_t target_address = get_address(label, symbol_table);
     uint32_t offset = target_address - pc;
     offset = offset >> 2;
 
@@ -259,13 +276,13 @@ void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, s
     toBinaryString(binary, binary_string);
 }
 
-void assemble_special_to(tokenised_line *tokenised_line, int line, char* binary_string){
+void assemble_special_to(tokenised_line *tokenised_line, int line, char *binary_string) {
     uint32_t binary = 0;
     char *opcode = tokenised_line->opcode[line];
 
     if (!(strcmp("andeq", opcode))) {
         //ALL 0 HALT INSTRUCTION
-        toBinaryString(binary,binary_string);
+        toBinaryString(binary, binary_string);
     }
 
 

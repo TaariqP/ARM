@@ -204,6 +204,16 @@ int test_tokenizer(tokenised_line *tokenised_line) {
 //    }
 }
 
+
+int is_empty(const char *string) {
+    while (*string != '\0') {
+        if (!isspace(*string))
+            return 0;
+        string++;
+    }
+    return 1;
+}
+
 int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
 
     char *line_t = (char *) malloc(sizeof(char) * LINE_LENGTH);

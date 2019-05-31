@@ -3,7 +3,7 @@
 #include <memory.h>
 
 #include "assemble_utils/utils.h"
-#include "assemble_utils/defs.h"
+
 
 
 int main(int argc, char **argv) {
@@ -12,7 +12,6 @@ int main(int argc, char **argv) {
         printf("Provide 2 argument!");
         return EXIT_FAILURE;
     }
-
 
     FILE *file;
     char **code = (char **) malloc(sizeof(char *) * LINES);
@@ -24,11 +23,13 @@ int main(int argc, char **argv) {
         code[0] = (char *) malloc(sizeof(char) * LINE_LENGTH);
         while (fgets(code[line], LINE_LENGTH, file) != NULL) {
             //Add null terminator at the end of every line
-            code[line][strlen(code[line]) - 1] = '\0';
-            printf("Code line %d: %s\n", line, code[line]);
-            line++;
-            //TODO: VALGRIND ERROR
-            code[line] = (char *) malloc(sizeof(char) * LINE_LENGTH);
+            if (!is_empty(code[line])) {
+                code[line][strlen(code[line]) - 1] = '\0';
+                printf("Code line %d: %s\n", line, code[line]);
+                line++;
+                //TODO: VALGRIND ERROR
+                code[line] = (char *) malloc(sizeof(char) * LINE_LENGTH);
+            }
         }
         fclose(file);
         char *binary = two_pass_assembly(code, line);

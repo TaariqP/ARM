@@ -9,7 +9,7 @@
 #include <stdint-gcc.h>
 
 #define LINES 50
-#define LINE_LENGTH 50
+#define LINE_LENGTH 100
 #define OPCODE_LENGTH 5
 #define OPERAND_LENGTH 20
 #define MAX_OPERANDS 5
