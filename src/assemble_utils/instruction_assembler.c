@@ -168,12 +168,10 @@ uint32_t assemble_sdt(char *string, char **code, int line){
     return binary;
 }
 
-uint32_t assemble_mul(tokenised_line *tokenised_line, int line) {
+void assemble_mul_to(tokenised_line *tokenised_line, int line, char *binary_string) {
     //condition is the last 2 letters of the opcode
     char *condition = tokenised_line->opcode[line] + sizeof(char);
-
     uint32_t binary = 0;
-
     //set cond to 1110
     set_n_bits(&binary, COND_END_BIT, 14);
 
@@ -184,19 +182,25 @@ uint32_t assemble_mul(tokenised_line *tokenised_line, int line) {
         set_n_bits(&binary, 21, 1);
     }
 
+    // S bit already set to 0
+
     //TODO: set Rd
+    set_operand(&binary, line, 0, 16, tokenised_line);
 
     //TODO: set Rn
-
+    if (strcmp(condition, "la") == 0) {
+        set_operand(&binary, line, 3, 12, tokenised_line);
+    }
     //TODO: set Rs
+    set_operand(&binary,line,2,8,tokenised_line);
 
     //set bits 7-4 to be 1001
     set_n_bits(&binary, 4, 9);
 
     //TODO: set Rm
+    set_operand(&binary,line,1,0, tokenised_line);
 
-
-    return binary;
+    toBinaryString(binary, binary_string);
 
 }
 

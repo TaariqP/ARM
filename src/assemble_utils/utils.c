@@ -17,6 +17,20 @@ char *SDT[] = {"ldr", "str"};
 char *BRANCH[] = {"beq", "bne", "bge", "blt", "bgt", "ble", "b"};
 char *SPECIAL[] = {"lsl", "andeq"};
 
+
+
+uint8_t mask_1_bit_assemble(int value, int bit) {
+    return (value >> bit) & 0x1;
+}
+
+//converts a 32bit integer to a binary string
+void toBinaryString(uint32_t binary, char *result) {
+    for (int i = 0; i < 32; i++) {
+        result[i] = (char) ((mask_1_bit_assemble(binary, 31 - i) + '0'));
+    }
+    result[32] = '\0';
+}
+
 void binary_file_writer(char *filename, const char *binary_string) {
     FILE *binary_file = fopen(filename, "wb+");
     if (binary_file) {
@@ -68,9 +82,6 @@ char *trim_whitespace(char *str) {
 }
 
 
-uint8_t mask_1_bit_assemble(int value, int bit) {
-    return (value >> bit) & 0x1;
-}
 
 //rotate left once
 int rol(uint32_t val) {
@@ -138,14 +149,12 @@ void set_n_bits(uint32_t *binary_num, int end_bit, int value) {
     *binary_num |= (value << end_bit);
 }
 
-//converts a 32bit integer to a binary string
-void toBinaryString(uint32_t binary, char *result) {
-    for (int i = 0; i < 32; i++) {
-        result[i] = (char) ((mask_1_bit_assemble(binary, 31 - i) + '0'));
-    }
-    result[32] = '\0';
+void set_operand(uint32_t  *binary, int line, int arg_num, int end_bit, tokenised_line *tokenised_line) {
+    char *reg = tokenised_line->operands[line][arg_num];
+    reg += sizeof(char);
+    int reg_num = (int) strtol(reg, (char **) NULL, 10);
+    set_n_bits(binary, end_bit, reg_num);
 }
-
 //Check if label exists in symbol table
 
 int is_in_symbol_table(char *label, symbol_table *symbol_table) {
@@ -304,8 +313,12 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
                 }
             }
             for (int k = 0; k < NUMBER_OF_MUL; ++k) {
-                if (strcmp(*tokenised_line->opcode, MUL[k]) == 0) {
-                    //strcat(binary, assemble_mul(tokenised_line, line_num, *symbol_table));
+                if (strcmp(tokenised_line->opcode[line_num], MUL[k]) == 0) {
+                    char binaryToAdd[33];
+                    assemble_mul_to(tokenised_line, line_num, binaryToAdd);
+                    strcat(binary, binaryToAdd);
+                    printf("%s\n", binaryToAdd);
+                    break;
                 }
             }
             for (int k = 0; k < NUMBER_OF_BRANCH; ++k) {
