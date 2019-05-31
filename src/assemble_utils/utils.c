@@ -41,7 +41,7 @@ void binary_file_writer(char *filename, const char *binary_string) {
 
 
         fwrite(&bytes, sizeof(bytes), 1, binary_file);
-        //fclose(binary_file);
+        fclose(binary_file);
     } else {
         printf("could not write to binary file");
     }
@@ -197,7 +197,7 @@ int test_tokenizer(tokenised_line *tokenised_line) {
 
 int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
 
-    char *line_t = malloc(sizeof(char) * COMMAND_LENGTH);
+    char *line_t = (char *) malloc(sizeof(char) * COMMAND_LENGTH);
     strcpy(line_t, line);
 
 
@@ -368,6 +368,7 @@ char *two_pass_assembly(char **code, int num_of_lines) {
     for (int l = 0; l < num_of_lines; ++l) {
         free(tokenised_line->opcode[l]);
     }
+    free(tokenised_line->opcode);
 
     for (int i = 0; i < num_of_lines; ++i) {
         for (int j = 0; j < MAX_OPERANDS; ++j) {
@@ -376,7 +377,6 @@ char *two_pass_assembly(char **code, int num_of_lines) {
         free(tokenised_line->operands[i]);         // free the row
     }
 
-    free(tokenised_line->opcode);
     free(tokenised_line->operands);
     free(tokenised_line);
     free(symbol_table);
