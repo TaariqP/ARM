@@ -9,9 +9,10 @@
 #include <stdint-gcc.h>
 
 #define LINES 50
-#define LINE_LENGTH 511
-#define OPCODE_LENGTH 3
+#define LINE_LENGTH 50
+#define OPCODE_LENGTH 5
 #define OPERAND_LENGTH 20
+#define MAX_OPERANDS 5
 #define INSTRUCTION_SIZE 32
 #define NUMBER_OF_DPI 10
 #define NUMBER_OF_MUL 2

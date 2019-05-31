@@ -31,11 +31,17 @@ void binary_file_writer(char *filename, const char *binary_string) {
             final_instruction[32] = '\0';
             strncpy(final_instruction, &binary_string[i * 32], 32);
             bytes[i] = (int) strtol(final_instruction, NULL, 2);
-            printf("%s\n", binary_string);
         }
 
+        for (int j = 0; j < no_of_instructions; ++j) {
+            char bin[100];
+            toBinaryString((uint32_t) bytes[j], bin);
+            printf("%s", bin);
+        }
+
+
         fwrite(&bytes, sizeof(bytes), 1, binary_file);
-        //fclose(binary_file);
+        fclose(binary_file);
     } else {
         printf("could not write to binary file");
     }
@@ -172,7 +178,7 @@ void add_to_mappings(symbol_table *symbol_table, mapping mapping) {
     symbol_table->mappings[num_elements] = mapping;
 }
 
-int test_tokenizer(tokenised_line* tokenised_line){
+int test_tokenizer(tokenised_line *tokenised_line) {
     printf("Tokenised_lines\n");
     printf("Number of lines: %d", tokenised_line->num_of_lines);
     printf("Opcodes: ");
@@ -191,7 +197,7 @@ int test_tokenizer(tokenised_line* tokenised_line){
 
 int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
 
-    char *line_t = malloc(sizeof(char) * COMMAND_LENGTH);
+    char *line_t = (char *) malloc(sizeof(char) * LINE_LENGTH);
     strcpy(line_t, line);
 
 
@@ -222,10 +228,10 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
         num_of_operands++;
     }
 //    for (int i = 0; i < num_of_operands; ++i) {
-//        *(tokenised_line->operands)[i] = trim_whitespace(*(tokenised_line->operands)[i]);
+//        (tokenised_line->operands)[line_num][i] = trim_whitespace((tokenised_line->operands)[line_num][i]);
 //    }
 
-    //free(line_t);
+    free(line_t);
     return num_of_operands;
 
 }
@@ -249,6 +255,7 @@ void first_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbo
 
 char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbol_table) {
 
+    //TODO: VALGRIND ERROR
     char *binary = (char *) malloc(INSTRUCTION_SIZE * LINES);
     binary[0] = '\0';
     //Read opcode mnemonics + operands for each instruction
@@ -265,10 +272,10 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
             //Get operands that are labels and use symbol table to get address
             for (int j = 0; j < num_of_operands; ++j) {
                 int address;
-                if (is_in_symbol_table(tokenised_line->operands[j], symbol_table)) {
-                    address = get_address(tokenised_line->operands[j], symbol_table);
-                    sprintf(tokenised_line->operands[j], "%d", address);
-                }
+//                if (is_in_symbol_table(tokenised_line->operands[j], symbol_table)) {
+//                    address = get_address(tokenised_line->operands[j], symbol_table);
+//                    sprintf(tokenised_line->operands[j], "%d", address);
+//                }
             }
 
             //Calls to Instruction_assemble
@@ -279,6 +286,7 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
                     assemble_dpi_to(tokenised_line, line_num, binaryToAdd);
                     strcat(binary, binaryToAdd);
                     printf("%s\n", binaryToAdd);
+                    break;
                     break;
                 }
             }
@@ -309,11 +317,11 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
 
 char *two_pass_assembly(char **code, int num_of_lines) {
 
-    symbol_table *symbol_table = malloc((sizeof(symbol_table)));
+    symbol_table *symbol_table = malloc(sizeof(*symbol_table));
     symbol_table->num_elements = 0;
 //    symbol_table->mappings;
 
-    tokenised_line *tokenised_line = malloc(sizeof(tokenised_line));
+    tokenised_line *tokenised_line = malloc(sizeof(*tokenised_line) * num_of_lines);
     tokenised_line->num_of_lines = num_of_lines;
 //    tokenised_line->label;
 
@@ -324,14 +332,28 @@ char *two_pass_assembly(char **code, int num_of_lines) {
     //size of char = 1 byte
     //OPCODE_LENGTH = 3;
     //char** opcode should be (number of lines * opcode length)
-    tokenised_line->opcode = (char **) malloc(sizeof(char *) * num_of_lines);
+
+            //TODO: VALGRIND ERROR
+    tokenised_line->opcode = (char **) malloc(sizeof(char *) * OPCODE_LENGTH * (num_of_lines));
+    for (int k = 0; k < num_of_lines; ++k) {
+        //TODO: VALGRIND ERROR
+        tokenised_line->opcode[k] = (char *) malloc(sizeof(char) * (OPCODE_LENGTH + 1));
+    }
 
     //Char*** = array of array of strings
     //char** = array of strings
     //char* = string
-            // MAX_operands = number of lines * (LINELENGTH / OPERAND_LENGTH)
+    // MAX_operands = number of lines * (LINELENGTH / OPERAND_LENGTH)
 
-    tokenised_line->operands = (char ***) malloc(sizeof(char **) * num_of_lines * (LINE_LENGTH / OPERAND_LENGTH));
+    tokenised_line->operands = (char ***) malloc(sizeof(char **) * num_of_lines);
+    for (int i = 0; i < num_of_lines; ++i) {
+        // allocate each row (the row cells)
+        tokenised_line->operands[i] = (char **) malloc(sizeof(char *) * MAX_OPERANDS);
+        for (int j = 0; j < MAX_OPERANDS; ++j) {
+            // initialize the row cell by allocating the string
+            tokenised_line->operands[i][j] = (char *) malloc(sizeof(char) * (OPERAND_LENGTH + 1));/* allocate string */
+        }
+    }
 
 //First pass assoociates labels with memory addresses.
     first_pass(code, tokenised_line, symbol_table);
@@ -340,10 +362,25 @@ char *two_pass_assembly(char **code, int num_of_lines) {
 
     char *binary = second_pass(code, tokenised_line, symbol_table);
 
-// REMEMBER TO free variables
-//    free(tokenised_line->opcode);
-//    free(tokenised_line->operands);
-//    free(symbol_table);
-//    free(tokenised_line);
+// REMEMBER TO free
+
+
+    for (int l = 0; l < num_of_lines; ++l) {
+        free(tokenised_line->opcode[l]);
+    }
+    free(tokenised_line->opcode);
+
+    for (int i = 0; i < num_of_lines; ++i) {
+        for (int j = 0; j < MAX_OPERANDS; ++j) {
+            //This free is colliding with the malloc in tokeniser
+            free(tokenised_line->operands[i][j]);  // free the string
+        }
+        free(tokenised_line->operands[i]);         // free the row
+    }
+
+    free(tokenised_line->operands);
+    free(tokenised_line);
+    free(symbol_table);
+
     return binary;
 }
