@@ -14,8 +14,6 @@
 
 // the variables below will be common to all functions, so have been initialised here. maybe we should pass them in?
 
-char condition[3];
-
 
 //TODO
 
@@ -114,17 +112,8 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char* binary_stri
     //takes off the # or the r, regardless of register or immediate value
     operand2 += sizeof(char);
 
-    //Base can be either BASE 10 OR BASE 16
-
-            int base = 0;
-            if (strstr(operand2, "0x")){
-                //Base 16
-                base = 16;
-            }
-            else{
-                //base 10
-                base  = 10;
-            }
+    int base;
+    set_base(operand2, &base);
 
     //calculate offset
     if (isImmediate){
@@ -214,25 +203,25 @@ void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, s
 
     //setting cond bits
     //TODO when all test cases pass, refactor because perhaps all test cases are not actually commands
-    if (strcmp(condition, "eq") == 0){
+    if (!(strcmp(condition, "eq"))){
         //BEQ
         set_n_bits(&binary, COND_END_BIT, 0);
-    } else if (strcmp("ne", condition) == 0){
+    } else if (!(strcmp("ne", condition))){
         //BNE
         set_n_bits(&binary, COND_END_BIT, 1);
-    } else if (strcmp("ge", condition) == 0){
+    } else if (!(strcmp("ge", condition))){
         //BGE
         set_n_bits(&binary, COND_END_BIT, 10);
-    } else if (strcmp("lt", condition) == 0) {
+    } else if (!(strcmp("lt", condition))) {
         //BLT
         set_n_bits(&binary, COND_END_BIT, 11);
-    } else if (strcmp("gt", condition) == 0) {
+    } else if (!(strcmp("gt", condition))) {
         //BGT
         set_n_bits(&binary, COND_END_BIT, 12);
-    } else if (strcmp("le", condition) == 0){
+    } else if (!(strcmp("le", condition))){
         //BLE
         set_n_bits(&binary, COND_END_BIT, 13);
-    } else if (strcmp("al", condition) == 0){
+    } else if (!(strcmp("al", condition))){
         //UNCONDITIONAL BRANCH
         set_n_bits(&binary, COND_END_BIT, 14);
     } else if (condition[0]== '\0'){
@@ -272,7 +261,19 @@ void assemble_special_to(tokenised_line *tokenised_line, int line, char* binary_
     if (!(strcmp("andeq", opcode))){
         //ALL 0 HALT INSTRUCTION
         toBinaryString(binary,binary_string);
+        return;
     }
+    //LSL INSTRUCTION
+    //LSL Rn <#exp> = mov Rn, Rn, lsl <#exp>
+    //apply a logical shift to Rn by the amount specified
+        //by bottom byte of exp to compute a new value
+    // then we just return mov Rn val
 
+    char *expression = tokenised_line->operands[line][1] + sizeof(char);
+    int base;
+    set_base(expression, &base);
+    int shiftAmt = (int) strtol(expression, NULL, base);
+    shiftAmt &= 0xFF;
+    
 
 }

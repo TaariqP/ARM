@@ -166,6 +166,17 @@ int is_in_symbol_table(char *label, symbol_table *symbol_table) {
     return 0;
 }
 
+void set_base(char *expression, int *base){
+    if (strstr(expression, "0x")){
+        //Base 16
+        *base = 16;
+    }
+    else{
+        //Base 10
+        *base  = 10;
+    }
+}
+
 //gets the address of a label
 int get_address(char *label, symbol_table *symbol_table) {
     //compare given label to the label of each mapping till found.
