@@ -255,6 +255,7 @@ void first_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbo
 
 char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbol_table) {
 
+    //TODO: VALGRIND ERROR
     char *binary = (char *) malloc(INSTRUCTION_SIZE * LINES);
     binary[0] = '\0';
     //Read opcode mnemonics + operands for each instruction
@@ -314,7 +315,7 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
 
 char *two_pass_assembly(char **code, int num_of_lines) {
 
-    symbol_table *symbol_table = malloc((sizeof(symbol_table)));
+    symbol_table *symbol_table = malloc(sizeof(symbol_table));
     symbol_table->num_elements = 0;
 //    symbol_table->mappings;
 
@@ -329,8 +330,11 @@ char *two_pass_assembly(char **code, int num_of_lines) {
     //size of char = 1 byte
     //OPCODE_LENGTH = 3;
     //char** opcode should be (number of lines * opcode length)
-    tokenised_line->opcode = (char **) malloc(sizeof(char *) * LINES);
+
+            //TODO: VALGRIND ERROR
+    tokenised_line->opcode = (char **) malloc(sizeof(char *) * 10);
     for (int k = 0; k < LINES; ++k) {
+        //TODO: VALGRIND ERROR
         tokenised_line->opcode[k] = (char *) malloc(sizeof(char) * LINE_LENGTH);
     }
 
@@ -340,7 +344,7 @@ char *two_pass_assembly(char **code, int num_of_lines) {
     // MAX_operands = number of lines * (LINELENGTH / OPERAND_LENGTH)
 
     tokenised_line->operands = (char ***) malloc(sizeof(char **) * LINES);
-    for (int i = 0; i < LINES; ++i) {
+    for (size_t i = 0; i < LINES; ++i) {
         // allocate each row (the row cells)
         tokenised_line->operands[i] = (char **) malloc(LINE_LENGTH / OPERAND_LENGTH * sizeof(char *));
         for (size_t j = 0; j != LINE_LENGTH / OPERAND_LENGTH; ++j) {
@@ -362,8 +366,6 @@ char *two_pass_assembly(char **code, int num_of_lines) {
     for (int l = 0; l < LINES; ++l) {
         free(tokenised_line->opcode[l]);
     }
-   // free(tokenised_line->opcode);
-
 
     for (size_t i = 0; i != LINES; ++i) {
         for (size_t j = 0; j != LINE_LENGTH / OPERAND_LENGTH; ++j) {
@@ -371,12 +373,11 @@ char *two_pass_assembly(char **code, int num_of_lines) {
         }
         free(tokenised_line->operands[i]);         // free the row
     }
-    //free(tokenised_line->operands);
 
+    free(tokenised_line->opcode);
+    free(tokenised_line->operands);
     free(tokenised_line);
-
-
     free(symbol_table);
-    return
-            binary;
+
+    return binary;
 }
