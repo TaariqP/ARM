@@ -124,14 +124,9 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char* binary_stri
         } else {
             //rotate left till is 8 bits, and rotates are even, then store appropriately
             int num_of_rotates = 0;
-            char toPrint[33];
-            toBinaryString((uint32_t) immediate_value, toPrint);
-            printf("before rotate: %s\n", toPrint);
             while (!(is8bit(immediate_value) & (num_of_rotates % 2 == 0))){
                 immediate_value = rol((uint32_t) immediate_value);
                 num_of_rotates++;
-                toBinaryString((uint32_t)immediate_value, toPrint);
-                printf("after rotate number %d: %s\n", num_of_rotates, toPrint);
             }
             set_n_bits(&binary, 8, (num_of_rotates/2));
             set_n_bits(&binary, 0, immediate_value);
@@ -264,16 +259,36 @@ void assemble_special_to(tokenised_line *tokenised_line, int line, char* binary_
         return;
     }
     //LSL INSTRUCTION
-    //LSL Rn <#exp> = mov Rn, Rn, lsl <#exp>
-    //apply a logical shift to Rn by the amount specified
-        //by bottom byte of exp to compute a new value
-    // then we just return mov Rn val
+    /*LSL Rn <#exp> = mov Rn, Rn, lsl <#exp>
+     -apply a logical shift to Rn by the amount specified
+        by exp to compute a new value
+     -then we just return mov Rn val*/
 
+    //get shift amount
     char *expression = tokenised_line->operands[line][1] + sizeof(char);
     int base;
     set_base(expression, &base);
     int shiftAmt = (int) strtol(expression, NULL, base);
-    shiftAmt &= 0xFF;
-    
 
+    //can only take 5 bits of shiftAmt, or else its a register shift, but register unspecified
+    shiftAmt &= 0x1F;
+
+    //set binary to basically mov
+
+    //cond
+    set_n_bits(&binary, 28, 14);
+
+    //opcode
+    set_n_bits(&binary, 21, 13);
+
+    //Rd
+    set_operand(&binary, line, 1, 12, tokenised_line);
+
+    //integer
+    set_n_bits(&binary, 7, shiftAmt);
+
+    //Rm
+    set_operand(&binary, line, 1, 0, tokenised_line);
+
+    toBinaryString(binary, binary_string);
 }

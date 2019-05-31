@@ -339,6 +339,11 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
             }
             for (int k = 0; k < NUMBER_OF_SPECIAL; ++k) {
                 if (strcmp(*tokenised_line->opcode, SPECIAL[k]) == 0) {
+                    char binaryToAdd[33];
+                    assemble_special_to(tokenised_line, line_num, binaryToAdd);
+                    strcat(binary, binaryToAdd);
+                    printf("%s\n", binaryToAdd);
+                    break;
                 }
             }
         }
