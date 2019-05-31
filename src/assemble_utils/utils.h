@@ -27,6 +27,8 @@ bool is24bit(int);
 
 bool isArgument(char);
 
+void set_operand(uint32_t *, int, int, int, tokenised_line *);
+
 void get_argument(char *, int, char *);
 
 void set_n_bits(uint32_t *, int, int);
@@ -37,7 +39,7 @@ void set_operand(uint32_t  binary, int line, int arg_num, int end_bit, tokenised
 
 int is_in_symbol_table(char *label, symbol_table *symbol_table);
 
-uintptr_t get_address(char *label, symbol_table *symbol_table);
+uintptr_t get_address(char *, symbol_table *);
 
 void add_to_mappings(symbol_table *symbol_table, mapping mapping);
 

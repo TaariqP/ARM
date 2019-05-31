@@ -9,14 +9,14 @@
 #include <stdint.h>
 #include "defs.h"
 
-void assemble_dpi_to(tokenised_line *, int , char* );
+void assemble_dpi_to(tokenised_line *, int, char*);
 
 uint32_t assemble_sdt(char *, char **, int);
 
-uint32_t assemble_mul(tokenised_line *, int);
+void assemble_mul_to(tokenised_line *, int, char*);
 
-char *assemble_branch(tokenised_line *, char **, int, symbol_table *);
+void assemble_branch_to(tokenised_line *, char **, int, symbol_table *, char*);
 
-char *assemble_special(tokenised_line *, int);
+void assemble_special_to(tokenised_line *, int, char*);
 
 #endif //ARM11_11_INSTRUCTION_ASSEMBLE_H
