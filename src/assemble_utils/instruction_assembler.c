@@ -172,11 +172,60 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
 }
 
 
-uint32_t assemble_sdt(char *string, char **code, int line) {
-    uint32_t binary = 0;
+void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string) {
 
-    return binary;
+    uint32_t binary = 0;
+    char *opcode = tokenised_line->opcode[line];
+    int set_L;
+    int set_U;
+    char *expression = tokenised_line->operands[line][1];
+
+    int num_of_operands = sizeof(tokenised_line->operands[line]) / sizeof(char);
+    if (!(strcmp(opcode, "ldr"))){
+        set_L = 1;
+        if (expression[0] == '='){
+            //numeric constant
+
+            //potential just expression ++
+            expression += sizeof(char);
+            //asssume always hex
+            int expression_value = (int) strtol(expression, NULL, 16);
+            if (expression_value <= 0xFF){
+                //convert to mov instruction
+                opcode[0] = 'm';
+                opcode[1] = 'o';
+                opcode[2] = 'v';
+
+                expression -= sizeof(char);
+                expression[0] = '#';
+                tokenised_line->operands[line][1] = expression;
+                assemble_dpi_to(tokenised_line, line, binary_string);
+                return;
+            }
+
+            //in general case we need to output the value of expression, store it in 4 bytes at end of program
+            //TODO: output expression, stick it onto end of binary
+            //TODO: get address of new thing added, calculate offset, set last bits to offset
+        } else if (){
+
+        }
+
+
+
+
+
+
+
+
+
+
+    } else {
+        set_L = 0;
+    }
+
+    toBinaryString(binary, binary_string);
 }
+
 
 void assemble_mul_to(tokenised_line *tokenised_line, int line, char *binary_string) {
     //condition is the last 2 letters of the opcode
