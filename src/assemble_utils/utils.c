@@ -303,7 +303,7 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
                 int address;
                 if (is_in_symbol_table(tokenised_line->operands[line_num][j], symbol_table)) {
                     if (tokenised_line->label[line_num] != NULL) {
-                        address = get_address(tokenised_line->label[line_num], symbol_table);
+                        address = get_address(tokenised_line->operands[line_num][j], symbol_table);
                         printf("Assigning operand %s to address %d\n", tokenised_line->operands[line_num][j], address);
                         sprintf(tokenised_line->operands[line_num][j], "%d", address);
                     }
