@@ -325,7 +325,11 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
 
             for (int k = 0; k < NUMBER_OF_SDT; ++k) {
                 if (strcmp(tokenised_line->opcode[line_num], SDT[k]) == 0) {
-                    //strcat(binary, assemble_sdt(tokenised_line, line_num));
+                    char binaryToAdd[33];
+                    assemble_sdt_to(tokenised_line, line_num, binaryToAdd);
+                    strcat(binary, binaryToAdd);
+                    printf("%s\n", binaryToAdd);
+                    break;
                 }
             }
             for (int k = 0; k < NUMBER_OF_MUL; ++k) {

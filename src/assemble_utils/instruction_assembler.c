@@ -101,7 +101,7 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
         set_n_bits(&binary, 16, reg_num);
     }
 
-    //set Rd
+    //set Rd except for set CPSR
     char *rd = tokenised_line->operands[line][0];
     rd += sizeof(char);
     int reg_num = (int) strtol(rd, (char **) NULL, 10);
@@ -145,10 +145,47 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
 }
 
 
-uint32_t assemble_sdt(char *string, char **code, int line) {
-    uint32_t binary = 0;
+void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string) {
 
-    return binary;
+    uint32_t binary = 0;
+    char *opcode = tokenised_line->opcode[line];
+    int set_L;
+    char *expression = tokenised_line->operands[line][1];
+    if (!(strcmp(opcode, "ldr"))){
+        set_L = 1;
+        if (expression[0] == '='){
+            //numeric constant
+            //in general case we need to output the value of expression, store it in 4 bytes at end of program
+            //TODO: output expression, stick it onto end of binary
+            //TODO: get address of new thing added, calculate offset, set last bits to offset
+
+            //potential just expression ++
+            expression += sizeof(char);
+            //asssume always hex
+            int expression_value = (int) strtol(expression, NULL, 16);
+            if (expression_value <= 0xFF){
+                //convert to mov instruction
+                tokenised_line->opcode[line] = "mov";
+                expression -= sizeof(char);
+                expression[0] = '#';
+                tokenised_line->operands[line][1] = expression;
+                assemble_dpi_to(tokenised_line, line, binary_string);
+            }
+        }
+
+
+
+
+
+
+
+
+
+    } else {
+        set_L = 0;
+    }
+
+
 }
 
 void assemble_mul_to(tokenised_line *tokenised_line, int line, char *binary_string) {
