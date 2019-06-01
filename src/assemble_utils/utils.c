@@ -170,13 +170,6 @@ void set_n_bits(uint32_t *binary_num, int end_bit, int value) {
   *binary_num |= (value << end_bit);
 }
 
-void set_operand(uint32_t  binary, int line, int arg_num, int end_bit, tokenised_line *tokenised_line) {
-  char *reg = tokenised_line->operands[line][arg_num];
-  reg += sizeof(char);
-  int reg_num = (int) strtol(reg, (char **) NULL, 10);
-  set_n_bits(&binary, end_bit, reg_num);
-}
-
 void set_operand(uint32_t *binary, int line, int arg_num, int end_bit, tokenised_line *tokenised_line) {
     char *reg = tokenised_line->operands[line][arg_num];
     reg += sizeof(char);
