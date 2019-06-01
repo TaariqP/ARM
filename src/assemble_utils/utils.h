@@ -25,6 +25,8 @@ bool is8bit(int);
 
 bool is24bit(int);
 
+bool is26bit(int);
+
 bool isArgument(char);
 
 void set_operand(uint32_t *, int, int, int, tokenised_line *);

@@ -105,7 +105,7 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
         set_n_bits(&binary, 16, reg_num);
     }
 
-    if (type == set_CPSR){
+    if (type == set_CPSR) {
         char *rn = tokenised_line->operands[line][0];
         rn += sizeof(char);
         int reg_num = (int) strtol(rn, (char **) NULL, 10);
@@ -124,7 +124,7 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
     operand2 += sizeof(char);
 
 
-    if (type == set_CPSR){
+    if (type == set_CPSR) {
         int op2 = (int) strtol(operand2, (char **) NULL, 10);
         set_n_bits(&binary, 0, op2);
     }
@@ -220,6 +220,7 @@ void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, s
     //condition is the last two letter of the command
     uint32_t binary = 0;
     char *condition = tokenised_line->opcode[line] + sizeof(char);
+    int current_address = 4 * line;
 
 
 
@@ -257,21 +258,31 @@ void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, s
     //set bits 27-24 to be 1010
     set_n_bits(&binary, 24, 10);
 
-    uint32_t current_address = &code[line];
-    uint32_t pc = current_address + 8;
+    //4 bytes
+    //int pc = current_address + 8;
 
     //calculate offset
-    char *label = tokenised_line->label[line];
-    uint32_t target_address = get_address(label, symbol_table);
-    uint32_t offset = target_address - pc;
-    offset = offset >> 2;
+    //char *label = tokenised_line->operands[line][0];
+//    printf(tokenised_line->operands[line][0]);
+    int target_address = (int) strtol(tokenised_line->operands[line][0], NULL, 10);
 
-    //check offset valid and set offset
-    if (is24bit(offset)) {
-        //valid offset
-        set_n_bits(&binary, 0, offset);
-    } else {
+    int offset = (target_address - current_address) - 8;
+    offset = offset & 0x3FFFFFF;
+    if (!is26bit(offset)) {
         fprintf(stderr, "invalid offset");
+    } else {
+        offset = offset >> 2;
+        offset = offset & 0xFFFFFF;
+
+        set_n_bits(&binary, 0, offset);
+        //binary = binary & offset;
+        //check offset valid and set offset
+        if (is24bit(offset)) {
+            //valid offset
+            set_n_bits(&binary, 0, offset);
+        } else {
+            fprintf(stderr, "invalid offset");
+        }
     }
     toBinaryString(binary, binary_string);
 }

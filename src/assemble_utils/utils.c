@@ -97,6 +97,10 @@ bool is8bit(int val) {
     return (val == (val & 0xFF));
 }
 
+bool is26bit(int val){
+    return (val == val & 0x3FFFFFF);
+}
+
 bool is24bit(int val) {
     return (val == (val & 0xFFFFFF));
 }
@@ -302,11 +306,11 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
             for (int j = 0; j < num_of_operands; ++j) {
                 int address;
                 if (is_in_symbol_table(tokenised_line->operands[line_num][j], symbol_table)) {
-                    if (tokenised_line->label[line_num] != NULL) {
+                  //  if (tokenised_line->label[line_num] != NULL) {
                         address = get_address(tokenised_line->operands[line_num][j], symbol_table);
                         printf("Assigning operand %s to address %d\n", tokenised_line->operands[line_num][j], address);
                         sprintf(tokenised_line->operands[line_num][j], "%d", address);
-                    }
+                  //  }
                 }
             }
 
