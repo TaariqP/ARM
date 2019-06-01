@@ -31,8 +31,6 @@ bool isArgument(char);
 
 void set_operand(uint32_t *, int, int, int, tokenised_line *);
 
-void set_base(char *, int *);
-
 void get_argument(char *, int, char *);
 
 void set_n_bits(uint32_t *, int, int);

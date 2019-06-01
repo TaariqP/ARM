@@ -12,6 +12,8 @@
 
 // the variables below will be common to all functions, so have been initialised here. maybe we should pass them in?
 
+char condition[3];
+
 
 //TODO
 
@@ -128,6 +130,15 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
     }
     //Base can be either BASE 10 OR BASE 16
 
+    int base = 0;
+    if (strstr(operand2, "0x")) {
+        //Base 16
+        base = 16;
+    } else {
+        //base 10
+        base = 10;
+    }
+
     //calculate offset
     if (isImmediate) {
         int immediate_value = (int) strtol(operand2, NULL, base);
@@ -137,7 +148,8 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
         } else {
             //rotate left till is 8 bits, and rotates are even, then store appropriately
             int num_of_rotates = 0;
-            while (!(is8bit(immediate_value) & (num_of_rotates % 2 == 0))){
+
+            while (!(is8bit(immediate_value) & (num_of_rotates % 2 == 0))) {
                 immediate_value = rol((uint32_t) immediate_value);
                 num_of_rotates++;
             }
@@ -160,47 +172,10 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
 }
 
 
-void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string) {
-
+uint32_t assemble_sdt(char *string, char **code, int line) {
     uint32_t binary = 0;
-    char *opcode = tokenised_line->opcode[line];
-    int set_L;
-    char *expression = tokenised_line->operands[line][1];
-    if (!(strcmp(opcode, "ldr"))){
-        set_L = 1;
-        if (expression[0] == '='){
-            //numeric constant
-            //in general case we need to output the value of expression, store it in 4 bytes at end of program
-            //TODO: output expression, stick it onto end of binary
-            //TODO: get address of new thing added, calculate offset, set last bits to offset
 
-            //potential just expression ++
-            expression += sizeof(char);
-            //asssume always hex
-            int expression_value = (int) strtol(expression, NULL, 16);
-            if (expression_value <= 0xFF){
-                //convert to mov instruction
-                tokenised_line->opcode[line] = "mov";
-                expression -= sizeof(char);
-                expression[0] = '#';
-                tokenised_line->operands[line][1] = expression;
-                assemble_dpi_to(tokenised_line, line, binary_string);
-            }
-        }
-
-
-
-
-
-
-
-
-
-    } else {
-        set_L = 0;
-    }
-
-
+    return binary;
 }
 
 void assemble_mul_to(tokenised_line *tokenised_line, int line, char *binary_string) {
@@ -251,25 +226,25 @@ void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, s
 
     //setting cond bits
     //TODO when all test cases pass, refactor because perhaps all test cases are not actually commands
-    if (!(strcmp(condition, "eq"))){
+    if (strcmp(condition, "eq") == 0) {
         //BEQ
         set_n_bits(&binary, COND_END_BIT, 0);
-    } else if (!(strcmp("ne", condition))){
+    } else if (strcmp("ne", condition) == 0) {
         //BNE
         set_n_bits(&binary, COND_END_BIT, 1);
-    } else if (!(strcmp("ge", condition))){
+    } else if (strcmp("ge", condition) == 0) {
         //BGE
         set_n_bits(&binary, COND_END_BIT, 10);
-    } else if (!(strcmp("lt", condition))) {
+    } else if (strcmp("lt", condition) == 0) {
         //BLT
         set_n_bits(&binary, COND_END_BIT, 11);
-    } else if (!(strcmp("gt", condition))) {
+    } else if (strcmp("gt", condition) == 0) {
         //BGT
         set_n_bits(&binary, COND_END_BIT, 12);
-    } else if (!(strcmp("le", condition))){
+    } else if (strcmp("le", condition) == 0) {
         //BLE
         set_n_bits(&binary, COND_END_BIT, 13);
-    } else if (!(strcmp("al", condition))){
+    } else if (strcmp("al", condition) == 0) {
         //UNCONDITIONAL BRANCH
         set_n_bits(&binary, COND_END_BIT, 14);
     } else if (condition[0] == '\0') {
@@ -317,40 +292,8 @@ void assemble_special_to(tokenised_line *tokenised_line, int line, char *binary_
 
     if (!(strcmp("andeq", opcode))) {
         //ALL 0 HALT INSTRUCTION
-        toBinaryString(binary,binary_string);
-        return;
+        toBinaryString(binary, binary_string);
     }
-    //LSL INSTRUCTION
-    /*LSL Rn <#exp> = mov Rn, Rn, lsl <#exp>
-     -apply a logical shift to Rn by the amount specified
-        by exp to compute a new value
-     -then we just return mov Rn val*/
 
-    //get shift amount
-    char *expression = tokenised_line->operands[line][1] + sizeof(char);
-    int base;
-    set_base(expression, &base);
-    int shiftAmt = (int) strtol(expression, NULL, base);
 
-    //can only take 5 bits of shiftAmt, or else its a register shift, but register unspecified
-    shiftAmt &= 0x1F;
-
-    //set binary to basically mov
-
-    //cond
-    set_n_bits(&binary, 28, 14);
-
-    //opcode
-    set_n_bits(&binary, 21, 13);
-
-    //Rd
-    set_operand(&binary, line, 1, 12, tokenised_line);
-
-    //integer
-    set_n_bits(&binary, 7, shiftAmt);
-
-    //Rm
-    set_operand(&binary, line, 1, 0, tokenised_line);
-
-    toBinaryString(binary, binary_string);
 }
