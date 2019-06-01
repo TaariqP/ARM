@@ -261,30 +261,29 @@ void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, s
     //4 bytes
     //int pc = current_address + 8;
 
-    //calculate offset
-    //char *label = tokenised_line->operands[line][0];
-//    printf(tokenised_line->operands[line][0]);
+    //Get operand which will be an address
     int target_address = (int) strtol(tokenised_line->operands[line][0], NULL, 10);
 
+    //Calculate offset = label - current - 8 byte pipeline
+    int x = target_address - current_address;
     int offset = (target_address - current_address) - 8;
-    offset = offset & 0x3FFFFFF;
+    //get first 26 bits
+    offset &= 0x3FFFFFF;
+    //Check 26 bits
     if (!is26bit(offset)) {
         fprintf(stderr, "invalid offset");
     } else {
-        offset = offset >> 2;
-        offset = offset & 0xFFFFFF;
-
-        set_n_bits(&binary, 0, offset);
-        //binary = binary & offset;
+        //Right shift
+        offset >>= 2;
+        //Get first 24 bits
+        offset &= 0xFFFFFF;
         //check offset valid and set offset
-        if (is24bit(offset)) {
-            //valid offset
-            set_n_bits(&binary, 0, offset);
-        } else {
-            fprintf(stderr, "invalid offset");
-        }
+//        char *res;
+//        toBinaryString(offset, res);
+//        printf("Offset: %s\n", res);
+        set_n_bits(&binary, 0, offset);
+        toBinaryString(binary, binary_string);
     }
-    toBinaryString(binary, binary_string);
 }
 
 void assemble_special_to(tokenised_line *tokenised_line, int line, char *binary_string) {

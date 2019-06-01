@@ -23,7 +23,7 @@ uint8_t mask_1_bit_assemble(int value, int bit) {
 }
 
 //converts a 32bit integer to a binary string
-void toBinaryString(uint32_t binary, char *result) {
+void toBinaryString(int binary, char *result) {
     for (int i = 0; i < 32; i++) {
         result[i] = (char) ((mask_1_bit_assemble(binary, 31 - i) + '0'));
     }
@@ -342,7 +342,7 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
             }
             for (int k = 0; k < NUMBER_OF_BRANCH; ++k) {
                 if (strcmp(tokenised_line->opcode[line_num], BRANCH[k]) == 0) {
-                    char binaryToAdd[33];
+                    char binaryToAdd[33] = {0};
                     assemble_branch_to(tokenised_line, code, line_num, symbol_table, binaryToAdd);
                     strcat(binary, binaryToAdd);
                     printf("%s\n", binaryToAdd);
