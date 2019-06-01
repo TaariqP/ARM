@@ -168,6 +168,17 @@ int is_in_symbol_table(char *label, symbol_table *symbol_table) {
     return 0;
 }
 
+void set_base(char *expression, int *base){
+    if (strstr(expression, "0x")){
+        //Base 16
+        *base = 16;
+    }
+    else{
+        //Base 10
+        *base  = 10;
+    }
+}
+
 //gets the address of a label
 int get_address(char *label, symbol_table *symbol_table) {
     //compare given label to the label of each mapping till found.
@@ -328,7 +339,11 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
 
             for (int k = 0; k < NUMBER_OF_SDT; ++k) {
                 if (strcmp(tokenised_line->opcode[line_num], SDT[k]) == 0) {
-                    //strcat(binary, assemble_sdt(tokenised_line, line_num));
+                    char binaryToAdd[33];
+                    assemble_sdt_to(tokenised_line, line_num, binaryToAdd);
+                    strcat(binary, binaryToAdd);
+                    printf("%s\n", binaryToAdd);
+                    break;
                 }
             }
             for (int k = 0; k < NUMBER_OF_MUL; ++k) {
@@ -351,7 +366,12 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
                 }
             }
             for (int k = 0; k < NUMBER_OF_SPECIAL; ++k) {
-                if (strcmp(tokenised_line->opcode[line_num], SPECIAL[k]) == 0) {
+                if (strcmp(*tokenised_line->opcode, SPECIAL[k]) == 0) {
+                    char binaryToAdd[33];
+                    assemble_special_to(tokenised_line, line_num, binaryToAdd);
+                    strcat(binary, binaryToAdd);
+                    printf("%s\n", binaryToAdd);
+                    break;
                 }
             }
         }
