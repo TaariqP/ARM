@@ -87,10 +87,26 @@ uint32_t assemble_sdt(char *string, char **code, int line){
     offset = offset >> 2;
 
     if (!strcmp(command, "dr")) {
+        //load instruction
         binary = set_n_bits(binary, 20 ,1);
 
         //need to check if expression begins with an =...
-        //how to get <expression>...?
+        //how to get <expression>...? is below ok..?
+        char *operand2 = tokenised_line->operands[line][argument];
+        bool isImmediate = (operand2[0] == '=');
+        //if starts with =
+        if () {
+            //immediate constant
+
+            //if argument <= 0xFF, use a mov instruction
+            if () {
+
+                return;
+            }
+            //set above calculated offset as bits 11-0
+
+            //place raw offset at end of assembly file
+        }
 
         //check offset valid
         if(is24bit(offset)){
