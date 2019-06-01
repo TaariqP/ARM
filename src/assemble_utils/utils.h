@@ -14,6 +14,9 @@ void binary_file_writer(char *, const char *);
 
 void extract_2_char_cond(char *, char *);
 
+char *trim_whitespace(char *);
+
+
 uint8_t mask_1_bit_assemble(int, int);
 
 int rol(uint32_t);
@@ -22,23 +25,28 @@ bool is8bit(int);
 
 bool is24bit(int);
 
+bool is26bit(int);
+
 bool isArgument(char);
+
+void set_operand(uint32_t *, int, int, int, tokenised_line *);
 
 void get_argument(char *, int, char *);
 
 void set_n_bits(uint32_t *, int, int);
 
-void set_operand(uint32_t  binary, int line, int arg_num, int end_bit, tokenised_line *tokenised_line);
+int is_empty(const char *);
 
-void toBinaryString(uint32_t binary, char *result);
+
+void toBinaryString(int binary, char *result);
 
 int is_in_symbol_table(char *label, symbol_table *symbol_table);
 
-uintptr_t get_address(char *, symbol_table *);
+int get_address(char *, symbol_table *);
 
 void add_to_mappings(symbol_table *symbol_table, mapping mapping);
 
-int tokenizer(char *line, int, tokenised_line* tokenised_line);
+int tokenizer(char *line, int, tokenised_line *tokenised_line);
 
 void first_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbol_table);
 
