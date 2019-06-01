@@ -216,11 +216,11 @@ void assemble_mul_to(tokenised_line *tokenised_line, int line, char *binary_stri
 
 
 void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, symbol_table *symbol_table,
-                        char *binary_string) {
+                        char *binary_string, int num_of_labels) {
     //condition is the last two letter of the command
     uint32_t binary = 0;
     char *condition = tokenised_line->opcode[line] + sizeof(char);
-    int current_address = 4 * line;
+
 
 
 
@@ -263,9 +263,8 @@ void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, s
 
     //Get operand which will be an address
     int target_address = (int) strtol(tokenised_line->operands[line][0], NULL, 10);
-
+    int current_address = 4 * (line - num_of_labels);
     //Calculate offset = label - current - 8 byte pipeline
-    int x = target_address - current_address;
     int offset = (target_address - current_address) - 8;
     //get first 26 bits
     offset &= 0x3FFFFFF;
@@ -278,9 +277,10 @@ void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, s
         //Get first 24 bits
         offset &= 0xFFFFFF;
         //check offset valid and set offset
-//        char *res;
-//        toBinaryString(offset, res);
-//        printf("Offset: %s\n", res);
+        printf("offset value: %d\n", offset);
+        char *res;
+        toBinaryString(offset, res);
+        printf("Offset: %s\n", res);
         set_n_bits(&binary, 0, offset);
         toBinaryString(binary, binary_string);
     }
