@@ -230,43 +230,45 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
             //in general case we need to output the value of expression, store it in 4 bytes at end of program
             //TODO: output expression, stick it onto end of binary
             //TODO: get address of new thing added, calculate offset, set last bits to offset
-
-        //need to somehow differentiate between pre and post indexed
-        } else if (true){
-            //pre indexed
-            set_P = 1;
-            address += (2 * sizeof(char));
-            set_rn = (int) strtol(address, NULL, 10);
-
-            //either type [rn,<#exp>] or type [rn], TODO: identify type, set offset based on it
-            if (address_offset[0] == '#') {
-                //type is [rn,<#expression>]
-                address_offset += sizeof(char);
-                bool isNegative = false;
-                if (address_offset[0] == '-'){
-                    isNegative = true;
-                    address_offset += sizeof(char);
-                }
-                //get base of number and set offset
-                int base;
-                set_base(address_offset, &base);
-                set_offset = (int) strtol(address_offset, NULL, base);
-
-                //set U based on +ve or -ve
-
-                if (isNegative){
-                    set_U = 0;
-                }
-
-            }
-            //otherwise is of type [rn], offset need not be set
-
+            
         }
 
 
     } else {
         //STR instruction
         set_L = 0;
+    }
+
+    //need to somehow differentiate between pre and post indexed
+    if (true){
+
+        //pre indexed
+        set_P = 1;
+        address += (2 * sizeof(char));
+
+        set_rn = (int) strtol(address, NULL, 10);
+
+        //either type [rn,<#exp>] or type [rn], TODO: identify type, set offset based on it
+        if (address_offset[0] == '#') {
+            //type is [rn,<#expression>]
+            address_offset += sizeof(char);
+            bool isNegative = false;
+            if (address_offset[0] == '-'){
+                isNegative = true;
+                address_offset += sizeof(char);
+            }
+            //get base of number and set offset
+            int base;
+            set_base(address_offset, &base);
+            set_offset = (int) strtol(address_offset, NULL, base);
+
+            //set U based on +ve or -ve
+            if (isNegative){
+                set_U = 0;
+            }
+
+        }
+        //otherwise is of type [rn], offset need not be set
     }
 
     //assume always executed, set cond
