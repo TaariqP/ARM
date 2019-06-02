@@ -9,9 +9,27 @@
 #include <stdint.h>
 
 #define LINES 50
-#define LINE_LENGTH 511
-#define OPCODE_LENGTH 3
+#define LINE_LENGTH 100
+#define OPCODE_LENGTH 5
 #define OPERAND_LENGTH 20
+#define MAX_OPERANDS 5
+#define INSTRUCTION_SIZE 32
+#define NUMBER_OF_DPI 10
+#define NUMBER_OF_MUL 2
+#define NUMBER_OF_SDT 2
+#define NUMBER_OF_BRANCH 7
+#define NUMBER_OF_SPECIAL 2
+#define COND_END_BIT 28
+#define DPI_OPCODE_END_BIT 21
+#define COMMAND_LENGTH 128
+// the initial 0 binary that we set depending on the instruction
+
+typedef enum {
+    compute_result,
+    single_operand,
+    set_CPSR
+}DPI_TYPE;
+
 
 typedef enum {
     //if not set, then is post-indexing
@@ -22,7 +40,7 @@ typedef enum {
 
 typedef struct {
     char *label;
-    uintptr_t memory_address;
+    int memory_address;
 } mapping;
 
 typedef struct {
@@ -32,6 +50,8 @@ typedef struct {
 
 typedef struct {
     //Array of strings
+    //? to keep line_num??
+    int num_of_lines;
     char** label;
     char** opcode;
     //Array of array of strings
