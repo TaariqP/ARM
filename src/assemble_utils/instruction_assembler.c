@@ -328,7 +328,6 @@ void assemble_special_to(tokenised_line *tokenised_line, int line, char *binary_
     //Rd is
     set_operand(&binary, line, 0, 12, tokenised_line);
 
-
     //Setting Operand2
     //get shift amount
     char *expression = tokenised_line->operands[line][1] + sizeof(char);
