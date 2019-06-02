@@ -5,7 +5,6 @@
 #ifndef ARM11_11_INSTRUCTION_ASSEMBLE_H
 #define ARM11_11_INSTRUCTION_ASSEMBLE_H
 
-
 #include <stdint.h>
 #include "defs.h"
 

@@ -348,8 +348,6 @@ void assemble_special_to(tokenised_line *tokenised_line, int line, char *binary_
     //set_n_bits(&binary, 0, shiftAmt);
     //set_operand(&binary, line, 1, 0, tokenised_line);
 
-
     toBinaryString(binary, binary_string);
-
 
 }
