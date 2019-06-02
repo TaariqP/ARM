@@ -30,7 +30,6 @@ typedef enum {
     set_CPSR
 }DPI_TYPE;
 
-
 typedef enum {
     //if not set, then is post-indexing
     PRE_INDEXING,

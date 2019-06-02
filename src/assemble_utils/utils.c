@@ -89,6 +89,7 @@ char *trim_whitespace(char *str) {
     if (*str == 0)
         return str;
     return str;
+
 }
 
 

@@ -16,7 +16,6 @@ void extract_2_char_cond(char *, char *);
 
 char *trim_whitespace(char *);
 
-
 uint8_t mask_1_bit_assemble(int, int);
 
 int rol(uint32_t);
