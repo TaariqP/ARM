@@ -41,6 +41,15 @@ void set_base(char *expression, int *base){
     }
 }
 
+int negate(int value){
+    value = ~value;
+    value += 0x1;
+    value &= 0x000000FF;
+    char binary_string[33];
+    toBinaryString(value, binary_string);
+    return value;
+}
+
 void binary_file_writer(char *filename, const char *binary_string) {
     FILE *binary_file = fopen(filename, "wb+");
     if (binary_file) {
@@ -338,11 +347,11 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
 
             for (int k = 0; k < NUMBER_OF_SDT; ++k) {
                 if (strcmp(tokenised_line->opcode[line_num], SDT[k]) == 0) {
-//                    char binaryToAdd[33];
-//                    assemble_sdt_to(tokenised_line, line_num, binaryToAdd);
-//                    strcat(binary, binaryToAdd);
-//                    printf("%s\n", binaryToAdd);
-//                    break;
+                    char binaryToAdd[33];
+                    assemble_sdt_to(tokenised_line, line_num, binaryToAdd);
+                    strcat(binary, binaryToAdd);
+                    printf("%s\n", binaryToAdd);
+                    break;
                 }
             }
             for (int k = 0; k < NUMBER_OF_MUL; ++k) {
@@ -361,7 +370,6 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
                     strcat(binary, binaryToAdd);
                     printf("binary: %s\n", binaryToAdd);
                     break;
-                    //strcat(binary, assemble_branch(tokenised_line, line_num, symbol_table));
                 }
             }
             for (int k = 0; k < NUMBER_OF_SPECIAL; ++k) {
