@@ -41,6 +41,15 @@ void set_base(char *expression, int *base){
     }
 }
 
+int negate(int value){
+    value = ~value;
+    value += 0x1;
+    value &= 0x000000FF;
+    char binary_string[33];
+    toBinaryString(value, binary_string);
+    return value;
+}
+
 void binary_file_writer(char *filename, const char *binary_string) {
     FILE *binary_file = fopen(filename, "wb+");
     if (binary_file) {

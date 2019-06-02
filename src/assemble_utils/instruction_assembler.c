@@ -186,14 +186,24 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
 
     uint32_t binary = 0;
     char *opcode = tokenised_line->opcode[line];
-    int set_L;
-    int set_U;
+    char *address = tokenised_line->operands[line][1];
+    char *address_offset = tokenised_line->operands[line][2];
+    //really need the following int to make this work fully
+    int num_of_operands;
+
+
+    //initialise all to their respective defaults
+    int set_I = 0;
+    int set_P = 0;
+    int set_U = 1;
+    int set_L = 0;
     int set_rn = 0;
+    int set_rd = 0;
     int set_offset = 0;
 
-    char *address = tokenised_line->operands[line][1];
+    //extract rd
+    set_rd = (int) strtol((tokenised_line->operands[line][0] += sizeof(char)), NULL, 10);
 
-    int num_of_operands = sizeof(tokenised_line->operands[line]) / sizeof(char);
     if (!(strcmp(opcode, "ldr"))){
         //LDR instruction
         set_L = 1;
@@ -221,26 +231,36 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
             //TODO: output expression, stick it onto end of binary
             //TODO: get address of new thing added, calculate offset, set last bits to offset
 
-        //need to somehow find if num of operands is 2 or 3
+        //need to somehow differentiate between pre and post indexed
         } else if (true){
             //pre indexed
-            //either type [rn,<#exp>] or type [rn], TODO: identify type
+            set_P = 1;
+            address += (2 * sizeof(char));
+            set_rn = (int) strtol(address, NULL, 10);
 
-            //if contains a comma, split up to there (start after [r)
-            char *token = strtok(&address[2], ",");
-            char *reg_num = token;
+            //either type [rn,<#exp>] or type [rn], TODO: identify type, set offset based on it
+            if (address_offset[0] == '#') {
+                //type is [rn,<#expression>]
+                address_offset += sizeof(char);
+                bool isNegative = false;
+                if (address_offset[0] == '-'){
+                    isNegative = true;
+                    address_offset += sizeof(char);
+                }
+                //get base of number and set offset
+                int base;
+                set_base(address_offset, &base);
+                set_offset = (int) strtol(address_offset, NULL, base);
 
-            //take everything up to ]
-            token = strtok(NULL, "]");
-            if (token) {
-                //type is [rn,<#expression]
-                int reg = (int) strtol(reg_num, NULL, 10);
+                //set U based on +ve or -ve
 
-            } else {
-                //type is [rn]
-                reg_num = strtok(reg_num, "]");
-                int reg = (int) strtol(reg_num, NULL, 10);
+                if (isNegative){
+                    set_U = 0;
+                }
+
             }
+            //otherwise is of type [rn], offset need not be set
+
         }
 
 
@@ -249,16 +269,35 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
         set_L = 0;
     }
 
-    //assume always executed
+    //assume always executed, set cond
     set_n_bits(&binary, 28, 14);
+
+    set_n_bits(&binary, 26, 1);
+
+    //setI
+    set_n_bits(&binary, 25, set_I);
+
     //setP
+    set_n_bits(&binary, 24, set_P);
+
     //setU
+    set_n_bits(&binary, 23, set_U);
+
     //setL
+    set_n_bits(&binary, 20, set_L);
+
     //setrn
+    set_n_bits(&binary, 16, set_rn);
+
     //setrd
+    set_n_bits(&binary, 12, set_rd);
+
     //setoffset
+    set_n_bits(&binary, 0, set_offset);
 
     toBinaryString(binary, binary_string);
+    printf("%d\n", binary);
+    printf("%x\n", binary);
 }
 
 
