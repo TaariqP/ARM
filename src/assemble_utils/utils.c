@@ -30,6 +30,17 @@ void toBinaryString(int binary, char *result) {
     result[32] = '\0';
 }
 
+void set_base(char *expression, int *base){
+    if (strstr(expression, "0x")){
+        //Base 16
+        *base = 16;
+    }
+    else{
+        //Base 10
+        *base  = 10;
+    }
+}
+
 void binary_file_writer(char *filename, const char *binary_string) {
     FILE *binary_file = fopen(filename, "wb+");
     if (binary_file) {
@@ -291,25 +302,23 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
     //TODO: VALGRIND ERROR
     char *binary = (char *) malloc(INSTRUCTION_SIZE * LINES);
     binary[0] = '\0';
+    int num_of_labels = 0;
     //Read opcode mnemonics + operands for each instruction
     for (int line_num = 0; line_num < tokenised_line->num_of_lines; ++line_num) {
         int num_of_operands = tokenizer(code[line_num], line_num, tokenised_line);
-
-        //Labels
-        if (num_of_operands == 0) {
-            //TODO
-        }
-
         //Instructions
         if (num_of_operands != 0) {
             //Get operands that are labels and use symbol table to get address
             for (int j = 0; j < num_of_operands; ++j) {
-                int address;
                 if (is_in_symbol_table(tokenised_line->operands[line_num][j], symbol_table)) {
                   //  if (tokenised_line->label[line_num] != NULL) {
-                        address = get_address(tokenised_line->operands[line_num][j], symbol_table);
+                    int address = get_address(tokenised_line->operands[line_num][j], symbol_table);
                         printf("Assigning operand %s to address %d\n", tokenised_line->operands[line_num][j], address);
                         sprintf(tokenised_line->operands[line_num][j], "%d", address);
+                        if ((line_num * 4) > address){
+                            //if current address > address (i.e. after the label)
+                            num_of_labels++;
+                        }
                   //  }
                 }
             }
@@ -346,16 +355,20 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
             }
             for (int k = 0; k < NUMBER_OF_BRANCH; ++k) {
                 if (strcmp(tokenised_line->opcode[line_num], BRANCH[k]) == 0) {
-                    char binaryToAdd[33] = {0};
-                    assemble_branch_to(tokenised_line, code, line_num, symbol_table, binaryToAdd);
+                    char binaryToAdd[33];
+                    assemble_branch_to(tokenised_line, code, line_num, symbol_table, binaryToAdd, num_of_labels);
                     strcat(binary, binaryToAdd);
-                    printf("%s\n", binaryToAdd);
+                    printf("binary: %s\n", binaryToAdd);
                     break;
-                    //strcat(binary, assemble_branch(tokenised_line, line_num, symbol_table));
                 }
             }
             for (int k = 0; k < NUMBER_OF_SPECIAL; ++k) {
                 if (strcmp(tokenised_line->opcode[line_num], SPECIAL[k]) == 0) {
+                    char binaryToAdd[33];
+                    assemble_special_to(tokenised_line, line_num, binaryToAdd);
+                    strcat(binary, binaryToAdd);
+                    printf("binary: %s\n", binaryToAdd);
+                    break;
                 }
             }
         }

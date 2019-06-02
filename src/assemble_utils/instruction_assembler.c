@@ -74,6 +74,22 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
         type = compute_result;
     }
 
+
+//    int no_of_operands = 4;
+//    //Optional sub command
+//    if (!(strcmp(command, "sub")){
+//        for (int i = 0; i < no_of_operands; ++i) {
+//            char* operand = tokenised_line->operands[line][i];
+//            if (strstr(operand, "lsl")){
+//                char* r3 = tokenised_line->operands[line][i-1];
+//
+//                //Store the state of tokenised line
+//                //Set tokenised line to lsl r3,(last byte of value in r4)
+//                assemble_special_to(tokenised_line, line)
+//            }
+//        }
+//    }
+
     //set S bit if type is set_CPSR
     if (type == set_CPSR) {
         set_n_bits(&binary, 20, 1);
@@ -131,13 +147,7 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
     //Base can be either BASE 10 OR BASE 16
 
     int base = 0;
-    if (strstr(operand2, "0x")) {
-        //Base 16
-        base = 16;
-    } else {
-        //base 10
-        base = 10;
-    }
+    set_base(operand2, &base);
 
     //calculate offset
     if (isImmediate) {
@@ -178,27 +188,31 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
     char *opcode = tokenised_line->opcode[line];
     int set_L;
     int set_U;
-    char *expression = tokenised_line->operands[line][1];
+    int set_rn = 0;
+    int set_offset = 0;
+
+    char *address = tokenised_line->operands[line][1];
 
     int num_of_operands = sizeof(tokenised_line->operands[line]) / sizeof(char);
     if (!(strcmp(opcode, "ldr"))){
+        //LDR instruction
         set_L = 1;
-        if (expression[0] == '='){
+        if (address[0] == '='){
             //numeric constant
 
             //potential just expression ++
-            expression += sizeof(char);
+            address += sizeof(char);
             //asssume always hex
-            int expression_value = (int) strtol(expression, NULL, 16);
+            int expression_value = (int) strtol(address, NULL, 16);
             if (expression_value <= 0xFF){
                 //convert to mov instruction
                 opcode[0] = 'm';
                 opcode[1] = 'o';
                 opcode[2] = 'v';
 
-                expression -= sizeof(char);
-                expression[0] = '#';
-                tokenised_line->operands[line][1] = expression;
+                address -= sizeof(char);
+                address[0] = '#';
+                tokenised_line->operands[line][1] = address;
                 assemble_dpi_to(tokenised_line, line, binary_string);
                 return;
             }
@@ -206,22 +220,43 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
             //in general case we need to output the value of expression, store it in 4 bytes at end of program
             //TODO: output expression, stick it onto end of binary
             //TODO: get address of new thing added, calculate offset, set last bits to offset
-        } else if (){
 
+        //need to somehow find if num of operands is 2 or 3
+        } else if (true){
+            //pre indexed
+            //either type [rn,<#exp>] or type [rn], TODO: identify type
+
+            //if contains a comma, split up to there (start after [r)
+            char *token = strtok(&address[2], ",");
+            char *reg_num = token;
+
+            //take everything up to ]
+            token = strtok(NULL, "]");
+            if (token) {
+                //type is [rn,<#expression]
+                int reg = (int) strtol(reg_num, NULL, 10);
+
+            } else {
+                //type is [rn]
+                reg_num = strtok(reg_num, "]");
+                int reg = (int) strtol(reg_num, NULL, 10);
+            }
         }
 
 
-
-
-
-
-
-
-
-
     } else {
+        //STR instruction
         set_L = 0;
     }
+
+    //assume always executed
+    set_n_bits(&binary, 28, 14);
+    //setP
+    //setU
+    //setL
+    //setrn
+    //setrd
+    //setoffset
 
     toBinaryString(binary, binary_string);
 }
@@ -265,11 +300,11 @@ void assemble_mul_to(tokenised_line *tokenised_line, int line, char *binary_stri
 
 
 void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, symbol_table *symbol_table,
-                        char *binary_string) {
+                        char *binary_string, int num_of_labels) {
     //condition is the last two letter of the command
     uint32_t binary = 0;
     char *condition = tokenised_line->opcode[line] + sizeof(char);
-    int current_address = 4 * line;
+
 
 
 
@@ -312,9 +347,8 @@ void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, s
 
     //Get operand which will be an address
     int target_address = (int) strtol(tokenised_line->operands[line][0], NULL, 10);
-
+    int current_address = 4 * (line - num_of_labels);
     //Calculate offset = label - current - 8 byte pipeline
-    int x = target_address - current_address;
     int offset = (target_address - current_address) - 8;
     //get first 26 bits
     offset &= 0x3FFFFFF;
@@ -327,13 +361,15 @@ void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, s
         //Get first 24 bits
         offset &= 0xFFFFFF;
         //check offset valid and set offset
-//        char *res;
-//        toBinaryString(offset, res);
-//        printf("Offset: %s\n", res);
+        printf("offset value: %d\n", offset);
+        char *res;
+        toBinaryString(offset, res);
+        printf("Offset: %s\n", res);
         set_n_bits(&binary, 0, offset);
         toBinaryString(binary, binary_string);
     }
 }
+
 
 void assemble_special_to(tokenised_line *tokenised_line, int line, char *binary_string) {
     uint32_t binary = 0;
@@ -341,8 +377,54 @@ void assemble_special_to(tokenised_line *tokenised_line, int line, char *binary_
 
     if (!(strcmp("andeq", opcode))) {
         //ALL 0 HALT INSTRUCTION
-        toBinaryString(binary, binary_string);
+        toBinaryString(binary,binary_string);
+        return;
     }
+    //LSL INSTRUCTION
+    /*LSL Rn <#exp> = mov Rn, Rn, lsl <#exp>
+     -apply a logical shift to Rn by the amount specified
+        by exp to compute a new value
+     -then we just return mov Rn val*/
+
+    //set binary to basically mov
+
+    //cond
+    set_n_bits(&binary, 28, 14);
+
+    //2 zeroes, I is zero,
+
+    //opcode
+    set_n_bits(&binary, 21, 13);
+
+    //S is zero
+
+    //Rn is zero
+
+    //Rd is
+    set_operand(&binary, line, 0, 12, tokenised_line);
+
+
+    //Setting Operand2
+    //get shift amount
+    char *expression = tokenised_line->operands[line][1] + sizeof(char);
+    int base;
+    set_base(expression, &base);
+    int shiftAmt = (int) strtol(expression, NULL, base);
+
+    //can only take 5 bits of shiftAmt, or else its a register shift, but register unspecified
+    //shiftAmt &= 0x1F;
+
+
+    //Shift
+    set_n_bits(&binary, 7, shiftAmt);
+
+    //Rm set to rn
+    set_operand(&binary, line, 0, 0, tokenised_line);
+    //set_n_bits(&binary, 0, shiftAmt);
+    //set_operand(&binary, line, 1, 0, tokenised_line);
+
+
+    toBinaryString(binary, binary_string);
 
 
 }
