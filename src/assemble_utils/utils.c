@@ -30,6 +30,17 @@ void toBinaryString(int binary, char *result) {
     result[32] = '\0';
 }
 
+void set_base(char *expression, int *base){
+    if (strstr(expression, "0x")){
+        //Base 16
+        *base = 16;
+    }
+    else{
+        //Base 10
+        *base  = 10;
+    }
+}
+
 void binary_file_writer(char *filename, const char *binary_string) {
     FILE *binary_file = fopen(filename, "wb+");
     if (binary_file) {
@@ -354,6 +365,11 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
             }
             for (int k = 0; k < NUMBER_OF_SPECIAL; ++k) {
                 if (strcmp(tokenised_line->opcode[line_num], SPECIAL[k]) == 0) {
+                    char binaryToAdd[33];
+                    assemble_special_to(tokenised_line, line_num, binaryToAdd);
+                    strcat(binary, binaryToAdd);
+                    printf("binary: %s\n", binaryToAdd);
+                    break;
                 }
             }
         }
