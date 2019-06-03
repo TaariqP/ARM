@@ -421,6 +421,7 @@ char *two_pass_assembly(char **code, int num_of_lines) {
     // MAX_operands = number of lines * (LINELENGTH / OPERAND_LENGTH)
 
     tokenised_line->operands = (char ***) malloc(sizeof(char **) * num_of_lines);
+    tokenised_line->num_of_operands = (int *) malloc(sizeof(int) * num_of_lines);
     for (int i = 0; i < num_of_lines; ++i) {
         // allocate each row (the row cells)
         tokenised_line->operands[i] = (char **) malloc(sizeof(char *) * MAX_OPERANDS);
@@ -454,6 +455,7 @@ char *two_pass_assembly(char **code, int num_of_lines) {
     free(tokenised_line->opcode);
     free(tokenised_line->num_of_operands);
     free(tokenised_line->label);
+    free(tokenised_line->num_of_operands);
     free(tokenised_line->operands);
     free(tokenised_line);
     free(symbol_table->mappings);
