@@ -182,10 +182,192 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
 }
 
 
-uint32_t assemble_sdt(char *string, char **code, int line) {
-    uint32_t binary = 0;
+void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string) {
 
-    return binary;
+    uint32_t binary = 0;
+    char *opcode = tokenised_line->opcode[line];
+    char *address = tokenised_line->operands[line][1];
+    char *address_offset = tokenised_line->operands[line][2];
+    //really need the following int to make this work fully
+    int num_of_operands;
+
+
+    //initialise all to their respective defaults
+    int set_I = 0;
+    int set_P = 0;
+    int set_U = 1;
+    int set_L = 0;
+    int set_rn = 0;
+    int set_rd = 0;
+    int set_offset = 0;
+
+    //extract rd
+    set_rd = (int) strtol((tokenised_line->operands[line][0] += sizeof(char)), NULL, 10);
+
+    if (!(strcmp(opcode, "ldr"))){
+        //LDR instruction
+        set_L = 1;
+        if (address[0] == '='){
+            //numeric constant
+
+            //potential just expression ++
+            address += sizeof(char);
+            //asssume always hex
+            int expression_value = (int) strtol(address, NULL, 16);
+            if (expression_value <= 0xFF){
+                //convert to mov instruction
+                opcode[0] = 'm';
+                opcode[1] = 'o';
+                opcode[2] = 'v';
+
+                address -= sizeof(char);
+                address[0] = '#';
+                tokenised_line->operands[line][1] = address;
+                assemble_dpi_to(tokenised_line, line, binary_string);
+                return;
+            }
+
+            //in general case we need to output the value of expression, store it in 4 bytes at end of program
+            //TODO: output expression, stick it onto end of binary
+            //TODO: get address of new thing added, calculate offset, set last bits to offset
+
+        }
+
+
+    } else {
+        //STR instruction
+        set_L = 0;
+    }
+
+    // ldr Rd, [rn] = pre
+    // ldr Rd, [rn, #exp] = pre
+    // ldr Rd, [rn], #exp = post
+    address += (2* sizeof(char));
+    set_rn = (int) strtol(address, NULL, 10);
+    bool isNegative = false;
+
+    if (tokenised_line->num_of_operands[line] == 2 || containsChar(']', address_offset)){
+        //pre indexed
+        set_P = 1;
+
+        //either type [rn,<#exp>] or type [rn], TODO: identify type, set offset based on it
+        if (address_offset[0] == '#') {
+            //type is [rn,<#expression>]
+            address_offset += sizeof(char);
+            bool isNegative = false;
+            if (address_offset[0] == '-'){
+                isNegative = true;
+                address_offset += sizeof(char);
+            }
+            //get base of number and set offset
+            int base;
+            set_base(address_offset, &base);
+            set_offset = (int) strtol(address_offset, NULL, base);
+
+            //set U based on +ve or -ve
+            if (isNegative){
+                set_U = 0;
+            }
+
+        } else {
+            //shifted register offset
+            char *address_offset_shift = tokenised_line->operands[line][2];
+            if (address_offset[0] == '-'){
+                isNegative = true;
+                address_offset += sizeof(char);
+            }
+
+            //set U based on +ve or -ve
+            if (isNegative){
+                set_U = 0;
+            }
+            int base;
+            set_base(address_offset_shift, &base);
+            int shift = (int) strtol(address_offset_shift, NULL, base);
+
+            address_offset += sizeof(char);
+            int rm = (int) strtol(address_offset, NULL, 10);
+
+            //combine rm and shift appropriately (page 7 of spec)
+            shift = shift << 4;
+            set_offset = shift + rm;
+        }
+        //otherwise is of type [rn], offset need not be set
+    } else {
+        //post indexed
+
+        if (address_offset[0] == '#'){
+            // numeric offset
+            address_offset += sizeof(char);
+
+            if (address_offset[0] == '-'){
+                isNegative = true;
+                address_offset += sizeof(char);
+            }
+            int base;
+            set_base(address_offset, &base);
+            set_offset = (int) strtol(address_offset, NULL, base);
+
+            //set U based on +ve or -ve
+            if (isNegative){
+                set_U = 0;
+            }
+
+        } else {
+            //shifted register offset
+            char *address_offset_shift = tokenised_line->operands[line][2];
+            if (address_offset[0] == '-'){
+                isNegative = true;
+                address_offset += sizeof(char);
+            }
+
+            //set U based on +ve or -ve
+            if (isNegative){
+                set_U = 0;
+            }
+            int base;
+            set_base(address_offset_shift, &base);
+            int shift = (int) strtol(address_offset_shift, NULL, base);
+
+            address_offset += sizeof(char);
+            int rm = (int) strtol(address_offset, NULL, 10);
+
+            //combine rm and shift appropriately (page 7 of spec)
+            shift = shift << 4;
+            set_offset = shift + rm;
+        }
+    }
+
+    //assume always executed, set cond
+    set_n_bits(&binary, 28, 14);
+
+    set_n_bits(&binary, 26, 1);
+
+    //setI
+    set_n_bits(&binary, 25, set_I);
+
+    //setP
+    set_n_bits(&binary, 24, set_P);
+
+    //setU
+    set_n_bits(&binary, 23, set_U);
+
+    //setL
+    set_n_bits(&binary, 20, set_L);
+
+    //setrn
+    set_n_bits(&binary, 16, set_rn);
+
+    //setrd
+    set_n_bits(&binary, 12, set_rd);
+
+    //setoffset
+    set_n_bits(&binary, 0, set_offset);
+
+    toBinaryString(binary, binary_string);
+    printf("%d\n", binary);
+    printf("%x\n", binary);
+
 }
 
 void assemble_mul_to(tokenised_line *tokenised_line, int line, char *binary_string) {

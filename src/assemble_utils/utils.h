@@ -39,7 +39,6 @@ void set_n_bits(uint32_t *, int, int);
 
 int is_empty(const char *);
 
-
 void toBinaryString(int binary, char *result);
 
 int is_in_symbol_table(char *label, symbol_table *symbol_table);
