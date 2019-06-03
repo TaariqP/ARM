@@ -178,6 +178,7 @@ void set_operand(uint32_t *binary, int line, int arg_num, int end_bit, tokenised
     int reg_num = (int) strtol(reg, (char **) NULL, 10);
     set_n_bits(binary, end_bit, reg_num);
 }
+
 //Check if label exists in symbol table
 
 int is_in_symbol_table(char *label, symbol_table *symbol_table) {

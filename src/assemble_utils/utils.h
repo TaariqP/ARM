@@ -57,5 +57,4 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
 
 char *two_pass_assembly(char **code, int num_of_lines);
 
-
 #endif //ARM11_11_UTILS_H

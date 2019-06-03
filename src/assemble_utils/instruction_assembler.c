@@ -22,6 +22,7 @@ char condition[3];
 void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_string) {
     uint32_t binary = 0;
 
+
     //set cond to 1110
     set_n_bits(&binary, COND_END_BIT, 14);
 
