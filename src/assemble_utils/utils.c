@@ -41,6 +41,7 @@ void set_base(char *expression, int *base){
     }
 }
 
+
 void binary_file_writer(char *filename, const char *binary_string) {
     FILE *binary_file = fopen(filename, "wb+");
     if (binary_file) {
@@ -268,6 +269,7 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
         (tokenised_line->operands)[line_num][num_of_operands] = line_t;
         num_of_operands++;
     }
+    tokenised_line->num_of_operands[line_num] = num_of_operands;
     for (int i = 0; i < num_of_operands; ++i) {
         (tokenised_line->operands)[line_num][i] = trim_whitespace((tokenised_line->operands)[line_num][i]);
         printf("%s\n", tokenised_line->operands[line_num][i]);
@@ -276,6 +278,15 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
     //free(line_t);
     return num_of_operands;
 
+}
+
+bool containsChar(char c, char *string){
+    for (int i = 0; i < strlen(string); i++){
+        if (string[i] == c){
+            return true;
+        }
+    }
+    return false;
 }
 
 
@@ -311,15 +322,15 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
             //Get operands that are labels and use symbol table to get address
             for (int j = 0; j < num_of_operands; ++j) {
                 if (is_in_symbol_table(tokenised_line->operands[line_num][j], symbol_table)) {
-                  //  if (tokenised_line->label[line_num] != NULL) {
+                    //  if (tokenised_line->label[line_num] != NULL) {
                     int address = get_address(tokenised_line->operands[line_num][j], symbol_table);
-                        printf("Assigning operand %s to address %d\n", tokenised_line->operands[line_num][j], address);
-                        sprintf(tokenised_line->operands[line_num][j], "%d", address);
-                        if ((line_num * 4) > address){
-                            //if current address > address (i.e. after the label)
-                            num_of_labels++;
-                        }
-                  //  }
+                    printf("Assigning operand %s to address %d\n", tokenised_line->operands[line_num][j], address);
+                    sprintf(tokenised_line->operands[line_num][j], "%d", address);
+                    if ((line_num * 4) > address){
+                        //if current address > address (i.e. after the label)
+                        num_of_labels++;
+                    }
+                    //  }
                 }
             }
 
@@ -337,11 +348,11 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
 
             for (int k = 0; k < NUMBER_OF_SDT; ++k) {
                 if (strcmp(tokenised_line->opcode[line_num], SDT[k]) == 0) {
-//                    char binaryToAdd[33];
-//                    assemble_sdt_to(tokenised_line, line_num, binaryToAdd);
-//                    strcat(binary, binaryToAdd);
-//                    printf("%s\n", binaryToAdd);
-//                    break;
+                    char binaryToAdd[33];
+                    assemble_sdt_to(tokenised_line, line_num, binaryToAdd);
+                    strcat(binary, binaryToAdd);
+                    printf("%s\n", binaryToAdd);
+                    break;
                 }
             }
             for (int k = 0; k < NUMBER_OF_MUL; ++k) {
@@ -377,6 +388,7 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
     return binary;
 }
 
+
 char *two_pass_assembly(char **code, int num_of_lines) {
 
     symbol_table *symbol_table = malloc(sizeof(*symbol_table));
@@ -397,6 +409,7 @@ char *two_pass_assembly(char **code, int num_of_lines) {
 
     //TODO: VALGRIND ERROR
     tokenised_line->opcode = (char **) malloc(sizeof(char *) * OPCODE_LENGTH * (num_of_lines));
+    tokenised_line->num_of_operands = (int *) malloc(sizeof(int) *(num_of_lines));
     for (int k = 0; k < num_of_lines; ++k) {
         //TODO: VALGRIND ERROR
         tokenised_line->opcode[k] = (char *) malloc(sizeof(char) * (OPCODE_LENGTH + 1));
@@ -439,6 +452,7 @@ char *two_pass_assembly(char **code, int num_of_lines) {
         free(tokenised_line->opcode[l]);
     }
     free(tokenised_line->opcode);
+    free(tokenised_line->num_of_operands);
     free(tokenised_line->label);
     free(tokenised_line->operands);
     free(tokenised_line);

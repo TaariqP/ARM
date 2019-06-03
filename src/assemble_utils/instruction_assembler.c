@@ -367,8 +367,8 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
     toBinaryString(binary, binary_string);
     printf("%d\n", binary);
     printf("%x\n", binary);
-
 }
+
 
 void assemble_mul_to(tokenised_line *tokenised_line, int line, char *binary_string) {
     //condition is the last 2 letters of the opcode
@@ -477,6 +477,7 @@ void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, s
         toBinaryString(binary, binary_string);
     }
 }
+
 
 void assemble_special_to(tokenised_line *tokenised_line, int line, char *binary_string) {
     uint32_t binary = 0;

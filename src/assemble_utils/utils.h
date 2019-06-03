@@ -16,6 +16,7 @@ void extract_2_char_cond(char *, char *);
 
 char *trim_whitespace(char *);
 
+int negate(int);
 
 uint8_t mask_1_bit_assemble(int, int);
 
