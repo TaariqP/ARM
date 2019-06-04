@@ -22,6 +22,8 @@ uint8_t mask_1_bit_assemble(int, int);
 
 int rol(uint32_t);
 
+bool containsChar(char, char *);
+
 bool is8bit(int);
 
 bool is24bit(int);
