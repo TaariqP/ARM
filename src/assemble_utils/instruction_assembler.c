@@ -183,7 +183,8 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
 
 
 void
-assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, int current_instruction, int final_instruction,  int *value,
+assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, int current_instruction,
+                int final_instruction, int *value,
                 int offset, char **byte_to_add) {
 
     uint32_t binary = 0;
@@ -240,7 +241,7 @@ assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, i
 
 //pipeline offset subtracted
 
-                int destination_address = ((final_instruction  - current_instruction) * 4) + offset - 8;
+                int destination_address = ((final_instruction - current_instruction) * 4) + offset - 8;
                 *value = 1;
                 set_I = 0;
                 set_P = 1;
@@ -303,6 +304,12 @@ assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, i
         //pre indexed
         set_P = 1;
 
+        if (address_offset[0] == 'r'){
+            set_I = 1;
+        } else {
+            set_I = 0;
+        }
+
         //either type [rn,<#exp>] or type [rn], TODO: identify type, set offset based on it
         if (address_offset[0] == '#') {
             //type is [rn,<#expression>]
@@ -313,6 +320,8 @@ assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, i
             if (address_offset[0] == '-') {
                 isNegative = true;
                 address_offset += sizeof(char);
+            } else {
+                set_U = 1;
             }
             //get base of number and set offset
             int base;
@@ -327,9 +336,9 @@ assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, i
 
         } else {
             //shifted register offset
-            if (set_L == 0) {
-                set_I = 1;
-            }
+//            if (set_L == 0) {
+//                set_I = 1;
+//            }
             char *address_offset_shift = tokenised_line->operands[line][2];
             if (address_offset[0] == '-') {
                 isNegative = true;
@@ -355,6 +364,12 @@ assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, i
     } else {
         //post indexed
 
+        if (address_offset[0] == 'r'){
+            set_I = 1;
+        } else {
+            set_I = 0;
+        }
+
         if (address_offset[0] == '#') {
             // numeric offset
 
@@ -375,9 +390,9 @@ assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, i
 
         } else {
             //shifted register offset
-            if (set_L == 0) {
-                set_I = 1;
-            }
+//            if (set_L == 0) {
+//                set_I = 1;
+//            }
             char *address_offset_shift = tokenised_line->operands[line][2];
             if (address_offset[0] == '-') {
                 isNegative = true;
