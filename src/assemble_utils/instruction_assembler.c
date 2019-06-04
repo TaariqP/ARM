@@ -152,7 +152,7 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
     //calculate offset
     if (isImmediate) {
         int immediate_value = (int) strtol(operand2, NULL, base);
-        if (immediate_value <= 256) {
+        if (immediate_value < 256) {
             //can be stored directly in last 8 bits without need for rotate
             set_n_bits(&binary, 0, immediate_value);
         } else {
