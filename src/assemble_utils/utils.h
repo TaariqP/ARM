@@ -16,6 +16,7 @@ void extract_2_char_cond(char *, char *);
 
 char *trim_whitespace(char *);
 
+int negate(int);
 
 uint8_t mask_1_bit_assemble(int, int);
 
@@ -33,10 +34,11 @@ void set_operand(uint32_t *, int, int, int, tokenised_line *);
 
 void get_argument(char *, int, char *);
 
+void set_base(char *, int *);
+
 void set_n_bits(uint32_t *, int, int);
 
 int is_empty(const char *);
-
 
 void toBinaryString(int binary, char *result);
 
