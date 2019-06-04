@@ -52,7 +52,7 @@ void add_to_mappings(symbol_table *symbol_table, mapping mapping);
 
 int tokenizer(char *line, int, tokenised_line *tokenised_line);
 
-void first_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbol_table);
+int first_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbol_table);
 
 char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbol_table);
 

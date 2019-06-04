@@ -30,14 +30,13 @@ void toBinaryString(int binary, char *result) {
     result[32] = '\0';
 }
 
-void set_base(char *expression, int *base){
-    if (strstr(expression, "0x")){
+void set_base(char *expression, int *base) {
+    if (strstr(expression, "0x")) {
         //Base 16
         *base = 16;
-    }
-    else{
+    } else {
         //Base 10
-        *base  = 10;
+        *base = 10;
     }
 }
 
@@ -109,7 +108,7 @@ bool is8bit(int val) {
     return (val == (val & 0xFF));
 }
 
-bool is26bit(int val){
+bool is26bit(int val) {
     return (val == val & 0x3FFFFFF);
 }
 
@@ -184,7 +183,7 @@ int is_in_symbol_table(char *label, symbol_table *symbol_table) {
 int get_address(char *label, symbol_table *symbol_table) {
     //compare given label to the label of each mapping till found.
     for (int i = 0; i < symbol_table->num_elements; ++i) {
-        if (label == NULL){
+        if (label == NULL) {
             continue;
         }
         if (strcmp(symbol_table->mappings[i].label, label) == 0) {
@@ -280,9 +279,9 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
 
 }
 
-bool containsChar(char c, char *string){
-    for (int i = 0; i < strlen(string); i++){
-        if (string[i] == c){
+bool containsChar(char c, char *string) {
+    for (int i = 0; i < strlen(string); i++) {
+        if (string[i] == c) {
             return true;
         }
     }
@@ -290,8 +289,9 @@ bool containsChar(char c, char *string){
 }
 
 
-void first_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbol_table) {
+int first_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbol_table) {
     char *line;
+    int total_labels = 0;
     //Go through each line of code and get labels and add to symbol table.
     for (int line_num = 0; line_num < tokenised_line->num_of_lines; line_num++) {
         line = code[line_num];
@@ -303,14 +303,18 @@ void first_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbo
             mapping->memory_address = 4 * line_num;
             add_to_mappings(symbol_table, *mapping);
             printf("label: %s\n", tokenised_line->label[line_num]);
-
+            total_labels++;
         }
     }
+    return total_labels;
 }
 
-char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbol_table) {
+char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbol_table, int total_labels) {
 
     //TODO: VALGRIND ERROR
+    int offset = 0;
+    char *byte_to_add = calloc(sizeof(char), 4 * LINES);
+
     char *binary = (char *) malloc(INSTRUCTION_SIZE * LINES);
     binary[0] = '\0';
     int num_of_labels = 0;
@@ -326,7 +330,7 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
                     int address = get_address(tokenised_line->operands[line_num][j], symbol_table);
                     printf("Assigning operand %s to address %d\n", tokenised_line->operands[line_num][j], address);
                     sprintf(tokenised_line->operands[line_num][j], "%d", address);
-                    if ((line_num * 4) > address){
+                    if ((line_num * 4) > address) {
                         //if current address > address (i.e. after the label)
                         num_of_labels++;
                     }
@@ -347,11 +351,17 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
             }
 
             for (int k = 0; k < NUMBER_OF_SDT; ++k) {
+                int value = 0;
                 if (strcmp(tokenised_line->opcode[line_num], SDT[k]) == 0) {
                     char binaryToAdd[33];
-                    assemble_sdt_to(tokenised_line, line_num, binaryToAdd);
+                    assemble_sdt_to(tokenised_line, line_num, binaryToAdd, line_num - num_of_labels,
+                                    tokenised_line->num_of_lines - total_labels, &value, offset, &byte_to_add);
                     strcat(binary, binaryToAdd);
                     printf("%s\n", binaryToAdd);
+                    if (value) {
+                        offset += 4;
+                        value = 0;
+                    }
                     break;
                 }
             }
@@ -385,6 +395,7 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
             }
         }
     }
+    strcat(binary, byte_to_add);
     return binary;
 }
 
@@ -409,7 +420,7 @@ char *two_pass_assembly(char **code, int num_of_lines) {
 
     //TODO: VALGRIND ERROR
     tokenised_line->opcode = (char **) malloc(sizeof(char *) * OPCODE_LENGTH * (num_of_lines));
-    tokenised_line->num_of_operands = (int *) malloc(sizeof(int) *(num_of_lines));
+    tokenised_line->num_of_operands = (int *) malloc(sizeof(int) * (num_of_lines));
     for (int k = 0; k < num_of_lines; ++k) {
         //TODO: VALGRIND ERROR
         tokenised_line->opcode[k] = (char *) malloc(sizeof(char) * (OPCODE_LENGTH + 1));
@@ -432,11 +443,11 @@ char *two_pass_assembly(char **code, int num_of_lines) {
     }
 
 //First pass assoociates labels with memory addresses.
-    first_pass(code, tokenised_line, symbol_table);
+    int total_labels = first_pass(code, tokenised_line, symbol_table);
 
 /* Second Pass */
 
-    char *binary = second_pass(code, tokenised_line, symbol_table);
+    char *binary = second_pass(code, tokenised_line, symbol_table, total_labels);
 
 // REMEMBER TO free
 
@@ -455,7 +466,7 @@ char *two_pass_assembly(char **code, int num_of_lines) {
     free(tokenised_line->opcode);
     free(tokenised_line->num_of_operands);
     free(tokenised_line->label);
-    free(tokenised_line->num_of_operands);
+    //free(tokenised_line->num_of_operands);
     free(tokenised_line->operands);
     free(tokenised_line);
     free(symbol_table->mappings);
