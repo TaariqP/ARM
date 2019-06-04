@@ -306,10 +306,10 @@ assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, i
         //either type [rn,<#exp>] or type [rn], TODO: identify type, set offset based on it
         if (address_offset[0] == '#') {
             //type is [rn,<#expression>]
+
             address_offset += sizeof(char);
 
 
-            bool isNegative = false;
             if (address_offset[0] == '-') {
                 isNegative = true;
                 address_offset += sizeof(char);
@@ -327,6 +327,9 @@ assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, i
 
         } else {
             //shifted register offset
+            if (set_L == 0) {
+                set_I = 1;
+            }
             char *address_offset_shift = tokenised_line->operands[line][2];
             if (address_offset[0] == '-') {
                 isNegative = true;
@@ -354,6 +357,7 @@ assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, i
 
         if (address_offset[0] == '#') {
             // numeric offset
+
             address_offset += sizeof(char);
 
             if (address_offset[0] == '-') {
@@ -371,6 +375,9 @@ assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, i
 
         } else {
             //shifted register offset
+            if (set_L == 0) {
+                set_I = 1;
+            }
             char *address_offset_shift = tokenised_line->operands[line][2];
             if (address_offset[0] == '-') {
                 isNegative = true;
@@ -526,7 +533,7 @@ void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, s
         offset &= 0xFFFFFF;
         //check offset valid and set offset
         printf("offset value: %d\n", offset);
-        char *res;
+        char res[33];
         toBinaryString(offset, res);
         printf("Offset: %s\n", res);
         set_n_bits(&binary, 0, offset);

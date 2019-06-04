@@ -38,7 +38,7 @@ typedef struct {
 
 typedef struct {
     int num_elements;
-   mapping* mappings;
+    mapping* mappings;
 } symbol_table;
 
 typedef struct {
