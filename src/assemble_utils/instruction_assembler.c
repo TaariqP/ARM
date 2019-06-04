@@ -182,7 +182,9 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
 }
 
 
-void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string) {
+void
+assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, int current_instruction, int final_instruction,  int *value,
+                int offset, char **byte_to_add) {
 
     uint32_t binary = 0;
     char *opcode = tokenised_line->opcode[line];
@@ -204,17 +206,19 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
     //extract rd
     set_rd = (int) strtol((tokenised_line->operands[line][0] += sizeof(char)), NULL, 10);
 
-    if (!(strcmp(opcode, "ldr"))){
+    int expression_value;
+
+    if (!(strcmp(opcode, "ldr"))) {
         //LDR instruction
         set_L = 1;
-        if (address[0] == '='){
+        if (address[0] == '=') {
             //numeric constant
 
             //potential just expression ++
             address += sizeof(char);
             //asssume always hex
-            int expression_value = (int) strtol(address, NULL, 16);
-            if (expression_value <= 0xFF){
+            expression_value = (int) strtol(address, NULL, 16);
+            if (expression_value <= 0xFF) {
                 //convert to mov instruction
                 opcode[0] = 'm';
                 opcode[1] = 'o';
@@ -225,14 +229,63 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
                 tokenised_line->operands[line][1] = address;
                 assemble_dpi_to(tokenised_line, line, binary_string);
                 return;
+            } else {
+
+                //in general case we need to output the value of expression, store it in 4 bytes at end of program
+                //TODO: output expression, stick it onto end of binary
+                //TODO: get address of new thing added, calculate offset, set last bits to offset
+                /* In the general case, the assembler should put the value of <expression> in four bytes at the end
+    of the assembled program, and use the address of this value, with the PC as the base register and
+    a calculated offset, in the assembled ldr instruction. It will be always a pre-indexed address.*/
+
+//pipeline offset subtracted
+
+                int destination_address = ((final_instruction  - current_instruction) * 4) + offset - 8;
+                *value = 1;
+                set_I = 0;
+                set_P = 1;
+                set_U = 1;
+                set_L = 1;
+                set_rn = 15;
+                //rd alreaday set
+                //offset is destination_address
+                set_offset = destination_address;
+                //value to add to the byte
+                char res[33];
+                toBinaryString(expression_value, res);
+                strcat(*byte_to_add, res);
+
+
+                //assume always executed, set cond
+                set_n_bits(&binary, 28, 14);
+
+                set_n_bits(&binary, 26, 1);
+
+                //setI
+                set_n_bits(&binary, 25, set_I);
+
+                //setP
+                set_n_bits(&binary, 24, set_P);
+
+                //setU
+                set_n_bits(&binary, 23, set_U);
+
+                //setL
+                set_n_bits(&binary, 20, set_L);
+
+                //setrn
+                set_n_bits(&binary, 16, set_rn);
+
+                //setrd
+                set_n_bits(&binary, 12, set_rd);
+
+                //setoffset
+                set_n_bits(&binary, 0, set_offset);
+
+                toBinaryString(binary, binary_string);
+                return;
             }
-
-            //in general case we need to output the value of expression, store it in 4 bytes at end of program
-            //TODO: output expression, stick it onto end of binary
-            //TODO: get address of new thing added, calculate offset, set last bits to offset
-
         }
-
 
     } else {
         //STR instruction
@@ -242,11 +295,11 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
     // ldr Rd, [rn] = pre
     // ldr Rd, [rn, #exp] = pre
     // ldr Rd, [rn], #exp = post
-    address += (2* sizeof(char));
+    address += (2 * sizeof(char));
     set_rn = (int) strtol(address, NULL, 10);
     bool isNegative = false;
 
-    if (tokenised_line->num_of_operands[line] == 2 || containsChar(']', address_offset)){
+    if (tokenised_line->num_of_operands[line] == 2 || containsChar(']', address_offset)) {
         //pre indexed
         set_P = 1;
 
@@ -254,8 +307,10 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
         if (address_offset[0] == '#') {
             //type is [rn,<#expression>]
             address_offset += sizeof(char);
+
+
             bool isNegative = false;
-            if (address_offset[0] == '-'){
+            if (address_offset[0] == '-') {
                 isNegative = true;
                 address_offset += sizeof(char);
             }
@@ -264,21 +319,22 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
             set_base(address_offset, &base);
             set_offset = (int) strtol(address_offset, NULL, base);
 
+
             //set U based on +ve or -ve
-            if (isNegative){
+            if (isNegative) {
                 set_U = 0;
             }
 
         } else {
             //shifted register offset
             char *address_offset_shift = tokenised_line->operands[line][2];
-            if (address_offset[0] == '-'){
+            if (address_offset[0] == '-') {
                 isNegative = true;
                 address_offset += sizeof(char);
             }
 
             //set U based on +ve or -ve
-            if (isNegative){
+            if (isNegative) {
                 set_U = 0;
             }
             int base;
@@ -296,11 +352,11 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
     } else {
         //post indexed
 
-        if (address_offset[0] == '#'){
+        if (address_offset[0] == '#') {
             // numeric offset
             address_offset += sizeof(char);
 
-            if (address_offset[0] == '-'){
+            if (address_offset[0] == '-') {
                 isNegative = true;
                 address_offset += sizeof(char);
             }
@@ -309,20 +365,20 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
             set_offset = (int) strtol(address_offset, NULL, base);
 
             //set U based on +ve or -ve
-            if (isNegative){
+            if (isNegative) {
                 set_U = 0;
             }
 
         } else {
             //shifted register offset
             char *address_offset_shift = tokenised_line->operands[line][2];
-            if (address_offset[0] == '-'){
+            if (address_offset[0] == '-') {
                 isNegative = true;
                 address_offset += sizeof(char);
             }
 
             //set U based on +ve or -ve
-            if (isNegative){
+            if (isNegative) {
                 set_U = 0;
             }
             int base;
@@ -485,7 +541,7 @@ void assemble_special_to(tokenised_line *tokenised_line, int line, char *binary_
 
     if (!(strcmp("andeq", opcode))) {
         //ALL 0 HALT INSTRUCTION
-        toBinaryString(binary,binary_string);
+        toBinaryString(binary, binary_string);
         return;
     }
     //LSL INSTRUCTION
