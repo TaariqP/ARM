@@ -22,7 +22,6 @@
 #define COND_END_BIT 28
 #define DPI_OPCODE_END_BIT 21
 #define COMMAND_LENGTH 128
-// the initial 0 binary that we set depending on the instruction
 
 typedef enum {
     compute_result,
@@ -43,7 +42,6 @@ typedef struct {
 
 typedef struct {
     //Array of strings
-    //? to keep line_num??
     int num_of_lines;
     char** label;
     char** opcode;

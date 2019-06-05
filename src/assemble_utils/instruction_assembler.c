@@ -182,8 +182,7 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
 }
 
 
-void
-assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, int current_instruction,
+void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, int current_instruction,
                 int final_instruction, int *value,
                 int offset, char **byte_to_add) {
 
@@ -191,8 +190,6 @@ assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, i
     char *opcode = tokenised_line->opcode[line];
     char *address = tokenised_line->operands[line][1];
     char *address_offset = tokenised_line->operands[line][2];
-    //really need the following int to make this work fully
-    int num_of_operands;
 
 
     //initialise all to their respective defaults
@@ -300,14 +297,14 @@ assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, i
     set_rn = (int) strtol(address, NULL, 10);
     bool isNegative = false;
 
-    if (tokenised_line->num_of_operands[line] == 2 || containsChar(']', address_offset)) {
+    int lastargumentindex = tokenised_line->num_of_operands[line] -1;
+    if (tokenised_line->num_of_operands[line] == 2 ||
+            containsChar(']', tokenised_line->operands[line][lastargumentindex])) {
         //pre indexed
         set_P = 1;
 
         if (address_offset[0] == 'r'){
             set_I = 1;
-        } else {
-            set_I = 0;
         }
 
         //either type [rn,<#exp>] or type [rn], TODO: identify type, set offset based on it
@@ -335,11 +332,7 @@ assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, i
             }
 
         } else {
-            //shifted register offset
-//            if (set_L == 0) {
-//                set_I = 1;
-//            }
-            char *address_offset_shift = tokenised_line->operands[line][2];
+            char *address_offset_shift = tokenised_line->operands[line][3];
             if (address_offset[0] == '-') {
                 isNegative = true;
                 address_offset += sizeof(char);
@@ -349,6 +342,7 @@ assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, i
             if (isNegative) {
                 set_U = 0;
             }
+
             int base;
             set_base(address_offset_shift, &base);
             int shift = (int) strtol(address_offset_shift, NULL, base);
@@ -357,17 +351,15 @@ assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, i
             int rm = (int) strtol(address_offset, NULL, 10);
 
             //combine rm and shift appropriately (page 7 of spec)
-            shift = shift << 4;
+            shift = shift << 7;
             set_offset = shift + rm;
         }
         //otherwise is of type [rn], offset need not be set
-    } else {
+    } else{
         //post indexed
 
         if (address_offset[0] == 'r'){
             set_I = 1;
-        } else {
-            set_I = 0;
         }
 
         if (address_offset[0] == '#') {
@@ -390,9 +382,6 @@ assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, i
 
         } else {
             //shifted register offset
-//            if (set_L == 0) {
-//                set_I = 1;
-//            }
             char *address_offset_shift = tokenised_line->operands[line][2];
             if (address_offset[0] == '-') {
                 isNegative = true;

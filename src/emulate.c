@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 #include "emulate_utils/utils.h"
 #include "emulate_utils/execute.h"
 #include "emulate_utils/decode.h"
@@ -96,7 +97,7 @@ void pipeline_cycle(current_state *state, int size) {
 
 }
 
-/*
+
 int main(int argc, char **argv) {
 
     if (argc != 2) {
@@ -134,4 +135,3 @@ int main(int argc, char **argv) {
 
     return EXIT_SUCCESS;
 }
-*/

@@ -11,7 +11,6 @@ void execute_dpi(current_state *state) {
     uint16_t operand2 = state->decoded_instruction.operand2;
     int32_t rn = state->decoded_instruction.rn;
     int rd = state->decoded_instruction.rd;
-    //printf("value in this register is : %d \n", rn);
 
 
     int finalOp2 = 0;
@@ -27,7 +26,6 @@ void execute_dpi(current_state *state) {
         uint32_t imm_32 = imm;
         //Zero extend to 32 bits and rotate right
         finalOp2 = ror(imm_32, (unsigned int) rotate * 2);
-        //printf("finalop2: %d \n", finalOp2);
     } else {
         //Shifted Register
         uint8_t rm = mask_4_bit(operand2, 0);
@@ -36,14 +34,11 @@ void execute_dpi(current_state *state) {
         uint8_t shiftAmount = 0;
         if (!(shift & 0x1)) {
             //Constant amount
-            //printf("constant shift: ");
             shiftAmount = (shift >> 3) & 0x1F;
         } else {
             //Register amount (Optional)
-            //printf("optional register shift: ");
             uint8_t rs = mask_4_bit(operand2, 8);
             int32_t regVal = state->registers[rs];
-            //printf("shift register is: %d \n",rs);
             shiftAmount = mask_8_bit(state->registers[2], 0);
         }
 
@@ -54,30 +49,23 @@ void execute_dpi(current_state *state) {
             case 0:
                 finalOp2 = lsl(rm_value, shiftAmount);
                 shiftCarry = mask_1_bit(rm_value, 31 - shiftAmount);
-                //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
-
                 break;
+
             case 1:
                 finalOp2 = lsr(rm_value, shiftAmount);
                 shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
-//                printf("bottom byte of register 2 should be: %d \n", mask_8_bit(state->registers[2], 0));
-//                printf("bottom byte of register 2 (shift amount): %d \n", shiftAmount);
-//                printf("finalop2 value in reg3: %d \n", finalOp2);
-//                printf("shiftType = %d and shift carry = %d \n", shiftType, shiftCarry);
-
                 break;
+
             case 2:
                 finalOp2 = asr(rm_value, shiftAmount);
                 shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
-                //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
-
                 break;
+
             case 3:
                 finalOp2 = ror(rm_value, (unsigned int) shiftAmount);
                 shiftCarry = mask_1_bit(rm_value, shiftAmount - 1);
-                //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
-
                 break;
+
             default:
                 printf("Invalid shift type");
         }
@@ -99,7 +87,6 @@ void execute_dpi(current_state *state) {
             //SUB
             returnValue = rn - finalOp2;
             carry = finalOp2 <= rn;
-            //printf("register4 - finalop2 = %d - %d = %d carry: %d \n", rn, finalOp2, returnValue, carry);
             break;
         case 3:
             //RSB
@@ -136,15 +123,14 @@ void execute_dpi(current_state *state) {
             returnValue = finalOp2;
             carry = shiftCarry;
             break;
+
+        default:
+            fprintf(stderr, "opcode does not correspond to dpi instruction");
     }
-    //printf("rd should be 2: %d and return value end of thing: %d \n", state->decoded_instruction.rd, returnValue);
 
     //tst, teq, cmp do not write to rd
     if (opcode != 8 && opcode != 9 && opcode != 10) {
-        //printf("Opcode is %d. rn is %d. Finalop2 is %d, Set register %d to %d \n ", opcode,
-        // rn, finalOp2, state->decoded_instruction.rd, returnValue);
         state->registers[rd] = returnValue;
-        //printf("register %d contains %d \n", rd, returnValue);
     }
 
 
@@ -189,20 +175,20 @@ void execute_sdt(current_state *state) {
         switch (shiftType) {
             case 0:
                 finalOffset = lsl(rm_value, shiftAmount);
-                //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
                 break;
+
             case 1:
                 finalOffset = lsr(rm_value, shiftAmount);
-                //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
                 break;
+
             case 2:
                 finalOffset = asr(rm_value, shiftAmount);
-                //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
                 break;
+
             case 3:
                 finalOffset = ror(rm_value, (unsigned int) shiftAmount);
-                //printf("shiftType = %d and carry = %d \n", shiftType, shiftCarry);
                 break;
+
             default:
                 printf("Invalid shift type");
         }
@@ -243,9 +229,11 @@ void execute_sdt(current_state *state) {
             case GPIO_0_9:
                 printf("%s\n", "One GPIO pin from 0 to 9 has been accessed");
                 return;
+
             case GPIO_10_19:
                 printf("%s\n", "One GPIO pin from 10 to 19 has been accessed");
                 return;
+
             case GPIO_20_29:
                 printf("%s\n", "One GPIO pin from 20 to 29 has been accessed");
                 return;

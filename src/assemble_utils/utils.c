@@ -17,9 +17,9 @@ char *SDT[] = {"ldr", "str"};
 char *BRANCH[] = {"beq", "bne", "bge", "blt", "bgt", "ble", "b"};
 char *SPECIAL[] = {"lsl", "andeq"};
 
-
+//returns the value of the exact bit being requested (0 indexed)
 uint8_t mask_1_bit_assemble(int value, int bit) {
-    return (value >> bit) & 0x1;
+    return (uint8_t) ((value >> bit) & 0x1);
 }
 
 //converts a 32bit integer to a binary string
@@ -30,6 +30,7 @@ void toBinaryString(int binary, char *result) {
     result[32] = '\0';
 }
 
+//identifies and sets base of a number represented as a string
 void set_base(char *expression, int *base) {
     if (strstr(expression, "0x")) {
         //Base 16
@@ -40,7 +41,7 @@ void set_base(char *expression, int *base) {
     }
 }
 
-
+//writes binary string to an output file
 void binary_file_writer(char *filename, const char *binary_string) {
     FILE *binary_file = fopen(filename, "wb+");
     if (binary_file) {
@@ -72,25 +73,12 @@ void binary_file_writer(char *filename, const char *binary_string) {
 
 }
 
-//void extract_2_char_cond(char *string, char result[3]) {
-//    if (string[1] != ' ') {
-//        result[0] = string[1];
-//        result[1] = string[2];
-//        result[2] = '\0';
-//    } else {
-//        result[0] = ' ';
-//        result[1] = ' ';
-//        result[2] = '\0';
-//    }
-//}
-
 char *trim_whitespace(char *str) {
     while (isspace((unsigned char) *str)) str++;
     if (*str == 0)
         return str;
     return str;
 }
-
 
 //rotate left once
 int rol(uint32_t val) {
@@ -104,18 +92,17 @@ int rol(uint32_t val) {
     return temp;
 }
 
+//returns true if the integer can be represented in 8 bits
 bool is8bit(int val) {
     return (val == (val & 0xFF));
 }
 
+//returns true if the integer can be represented in 26 bits
 bool is26bit(int val) {
     return (val == val & 0x3FFFFFF);
 }
 
-bool is24bit(int val) {
-    return (val == (val & 0xFFFFFF));
-}
-
+//helper to indetify whether a certain charatcer makes up part of an argument
 bool isArgument(char c) {
     if (c == ',') {
         return false;
@@ -168,8 +155,8 @@ void set_operand(uint32_t *binary, int line, int arg_num, int end_bit, tokenised
     int reg_num = (int) strtol(reg, (char **) NULL, 10);
     set_n_bits(binary, end_bit, reg_num);
 }
-//Check if label exists in symbol table
 
+//Check if label exists in symbol table
 int is_in_symbol_table(char *label, symbol_table *symbol_table) {
     for (int i = 0; i < symbol_table->num_elements; ++i) {
         if (strcmp(symbol_table->mappings[i].label, label) == 0) {

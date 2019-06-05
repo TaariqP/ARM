@@ -27,6 +27,10 @@
 //0x2020 0008
 #define GPIO_20_29 538968072
 
+#define LSL 0
+#define LSR 1
+#define ASR 2
+#define ROR 3
 
 typedef enum {
     DPI,
