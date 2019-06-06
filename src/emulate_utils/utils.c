@@ -10,17 +10,17 @@
 
 /*returns the value of the exact bit of the value inputted that we want (0 indexed)*/
 uint8_t mask_1_bit(int value, int bit) {
-    return (value >> bit) & 0x1;
+    return (uint8_t) ((value >> bit) & 0x1);
 }
 
 /*returns the 4 bits required from the value (given the end bit) (0 indexed)*/
 uint8_t mask_4_bit(int value, int end_bit) {
-    return (value >> end_bit) & 0xF;
+    return (uint8_t) ((value >> end_bit) & 0xF);
 }
 
 /*returns the byte required from the value (given the end bit) (0 indexed)*/
 uint8_t mask_8_bit(int value, int end_bit) {
-    return (value >> end_bit) & 0xFF;
+    return (uint8_t) ((value >> end_bit) & 0xFF);
 }
 
 //Reads the binary file
