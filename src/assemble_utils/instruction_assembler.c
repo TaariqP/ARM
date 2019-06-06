@@ -75,20 +75,16 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
     }
 
 
-//    int no_of_operands = 4;
-//    //Optional sub command
-//    if (!(strcmp(command, "sub")){
-//        for (int i = 0; i < no_of_operands; ++i) {
-//            char* operand = tokenised_line->operands[line][i];
-//            if (strstr(operand, "lsl")){
-//                char* r3 = tokenised_line->operands[line][i-1];
-//
-//                //Store the state of tokenised line
-//                //Set tokenised line to lsl r3,(last byte of value in r4)
-//                assemble_special_to(tokenised_line, line)
-//            }
-//        }
-//    }
+    int no_of_operands = 4;
+    //Optional sub command e.g. sub r5,r4, r3, lsr r2
+    if (!(strcmp(command, "sub") && no_of_operands == 4){
+        char* ret;
+        if (ret = strstr(tokenised_line->operands[line][3], "lsr"){
+            ret += sizeof(char);
+            // ret now contains the register number
+                    
+        }
+    }
 
     //set S bit if type is set_CPSR
     if (type == set_CPSR) {
