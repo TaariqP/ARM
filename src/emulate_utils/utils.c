@@ -8,22 +8,22 @@
 #include <stdbool.h>
 #include "defs.h"
 
+/*returns the value of the exact bit of the value inputted that we want (0 indexed)*/
 uint8_t mask_1_bit(int value, int bit) {
     return (value >> bit) & 0x1;
 }
 
-
+/*returns the 4 bits required from the value (given the end bit) (0 indexed)*/
 uint8_t mask_4_bit(int value, int end_bit) {
     return (value >> end_bit) & 0xF;
 }
 
-
+/*returns the byte required from the value (given the end bit) (0 indexed)*/
 uint8_t mask_8_bit(int value, int end_bit) {
     return (value >> end_bit) & 0xFF;
 }
 
 //Reads the binary file
-
 void binary_file_loader(char *filename, char *memory) {
 
     FILE *binaryFile = fopen(filename, "rb");
@@ -38,7 +38,7 @@ void binary_file_loader(char *filename, char *memory) {
     fclose(binaryFile);
 
 }
-
+/*prints all non zero memories as required by emulate test outputs*/
 void print_binary(uint8_t *memory) {
 
     printf("%s\n", "Non-zero memory:");
@@ -54,7 +54,8 @@ void print_binary(uint8_t *memory) {
         }
     }
 }
-
+/*prints out the value of all registers as required by emulate test outputs*/
+//TODO: use a for loop in order to avoid duplicated code
 void print_registers(int32_t *registers) {
     printf("%s\n", "Registers:");
     printf("$0  : %10d (0x%08x)\n", registers[0], registers[0]);
@@ -74,7 +75,7 @@ void print_registers(int32_t *registers) {
     printf("CPSR: %10d (0x%08x)\n", registers[CPSR], registers[CPSR]);
 }
 
-
+/*checks the CPSR register to see whether condition is valid*/
 bool check_condition(current_state *state) {
     int32_t value = state->registers[CPSR];
     uint8_t n = mask_1_bit(value, N);

@@ -5,7 +5,8 @@
 #include "defs.h"
 #include "utils.h"
 #include <stdio.h>
-
+/*given a current state, executes the decoded instruction
+ * pre condition is that the decoded instruction is definitely a DPI instruction*/
 void execute_dpi(current_state *state) {
     uint8_t opcode = state->decoded_instruction.opcode;
     uint16_t operand2 = state->decoded_instruction.operand2;
@@ -146,6 +147,7 @@ void execute_dpi(current_state *state) {
 
 }
 
+/*same as execute_dpi but for sdt instructions*/
 void execute_sdt(current_state *state) {
     int32_t offset = state->decoded_instruction.offset;
     int32_t finalOffset = 0;
@@ -267,7 +269,7 @@ void execute_sdt(current_state *state) {
         set_register(state, rn, address + finalOffset);
     }
 }
-
+/*same as execute_dpi but for mul instructions*/
 void execute_mul(current_state *state) {
     int8_t acc = state->decoded_instruction.a;
     int8_t rm = state->decoded_instruction.rm;
@@ -291,7 +293,7 @@ void execute_mul(current_state *state) {
         set_CPSR_bit(state, Z, result == 0);
     }
 }
-
+/*same as execute_dpi but for branch instructions*/
 void execute_branch(current_state *state) {
     //manipulating offset appropriately for addition to PC
     int32_t offset = state->decoded_instruction.offset;
