@@ -11,6 +11,8 @@ assemble: assemble.o
 
 emulate: emulate.o
 
+assemble.o: /assemble_utils/defs.h /assemble_utils/utils.h /assemble_utils/instruction_assembler.h
+
 clean:
 	rm -f $(wildcard *.o)
 	rm -f assemble

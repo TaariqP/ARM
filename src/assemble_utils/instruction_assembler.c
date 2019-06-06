@@ -9,16 +9,11 @@
 #include "defs.h"
 #include "utils.h"
 
-
-// the variables below will be common to all functions, so have been initialised here. maybe we should pass them in?
-
 char condition[3];
 
-
-//TODO
-
-//CHANGE ALL ASSEMBLE FUNCTIONS TO TAKE TOKENISED LINE rather than the whole string
-//ALSO ADD assemble special instructions
+/*at this point, we know that the tokenized line number x contains a dpi instruction
+ * takes the entire set of tokenized lines, and assembles tokenized line x into binary
+ * the result is stored as a binary string to the char* provided as input*/
 void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_string) {
     uint32_t binary = 0;
 
@@ -74,22 +69,6 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
         type = compute_result;
     }
 
-
-//    int no_of_operands = 4;
-//    //Optional sub command
-//    if (!(strcmp(command, "sub")){
-//        for (int i = 0; i < no_of_operands; ++i) {
-//            char* operand = tokenised_line->operands[line][i];
-//            if (strstr(operand, "lsl")){
-//                char* r3 = tokenised_line->operands[line][i-1];
-//
-//                //Store the state of tokenised line
-//                //Set tokenised line to lsl r3,(last byte of value in r4)
-//                assemble_special_to(tokenised_line, line)
-//            }
-//        }
-//    }
-
     //set S bit if type is set_CPSR
     if (type == set_CPSR) {
         set_n_bits(&binary, 20, 1);
@@ -109,7 +88,6 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
     if (isImmediate) {
         set_n_bits(&binary, 25, 1);
     }
-
 
 
     //set Rn (except for mov)
@@ -144,8 +122,8 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
         int op2 = (int) strtol(operand2, (char **) NULL, 10);
         set_n_bits(&binary, 0, op2);
     }
-    //Base can be either BASE 10 OR BASE 16
 
+    //Base can be either BASE 10 OR BASE 16
     int base = 0;
     set_base(operand2, &base);
 
@@ -181,7 +159,7 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
     toBinaryString(binary, binary_string);
 }
 
-
+/*same as assemble_dpi, but for sdt instructions*/
 void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_string, int current_instruction,
                 int final_instruction, int *value,
                 int offset, char **byte_to_add) {
@@ -436,7 +414,7 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
     printf("%x\n", binary);
 }
 
-
+/*same as assemble_dpi, but for mul instructions*/
 void assemble_mul_to(tokenised_line *tokenised_line, int line, char *binary_string) {
     //condition is the last 2 letters of the opcode
     char *condition = tokenised_line->opcode[line] + sizeof(char);
@@ -473,7 +451,7 @@ void assemble_mul_to(tokenised_line *tokenised_line, int line, char *binary_stri
 
 }
 
-
+/*same as assemble_dpi, but for branch instructions*/
 void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, symbol_table *symbol_table,
                         char *binary_string, int num_of_labels) {
     //condition is the last two letter of the command
@@ -545,7 +523,7 @@ void assemble_branch_to(tokenised_line *tokenised_line, char **code, int line, s
     }
 }
 
-
+/*same as assemble_dpi, but for special instructions*/
 void assemble_special_to(tokenised_line *tokenised_line, int line, char *binary_string) {
     uint32_t binary = 0;
     char *opcode = tokenised_line->opcode[line];

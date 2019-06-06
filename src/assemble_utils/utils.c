@@ -10,12 +10,12 @@
 #include "defs.h"
 #include "instruction_assembler.h"
 
-
-char *DPI[] = {"add", "sub", "rsb", "and", "eor", "orr", "mov", "tst", "teq", "cmp"};
-char *MUL[] = {"mul", "mla"};
-char *SDT[] = {"ldr", "str"};
-char *BRANCH[] = {"beq", "bne", "bge", "blt", "bgt", "ble", "b"};
-char *SPECIAL[] = {"lsl", "andeq"};
+/*the below contain all possible instructions, and their types for use in the second pass*/
+const char *DPI[] = {"add", "sub", "rsb", "and", "eor", "orr", "mov", "tst", "teq", "cmp"};
+const char *MUL[] = {"mul", "mla"};
+const char *SDT[] = {"ldr", "str"};
+const char *BRANCH[] = {"beq", "bne", "bge", "blt", "bgt", "ble", "b"};
+const char *SPECIAL[] = {"lsl", "andeq"};
 
 //returns the value of the exact bit being requested (0 indexed)
 uint8_t mask_1_bit_assemble(int value, int bit) {

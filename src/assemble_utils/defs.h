@@ -23,23 +23,28 @@
 #define DPI_OPCODE_END_BIT 21
 #define COMMAND_LENGTH 128
 
+/*required for DPI assemble*/
 typedef enum {
     compute_result,
     single_operand,
     set_CPSR
 }DPI_TYPE;
 
-
+/*contains a string label, and its memory address*/
 typedef struct {
     char *label;
     int memory_address;
 } mapping;
 
+/* contains all mappings (mapping defined above)*/
 typedef struct {
     int num_elements;
     mapping* mappings;
 } symbol_table;
 
+/*contains all tokenized lines
+ * specific line properties can be accessed by
+ * e.g: tokenized_line->opcode[line]*/
 typedef struct {
     //Array of strings
     int num_of_lines;
