@@ -12,7 +12,6 @@
 
 void binary_file_writer(char *, const char *);
 
-void extract_2_char_cond(char *, char *);
 
 char *trim_whitespace(char *);
 
@@ -24,15 +23,12 @@ bool containsChar(char, char *);
 
 bool is8bit(int);
 
-bool is24bit(int);
 
 bool is26bit(int);
 
 bool isArgument(char);
 
 void set_operand(uint32_t *, int, int, int, tokenised_line *);
-
-void get_argument(char *, int, char *);
 
 void set_base(char *, int *);
 
