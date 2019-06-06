@@ -8,22 +8,22 @@
 #include <stdbool.h>
 #include "defs.h"
 
+/*returns the value of the exact bit of the value inputted that we want (0 indexed)*/
 uint8_t mask_1_bit(int value, int bit) {
-    return (value >> bit) & 0x1;
+    return (uint8_t) ((value >> bit) & 0x1);
 }
 
-
+/*returns the 4 bits required from the value (given the end bit) (0 indexed)*/
 uint8_t mask_4_bit(int value, int end_bit) {
-    return (value >> end_bit) & 0xF;
+    return (uint8_t) ((value >> end_bit) & 0xF);
 }
 
-
+/*returns the byte required from the value (given the end bit) (0 indexed)*/
 uint8_t mask_8_bit(int value, int end_bit) {
-    return (value >> end_bit) & 0xFF;
+    return (uint8_t) ((value >> end_bit) & 0xFF);
 }
 
 //Reads the binary file
-
 void binary_file_loader(char *filename, char *memory) {
 
     FILE *binaryFile = fopen(filename, "rb");
@@ -38,7 +38,7 @@ void binary_file_loader(char *filename, char *memory) {
     fclose(binaryFile);
 
 }
-
+/*prints all non zero memories as required by emulate test outputs*/
 void print_binary(uint8_t *memory) {
 
     printf("%s\n", "Non-zero memory:");
@@ -54,27 +54,23 @@ void print_binary(uint8_t *memory) {
         }
     }
 }
-
+/*prints out the value of all registers as required by emulate test outputs*/
 void print_registers(int32_t *registers) {
     printf("%s\n", "Registers:");
-    printf("$0  : %10d (0x%08x)\n", registers[0], registers[0]);
-    printf("$1  : %10d (0x%08x)\n", registers[1], registers[1]);
-    printf("$2  : %10d (0x%08x)\n", registers[2], registers[2]);
-    printf("$3  : %10d (0x%08x)\n", registers[3], registers[3]);
-    printf("$4  : %10d (0x%08x)\n", registers[4], registers[4]);
-    printf("$5  : %10d (0x%08x)\n", registers[5], registers[5]);
-    printf("$6  : %10d (0x%08x)\n", registers[6], registers[6]);
-    printf("$7  : %10d (0x%08x)\n", registers[7], registers[7]);
-    printf("$8  : %10d (0x%08x)\n", registers[8], registers[8]);
-    printf("$9  : %10d (0x%08x)\n", registers[9], registers[9]);
-    printf("$10 : %10d (0x%08x)\n", registers[10], registers[10]);
-    printf("$11 : %10d (0x%08x)\n", registers[11], registers[11]);
-    printf("$12 : %10d (0x%08x)\n", registers[12], registers[12]);
+    for (int i = 0; i < 13; i++) {
+        char reg[4];
+        reg[0] = '$';
+        sprintf(&reg[1], "%d", i);
+        if (i <10){
+            sprintf(&reg[2], " ");
+        }
+        printf("%s : %10d (0x%08x)\n",reg, registers[i], registers[i]);
+    }
     printf("PC  : %10d (0x%08x)\n", registers[PC], registers[PC]);
     printf("CPSR: %10d (0x%08x)\n", registers[CPSR], registers[CPSR]);
 }
 
-
+/*checks the CPSR register to see whether condition is valid*/
 bool check_condition(current_state *state) {
     int32_t value = state->registers[CPSR];
     uint8_t n = mask_1_bit(value, N);

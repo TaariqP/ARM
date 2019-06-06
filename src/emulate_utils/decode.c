@@ -7,6 +7,7 @@
 //#include <printf.h>
 #include "defs.h"
 #include "utils.h"
+/*all 4 functions in this file fill in the decoded_instruction struct (only fills in the appropriate properties)*/
 
 void decode_dpi(current_state *state) {
     uint32_t instruction = state->fetched_instruction.binary_value;

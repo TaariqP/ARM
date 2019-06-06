@@ -1,12 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 #include "emulate_utils/utils.h"
 #include "emulate_utils/execute.h"
 #include "emulate_utils/decode.h"
-//#include "emulate_utils/utils.c"
-//#include "emulate_utils/execute.c"
-//#include "emulate_utils/decode.c"
 
 void execute(current_state *state) {
     instruction_type type = state->decoded_instruction.type;
@@ -78,7 +76,7 @@ void pipeline_cycle(current_state *state, int size) {
 
 
     //infinite loop till halt encountered
-    while (state->decoded_instruction.type != ALL_ZERO & state->registers[PC] < (size + 8)) {
+    while ((state->decoded_instruction.type != ALL_ZERO) & (state->registers[PC] < (size + 8))) {
 
         if (state->decoded_instruction.type != NONE) {
             execute(state);
@@ -96,7 +94,7 @@ void pipeline_cycle(current_state *state, int size) {
 
 }
 
-/*
+
 int main(int argc, char **argv) {
 
     if (argc != 2) {
@@ -134,4 +132,3 @@ int main(int argc, char **argv) {
 
     return EXIT_SUCCESS;
 }
-*/
