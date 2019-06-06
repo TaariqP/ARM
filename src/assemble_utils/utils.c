@@ -148,7 +148,8 @@ void get_argument(char *instruction, int argument_number, char *result) {
 void set_n_bits(uint32_t *binary_num, int end_bit, int value) {
     *binary_num |= (value << end_bit);
 }
-
+/*the following functions aims to reduce duplication in assemble_mul and assemble_dpi
+ * it sets the binary number at the specified bit to hold a specific register value*/
 void set_operand(uint32_t *binary, int line, int arg_num, int end_bit, tokenised_line *tokenised_line) {
     char *reg = tokenised_line->operands[line][arg_num];
     reg += sizeof(char);
@@ -179,7 +180,7 @@ int get_address(char *label, symbol_table *symbol_table) {
     }
     return -1;
 }
-
+/*used to fill in the symbol table*/
 void add_to_mappings(symbol_table *symbol_table, mapping mapping) {
     //Increment number of elements in symbol table
     int num_elements = symbol_table->num_elements;
@@ -189,24 +190,7 @@ void add_to_mappings(symbol_table *symbol_table, mapping mapping) {
     printf("mapping added, label: %s to address: %d\n", mapping.label, mapping.memory_address);
 }
 
-int test_tokenizer(tokenised_line *tokenised_line) {
-    printf("Tokenised_lines\n");
-    printf("Number of lines: %d", tokenised_line->num_of_lines);
-    printf("Opcodes: ");
-    for (int i = 0; i < tokenised_line->num_of_lines; ++i) {
-        printf("%s", tokenised_line->opcode[i]);
-    }
-
-    printf("operands");
-//    for (int j = 0; j < tokenised_line->num_of_lines; ++j) {
-//        for (int i = 0; i < tokenised_line->; ++i) {
-//
-//        }
-//        printf("%s", tokenised_line->operands[])
-//    }
-}
-
-
+/*checks if a string contains any non whitespace character*/
 int is_empty(const char *string) {
     while (*string != '\0') {
         if (!isspace(*string))
@@ -216,6 +200,7 @@ int is_empty(const char *string) {
     return 1;
 }
 
+/*fills in the tokenized line struct provided */
 int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
 
     char *line_t = (char *) malloc(sizeof(char) * LINE_LENGTH);
@@ -266,6 +251,7 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
 
 }
 
+/*check if given string contains the char we are searching for*/
 bool containsChar(char c, char *string) {
     for (int i = 0; i < strlen(string); i++) {
         if (string[i] == c) {
