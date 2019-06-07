@@ -325,16 +325,26 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
                 set_U = 0;
             }
 
-//            int base;
-//            set_base(address_offset_shift, &base);
-//            int shift = (int) strtol(address_offset_shift, NULL, base);
-//
-//            address_offset++;
-//            int rm = (int) strtol(address_offset, NULL, 10);
-//
-//            //combine rm and shift appropriately (page 7 of spec)
-//            shift = shift << 7;
-//            set_offset = shift + rm;
+            int shift_type = 0;
+            if (strstr(address_offset_shift, "lsr")) {
+                //shift is an lsr
+                //move past "lsr #" in "lsr #exp"
+                address_offset_shift += (5 * sizeof(char));
+                shift_type = 1;
+            }
+
+
+            int base;
+            set_base(address_offset_shift, &base);
+            int shift = (int) strtol(address_offset_shift, NULL, base);
+
+            address_offset++;
+            int rm = (int) strtol(address_offset, NULL, 10);
+
+            //combine rm, shift_type and shift appropriately (page 7 of spec)
+            shift = shift << 7;
+            shift_type = shift_type <<5;
+            set_offset = shift + shift_type +rm;
 
         }
         //otherwise is of type [rn], offset need not be set
