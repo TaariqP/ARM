@@ -297,7 +297,23 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
                 set_U = 0;
             }
 
+        } else if (containsChar(']', address_offset)){
+            // the entire offset is just a reg value
+
+            if (address_offset[0] == '-') {
+                isNegative = true;
+                address_offset++;
+            }
+            //set U based on +ve or -ve
+            if (isNegative) {
+                set_U = 0;
+            }
+
+            address_offset++;
+            int rm = (int) strtol(address_offset, NULL, 10);
+            set_offset = rm;
         } else {
+            // contains another 4th argument that specifies the shift
             char *address_offset_shift = tokenised_line->operands[line][3];
             if (address_offset[0] == '-') {
                 isNegative = true;
@@ -309,16 +325,17 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
                 set_U = 0;
             }
 
-            int base;
-            set_base(address_offset_shift, &base);
-            int shift = (int) strtol(address_offset_shift, NULL, base);
+//            int base;
+//            set_base(address_offset_shift, &base);
+//            int shift = (int) strtol(address_offset_shift, NULL, base);
+//
+//            address_offset++;
+//            int rm = (int) strtol(address_offset, NULL, 10);
+//
+//            //combine rm and shift appropriately (page 7 of spec)
+//            shift = shift << 7;
+//            set_offset = shift + rm;
 
-            address_offset++;
-            int rm = (int) strtol(address_offset, NULL, 10);
-
-            //combine rm and shift appropriately (page 7 of spec)
-            shift = shift << 7;
-            set_offset = shift + rm;
         }
         //otherwise is of type [rn], offset need not be set
     } else {
@@ -366,7 +383,7 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
             int rm = (int) strtol(address_offset, NULL, 10);
 
             //combine rm and shift appropriately (page 7 of spec)
-            shift = shift << 4;
+            shift = shift << 7;
             set_offset = shift + rm;
         }
     }
