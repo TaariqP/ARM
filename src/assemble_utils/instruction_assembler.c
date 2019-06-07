@@ -108,14 +108,14 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
     if (type != single_operand & type != set_CPSR) {
         char *rn = tokenised_line->operands[line][1];
         //move pointer to only consider reg number (remove r from rxx)
-        rn += sizeof(char);
+        rn++;
         int reg_num = (int) strtol(rn, (char **) NULL, 10);
         set_n_bits(&binary, 16, reg_num);
     }
 
     if (type == set_CPSR) {
         char *rn = tokenised_line->operands[line][0];
-        rn += sizeof(char);
+        rn++;
         int reg_num = (int) strtol(rn, (char **) NULL, 10);
         set_n_bits(&binary, 16, reg_num);
     }
@@ -123,13 +123,13 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
     //set Rd
     if (type != set_CPSR) {
         char *rd = tokenised_line->operands[line][0];
-        rd += sizeof(char);
+        rd++;
         int reg_num = (int) strtol(rd, (char **) NULL, 10);
         set_n_bits(&binary, 12, reg_num);
     }
 
     //takes off the # or the r, regardless of register or immediate value
-    operand2 += sizeof(char);
+    operand2++;
 
 
     if (type == set_CPSR) {
@@ -204,8 +204,7 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
         if (address[0] == '=') {
             //numeric constant
 
-            //potential just expression ++
-            address += sizeof(char);
+            address++;
             //asssume always hex
             expression_value = (int) strtol(address, NULL, 16);
             if (expression_value <= 0xFF) {
@@ -278,12 +277,12 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
         if (address_offset[0] == '#') {
             //type is [rn,<#expression>]
 
-            address_offset += sizeof(char);
+            address_offset++;
 
 
             if (address_offset[0] == '-') {
                 isNegative = true;
-                address_offset += sizeof(char);
+                address_offset++;
             } else {
                 set_U = 1;
             }
@@ -302,7 +301,7 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
             char *address_offset_shift = tokenised_line->operands[line][3];
             if (address_offset[0] == '-') {
                 isNegative = true;
-                address_offset += sizeof(char);
+                address_offset++;
             }
 
             //set U based on +ve or -ve
@@ -314,7 +313,7 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
             set_base(address_offset_shift, &base);
             int shift = (int) strtol(address_offset_shift, NULL, base);
 
-            address_offset += sizeof(char);
+            address_offset++;
             int rm = (int) strtol(address_offset, NULL, 10);
 
             //combine rm and shift appropriately (page 7 of spec)
@@ -332,11 +331,11 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
         if (address_offset[0] == '#') {
             // numeric offset
 
-            address_offset += sizeof(char);
+            address_offset++;
 
             if (address_offset[0] == '-') {
                 isNegative = true;
-                address_offset += sizeof(char);
+                address_offset++;
             }
             int base;
             set_base(address_offset, &base);
@@ -352,7 +351,7 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
             char *address_offset_shift = tokenised_line->operands[line][2];
             if (address_offset[0] == '-') {
                 isNegative = true;
-                address_offset += sizeof(char);
+                address_offset++;
             }
 
             //set U based on +ve or -ve
@@ -363,7 +362,7 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
             set_base(address_offset_shift, &base);
             int shift = (int) strtol(address_offset_shift, NULL, base);
 
-            address_offset += sizeof(char);
+            address_offset++;
             int rm = (int) strtol(address_offset, NULL, 10);
 
             //combine rm and shift appropriately (page 7 of spec)
