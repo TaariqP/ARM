@@ -70,18 +70,18 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
     }
 
 
-/* Optional
+// Optional
     int no_of_operands = 4;
     //Optional sub command e.g. sub r5,r4, r3, lsr r2
     if (!(strcmp(command, "sub") && no_of_operands == 4){
         char* ret;
         if (ret = strstr(tokenised_line->operands[line][3], "lsr"){
             ret += sizeof(char);
-            // ret now contains the register number
+            // ret now contains the register number to get the last byte
                     
         }
     }
-    */
+
 
     //set S bit if type is set_CPSR
     if (type == set_CPSR) {
