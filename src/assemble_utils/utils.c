@@ -157,6 +157,35 @@ void set_operand(uint32_t *binary, int line, int arg_num, int end_bit, tokenised
     set_n_bits(binary, end_bit, reg_num);
 }
 
+void set_sdt_bits(uint32_t *binary, int set_I, int set_P, int set_U, int set_L, int set_rn, int set_rd, int set_offset){
+
+    //assume always executed, set cond
+    set_n_bits(binary, 28, 14);
+
+    set_n_bits(binary, 26, 1);
+
+    //setI
+    set_n_bits(binary, 25, set_I);
+
+    //setP
+    set_n_bits(binary, 24, set_P);
+
+    //setU
+    set_n_bits(binary, 23, set_U);
+
+    //setL
+    set_n_bits(binary, 20, set_L);
+
+    //setrn
+    set_n_bits(binary, 16, set_rn);
+
+    //setrd
+    set_n_bits(binary, 12, set_rd);
+
+    //setoffset
+    set_n_bits(binary, 0, set_offset);
+}
+
 //Check if label exists in symbol table
 int is_in_symbol_table(char *label, symbol_table *symbol_table) {
     for (int i = 0; i < symbol_table->num_elements; ++i) {

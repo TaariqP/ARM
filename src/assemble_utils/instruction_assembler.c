@@ -245,32 +245,7 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
                 toBinaryString(expression_value, res);
                 strcat(*byte_to_add, res);
 
-
-                //assume always executed, set cond
-                set_n_bits(&binary, 28, 14);
-
-                set_n_bits(&binary, 26, 1);
-
-                //setI
-                set_n_bits(&binary, 25, set_I);
-
-                //setP
-                set_n_bits(&binary, 24, set_P);
-
-                //setU
-                set_n_bits(&binary, 23, set_U);
-
-                //setL
-                set_n_bits(&binary, 20, set_L);
-
-                //setrn
-                set_n_bits(&binary, 16, set_rn);
-
-                //setrd
-                set_n_bits(&binary, 12, set_rd);
-
-                //setoffset
-                set_n_bits(&binary, 0, set_offset);
+                set_sdt_bits(&binary, set_I, set_P, set_U, set_L, set_rn, set_rd, set_offset);
 
                 toBinaryString(binary, binary_string);
                 return;
@@ -397,31 +372,7 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
         }
     }
 
-    //assume always executed, set cond
-    set_n_bits(&binary, 28, 14);
-
-    set_n_bits(&binary, 26, 1);
-
-    //setI
-    set_n_bits(&binary, 25, set_I);
-
-    //setP
-    set_n_bits(&binary, 24, set_P);
-
-    //setU
-    set_n_bits(&binary, 23, set_U);
-
-    //setL
-    set_n_bits(&binary, 20, set_L);
-
-    //setrn
-    set_n_bits(&binary, 16, set_rn);
-
-    //setrd
-    set_n_bits(&binary, 12, set_rd);
-
-    //setoffset
-    set_n_bits(&binary, 0, set_offset);
+    set_sdt_bits(&binary, set_I, set_P, set_U, set_L, set_rn, set_rd, set_offset);
 
     toBinaryString(binary, binary_string);
     printf("%d\n", binary);
