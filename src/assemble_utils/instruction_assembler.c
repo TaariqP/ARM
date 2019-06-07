@@ -90,7 +90,7 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
 
     //set I (can be done after because it is a single bit)
     int argument;
-    //decide which operand to look at based on type (mov looks at op 2, others at op 3)
+    //decide which operand to look at (either 2 or 3) based on type
     if (type == single_operand | type == set_CPSR) {
         argument = 1;
     } else {
@@ -108,14 +108,14 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
     if (type != single_operand & type != set_CPSR) {
         char *rn = tokenised_line->operands[line][1];
         //move pointer to only consider reg number (remove r from rxx)
-        rn += sizeof(char);
+        rn++;
         int reg_num = (int) strtol(rn, (char **) NULL, 10);
         set_n_bits(&binary, 16, reg_num);
     }
 
     if (type == set_CPSR) {
         char *rn = tokenised_line->operands[line][0];
-        rn += sizeof(char);
+        rn++;
         int reg_num = (int) strtol(rn, (char **) NULL, 10);
         set_n_bits(&binary, 16, reg_num);
     }
@@ -123,13 +123,13 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
     //set Rd
     if (type != set_CPSR) {
         char *rd = tokenised_line->operands[line][0];
-        rd += sizeof(char);
+        rd++;
         int reg_num = (int) strtol(rd, (char **) NULL, 10);
         set_n_bits(&binary, 12, reg_num);
     }
 
     //takes off the # or the r, regardless of register or immediate value
-    operand2 += sizeof(char);
+    operand2++;
 
 
     if (type == set_CPSR) {
@@ -144,7 +144,7 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
     //calculate offset
     if (isImmediate) {
         int immediate_value = (int) strtol(operand2, NULL, base);
-        if (immediate_value < 256) {
+        if (immediate_value <= 0xFF) {
             //can be stored directly in last 8 bits without need for rotate
             set_n_bits(&binary, 0, immediate_value);
         } else {
@@ -204,8 +204,7 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
         if (address[0] == '=') {
             //numeric constant
 
-            //potential just expression ++
-            address += sizeof(char);
+            address++;
             //asssume always hex
             expression_value = (int) strtol(address, NULL, 16);
             if (expression_value <= 0xFF) {
@@ -245,32 +244,7 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
                 toBinaryString(expression_value, res);
                 strcat(*byte_to_add, res);
 
-
-                //assume always executed, set cond
-                set_n_bits(&binary, 28, 14);
-
-                set_n_bits(&binary, 26, 1);
-
-                //setI
-                set_n_bits(&binary, 25, set_I);
-
-                //setP
-                set_n_bits(&binary, 24, set_P);
-
-                //setU
-                set_n_bits(&binary, 23, set_U);
-
-                //setL
-                set_n_bits(&binary, 20, set_L);
-
-                //setrn
-                set_n_bits(&binary, 16, set_rn);
-
-                //setrd
-                set_n_bits(&binary, 12, set_rd);
-
-                //setoffset
-                set_n_bits(&binary, 0, set_offset);
+                set_sdt_bits(&binary, set_I, set_P, set_U, set_L, set_rn, set_rd, set_offset);
 
                 toBinaryString(binary, binary_string);
                 return;
@@ -303,12 +277,12 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
         if (address_offset[0] == '#') {
             //type is [rn,<#expression>]
 
-            address_offset += sizeof(char);
+            address_offset++;
 
 
             if (address_offset[0] == '-') {
                 isNegative = true;
-                address_offset += sizeof(char);
+                address_offset++;
             } else {
                 set_U = 1;
             }
@@ -323,11 +297,27 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
                 set_U = 0;
             }
 
+        } else if (containsChar(']', address_offset)){
+            // the entire offset is just a reg value
+
+            if (address_offset[0] == '-') {
+                isNegative = true;
+                address_offset++;
+            }
+            //set U based on +ve or -ve
+            if (isNegative) {
+                set_U = 0;
+            }
+
+            address_offset++;
+            int rm = (int) strtol(address_offset, NULL, 10);
+            set_offset = rm;
         } else {
+            // contains another 4th argument that specifies the shift
             char *address_offset_shift = tokenised_line->operands[line][3];
             if (address_offset[0] == '-') {
                 isNegative = true;
-                address_offset += sizeof(char);
+                address_offset++;
             }
 
             //set U based on +ve or -ve
@@ -335,16 +325,45 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
                 set_U = 0;
             }
 
+            int shift_type = 0;
+            if (strstr(address_offset_shift, "lsr")) {
+                //shift is an lsr
+                shift_type = 1;
+            } else if (strstr(address_offset_shift, "asr")){
+                //shift is an asr
+                shift_type = 2;
+            } else if (strstr(address_offset_shift, "ror")){
+                //shift is a ror
+                shift_type = 3;
+            }
+            //otheriwse is an lsl, no need to change the shift_type since it is already 0
+
+            bool shift_by_register = false;
+            if (address_offset_shift[4] == 'r'){
+                shift_by_register = true;
+            }
+
+            //move past "lsr #" in "lsr #exp"
+            address_offset_shift += (5 * sizeof(char));
             int base;
             set_base(address_offset_shift, &base);
             int shift = (int) strtol(address_offset_shift, NULL, base);
 
-            address_offset += sizeof(char);
+            address_offset++;
             int rm = (int) strtol(address_offset, NULL, 10);
 
-            //combine rm and shift appropriately (page 7 of spec)
-            shift = shift << 7;
-            set_offset = shift + rm;
+            //combine rm, shift_type and shift appropriately (page 7 of spec)
+            if(shift_by_register){
+                shift = shift << 8;
+            } else {
+                shift = shift << 7;
+            }
+            shift_type = shift_type << 5;
+            set_offset = shift + shift_type +rm;
+            if (shift_by_register){
+                set_offset += (0x1 << 4);
+            }
+
         }
         //otherwise is of type [rn], offset need not be set
     } else {
@@ -357,11 +376,11 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
         if (address_offset[0] == '#') {
             // numeric offset
 
-            address_offset += sizeof(char);
+            address_offset++;
 
             if (address_offset[0] == '-') {
                 isNegative = true;
-                address_offset += sizeof(char);
+                address_offset++;
             }
             int base;
             set_base(address_offset, &base);
@@ -377,7 +396,7 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
             char *address_offset_shift = tokenised_line->operands[line][2];
             if (address_offset[0] == '-') {
                 isNegative = true;
-                address_offset += sizeof(char);
+                address_offset++;
             }
 
             //set U based on +ve or -ve
@@ -388,40 +407,16 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
             set_base(address_offset_shift, &base);
             int shift = (int) strtol(address_offset_shift, NULL, base);
 
-            address_offset += sizeof(char);
+            address_offset++;
             int rm = (int) strtol(address_offset, NULL, 10);
 
             //combine rm and shift appropriately (page 7 of spec)
-            shift = shift << 4;
+            shift = shift << 7;
             set_offset = shift + rm;
         }
     }
 
-    //assume always executed, set cond
-    set_n_bits(&binary, 28, 14);
-
-    set_n_bits(&binary, 26, 1);
-
-    //setI
-    set_n_bits(&binary, 25, set_I);
-
-    //setP
-    set_n_bits(&binary, 24, set_P);
-
-    //setU
-    set_n_bits(&binary, 23, set_U);
-
-    //setL
-    set_n_bits(&binary, 20, set_L);
-
-    //setrn
-    set_n_bits(&binary, 16, set_rn);
-
-    //setrd
-    set_n_bits(&binary, 12, set_rd);
-
-    //setoffset
-    set_n_bits(&binary, 0, set_offset);
+    set_sdt_bits(&binary, set_I, set_P, set_U, set_L, set_rn, set_rd, set_offset);
 
     toBinaryString(binary, binary_string);
     printf("%d\n", binary);

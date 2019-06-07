@@ -34,6 +34,8 @@ void set_base(char *, int *);
 
 void set_n_bits(uint32_t *, int, int);
 
+void set_sdt_bits(uint32_t *binary, int set_I, int set_P, int set_U, int set_L, int set_rn, int set_rd, int set_offset);
+
 int is_empty(const char *);
 
 void toBinaryString(int binary, char *result);

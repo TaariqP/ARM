@@ -19,7 +19,6 @@ int main(int argc, char **argv) {
 
     if (file) {
         int line = 0;
-        //TODO: VALGRIND ERROR
         code[0] = (char *) malloc(sizeof(char) * LINE_LENGTH);
         while (fgets(code[line], LINE_LENGTH, file) != NULL) {
             //Add null terminator at the end of every line
@@ -27,7 +26,6 @@ int main(int argc, char **argv) {
                 code[line][strlen(code[line]) - 1] = '\0';
                 printf("Code line %d: %s\n", line, code[line]);
                 line++;
-                //TODO: VALGRIND ERROR
                 code[line] = (char *) malloc(sizeof(char) * LINE_LENGTH);
             }
         }

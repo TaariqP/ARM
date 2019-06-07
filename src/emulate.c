@@ -95,40 +95,40 @@ void pipeline_cycle(current_state *state, int size) {
 }
 
 
-int main(int argc, char **argv) {
-
-    if (argc != 2) {
-        printf("Provide an argument!");
-        return EXIT_FAILURE;
-    }
-
-    char *filename = argv[1];
-    FILE *input = fopen(filename, "rb");
-
-    if (input == NULL) {
-        printf("Invalid File");
-        return EXIT_FAILURE;
-    }
-
-    current_state *state = malloc(sizeof(current_state));
-    current_state INITIAL_STATE = {
-            .memory = {0},
-            .registers = {0},
-            .fetched_instruction.binary_value = 0,
-            .decoded_instruction.type = NONE
-    };
-    *state = INITIAL_STATE;
-
-
-    binary_file_loader(filename, (char *) state->memory);
-
-    int size = get_file_size(filename);
-
-    pipeline_cycle(state, size);
-
-    print_registers(state->registers);
-    print_binary(state->memory);
-    free(state);
-
-    return EXIT_SUCCESS;
-}
+//int main(int argc, char **argv) {
+//
+//    if (argc != 2) {
+//        printf("Provide an argument!");
+//        return EXIT_FAILURE;
+//    }
+//
+//    char *filename = argv[1];
+//    FILE *input = fopen(filename, "rb");
+//
+//    if (input == NULL) {
+//        printf("Invalid File");
+//        return EXIT_FAILURE;
+//    }
+//
+//    current_state *state = malloc(sizeof(current_state));
+//    current_state INITIAL_STATE = {
+//            .memory = {0},
+//            .registers = {0},
+//            .fetched_instruction.binary_value = 0,
+//            .decoded_instruction.type = NONE
+//    };
+//    *state = INITIAL_STATE;
+//
+//
+//    binary_file_loader(filename, (char *) state->memory);
+//
+//    int size = get_file_size(filename);
+//
+//    pipeline_cycle(state, size);
+//
+//    print_registers(state->registers);
+//    print_binary(state->memory);
+//    free(state);
+//
+//    return EXIT_SUCCESS;
+//}

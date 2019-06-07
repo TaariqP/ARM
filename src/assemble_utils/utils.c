@@ -157,6 +157,35 @@ void set_operand(uint32_t *binary, int line, int arg_num, int end_bit, tokenised
     set_n_bits(binary, end_bit, reg_num);
 }
 
+void set_sdt_bits(uint32_t *binary, int set_I, int set_P, int set_U, int set_L, int set_rn, int set_rd, int set_offset){
+
+    //assume always executed, set cond
+    set_n_bits(binary, COND_END_BIT, 14);
+
+    set_n_bits(binary, 26, 1);
+
+    //setI
+    set_n_bits(binary, 25, set_I);
+
+    //setP
+    set_n_bits(binary, 24, set_P);
+
+    //setU
+    set_n_bits(binary, 23, set_U);
+
+    //setL
+    set_n_bits(binary, 20, set_L);
+
+    //setrn
+    set_n_bits(binary, 16, set_rn);
+
+    //setrd
+    set_n_bits(binary, 12, set_rd);
+
+    //setoffset
+    set_n_bits(binary, 0, set_offset);
+}
+
 //Check if label exists in symbol table
 int is_in_symbol_table(char *label, symbol_table *symbol_table) {
     for (int i = 0; i < symbol_table->num_elements; ++i) {
@@ -299,15 +328,12 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
             //Get operands that are labels and use symbol table to get address
             for (int j = 0; j < num_of_operands; ++j) {
                 if (is_in_symbol_table(tokenised_line->operands[line_num][j], symbol_table)) {
-                    //  if (tokenised_line->label[line_num] != NULL) {
                     int address = get_address(tokenised_line->operands[line_num][j], symbol_table);
                     printf("Assigning operand %s to address %d\n", tokenised_line->operands[line_num][j], address);
                     sprintf(tokenised_line->operands[line_num][j], "%d", address);
                     if ((line_num * 4) > address) {
-                        //if current address > address (i.e. after the label)
                         num_of_labels++;
                     }
-                    //  }
                 }
             }
 
@@ -384,26 +410,16 @@ char *two_pass_assembly(char **code, int num_of_lines) {
     tokenised_line->label = (char **) malloc(sizeof(char) * LINE_LENGTH);
 
 
-    //char** array of strings
-    //Pointers are 8 bytes (64-bits) long
-    // SIZE OF (char pointer) = 8 bytes
-    //size of char = 1 byte
     //OPCODE_LENGTH = 3;
     //char** opcode should be (number of lines * opcode length)
-
-    //TODO: VALGRIND ERROR
     tokenised_line->opcode = (char **) malloc(sizeof(char *) * OPCODE_LENGTH * (num_of_lines));
     tokenised_line->num_of_operands = (int *) malloc(sizeof(int) * (num_of_lines));
     for (int k = 0; k < num_of_lines; ++k) {
-        //TODO: VALGRIND ERROR
         tokenised_line->opcode[k] = (char *) malloc(sizeof(char) * (OPCODE_LENGTH + 1));
     }
 
-    //Char*** = array of array of strings
-    //char** = array of strings
-    //char* = string
-    // MAX_operands = number of lines * (LINELENGTH / OPERAND_LENGTH)
 
+    // MAX_operands = number of lines * (LINELENGTH / OPERAND_LENGTH)
     tokenised_line->operands = (char ***) malloc(sizeof(char **) * num_of_lines);
     tokenised_line->num_of_operands = (int *) malloc(sizeof(int) * num_of_lines);
     for (int i = 0; i < num_of_lines; ++i) {
@@ -422,12 +438,10 @@ char *two_pass_assembly(char **code, int num_of_lines) {
 
     char *binary = second_pass(code, tokenised_line, symbol_table, total_labels);
 
-// REMEMBER TO free
 
 
 //    for (int i = 0; i < num_of_lines; ++i) {
 //        for (int j = 0; j < MAX_OPERANDS; ++j) {
-//            //This free is colliding with the malloc in tokeniser
 //            free(tokenised_line->operands[i][j]);  // free the string
 //        }
 //        free(tokenised_line->operands[i]);         // free the row
@@ -439,7 +453,6 @@ char *two_pass_assembly(char **code, int num_of_lines) {
     free(tokenised_line->opcode);
     free(tokenised_line->num_of_operands);
     free(tokenised_line->label);
-    //free(tokenised_line->num_of_operands);
     free(tokenised_line->operands);
     free(tokenised_line);
     free(symbol_table->mappings);
