@@ -81,7 +81,34 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
 //
 //        }
 //    }
+/*
+    bool shift_by_register = false;
+    if (address_offset_shift[4] == 'r') {
+        shift_by_register = true;
+    }
 
+    //move past "lsr #" in "lsr #exp"
+    address_offset_shift += (5 * sizeof(char));
+    int base;
+    set_base(address_offset_shift, &base);
+    int shift = (int) strtol(address_offset_shift, NULL, base);
+
+    address_offset++;
+    int rm = (int) strtol(address_offset, NULL, 10);
+
+    //combine rm, shift_type and shift appropriately (page 7 of spec)
+    if (shift_by_register) {
+        shift = shift << 8;
+    } else {
+        shift = shift << 7;
+    }
+    shift_type = shift_type << 5;
+    set_offset = shift + shift_type + rm;
+    if (shift_by_register) {
+        set_offset += (0x1 << 4);
+    }
+
+*/
 
     //set S bit if type is set_CPSR
     if (type == set_CPSR) {
@@ -199,6 +226,8 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
     int expression_value;
 
     if (!(strcmp(opcode, "ldr"))) {
+        set_rd = (int) strtol((tokenised_line->operands[line][0]) + sizeof(char), NULL, 10);
+
         //LDR instruction
         set_L = 1;
         if (address[0] == '=') {
@@ -256,6 +285,8 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
         set_L = 0;
     }
 
+    set_rd = (int) strtol((tokenised_line->operands[line][0]) + sizeof(char), NULL, 10);
+
     // ldr Rd, [rn] = pre
     // ldr Rd, [rn, #exp] = pre
     // ldr Rd, [rn], #exp = post
@@ -297,7 +328,7 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
                 set_U = 0;
             }
 
-        } else if (containsChar(']', address_offset)){
+        } else if (containsChar(']', address_offset)) {
             // the entire offset is just a reg value
 
             if (address_offset[0] == '-') {
@@ -329,17 +360,17 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
             if (strstr(address_offset_shift, "lsr")) {
                 //shift is an lsr
                 shift_type = 1;
-            } else if (strstr(address_offset_shift, "asr")){
+            } else if (strstr(address_offset_shift, "asr")) {
                 //shift is an asr
                 shift_type = 2;
-            } else if (strstr(address_offset_shift, "ror")){
+            } else if (strstr(address_offset_shift, "ror")) {
                 //shift is a ror
                 shift_type = 3;
             }
             //otheriwse is an lsl, no need to change the shift_type since it is already 0
 
             bool shift_by_register = false;
-            if (address_offset_shift[4] == 'r'){
+            if (address_offset_shift[4] == 'r') {
                 shift_by_register = true;
             }
 
@@ -353,14 +384,14 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
             int rm = (int) strtol(address_offset, NULL, 10);
 
             //combine rm, shift_type and shift appropriately (page 7 of spec)
-            if(shift_by_register){
+            if (shift_by_register) {
                 shift = shift << 8;
             } else {
                 shift = shift << 7;
             }
             shift_type = shift_type << 5;
-            set_offset = shift + shift_type +rm;
-            if (shift_by_register){
+            set_offset = shift + shift_type + rm;
+            if (shift_by_register) {
                 set_offset += (0x1 << 4);
             }
 
