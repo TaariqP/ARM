@@ -160,7 +160,7 @@ void set_operand(uint32_t *binary, int line, int arg_num, int end_bit, tokenised
 void set_sdt_bits(uint32_t *binary, int set_I, int set_P, int set_U, int set_L, int set_rn, int set_rd, int set_offset){
 
     //assume always executed, set cond
-    set_n_bits(binary, 28, 14);
+    set_n_bits(binary, COND_END_BIT, 14);
 
     set_n_bits(binary, 26, 1);
 

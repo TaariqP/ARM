@@ -90,7 +90,7 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
 
     //set I (can be done after because it is a single bit)
     int argument;
-    //decide which operand to look at based on type (mov looks at op 2, others at op 3)
+    //decide which operand to look at (either 2 or 3) based on type
     if (type == single_operand | type == set_CPSR) {
         argument = 1;
     } else {
@@ -144,7 +144,7 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
     //calculate offset
     if (isImmediate) {
         int immediate_value = (int) strtol(operand2, NULL, base);
-        if (immediate_value < 256) {
+        if (immediate_value <= 0xFF) {
             //can be stored directly in last 8 bits without need for rotate
             set_n_bits(&binary, 0, immediate_value);
         } else {
