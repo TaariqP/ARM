@@ -91,7 +91,6 @@ void pipeline_cycle(current_state *state, int size) {
         pc_increment(state);
     }
 
-
 }
 
 

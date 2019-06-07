@@ -68,47 +68,7 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
         //AND (no bits set, they remain 0)
         type = compute_result;
     }
-
-
-//// Optional
-//    int no_of_operands = 4;
-//    //Optional sub command e.g. sub r5,r4, r3, lsr r2
-//    if (!(strcmp(command, "sub") && no_of_operands == 4){
-//        char* ret;
-//        if (ret = strstr(tokenised_line->operands[line][3], "lsr"){
-//            ret += sizeof(char);
-//            // ret now contains the register number to get the last byte
-//
-//        }
-//    }
-/*
-    bool shift_by_register = false;
-    if (address_offset_shift[4] == 'r') {
-        shift_by_register = true;
-    }
-
-    //move past "lsr #" in "lsr #exp"
-    address_offset_shift += (5 * sizeof(char));
-    int base;
-    set_base(address_offset_shift, &base);
-    int shift = (int) strtol(address_offset_shift, NULL, base);
-
-    address_offset++;
-    int rm = (int) strtol(address_offset, NULL, 10);
-
-    //combine rm, shift_type and shift appropriately (page 7 of spec)
-    if (shift_by_register) {
-        shift = shift << 8;
-    } else {
-        shift = shift << 7;
-    }
-    shift_type = shift_type << 5;
-    set_offset = shift + shift_type + rm;
-    if (shift_by_register) {
-        set_offset += (0x1 << 4);
-    }
-
-*/
+    
 
     //set S bit if type is set_CPSR
     if (type == set_CPSR) {
@@ -190,6 +150,47 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
     } else {
         //is shift register
         //calculate and set shift
+        if (tokenised_line->num_of_operands[line] == 4) {
+            //has a shift value as 4th operand
+            //calculate shift type
+            char *shift = tokenised_line->operands[line][3];
+            int shift_type = 0;
+            if (strstr(shift, "lsr")) {
+                //shift is an lsr
+                shift_type = 1;
+            } else if (strstr(shift, "asr")) {
+                //shift is an asr
+                shift_type = 2;
+            } else if (strstr(shift, "ror")) {
+                //shift is a ror
+                shift_type = 3;
+            }
+            //skip past for example "lsl " in "lsl #exp"
+            shift += (4 * sizeof(char));
+            int shift_by_register = 0;
+            if (*shift == 'r'){
+                //register shift
+                shift_by_register = 1;
+            }
+            //skip past 'r' or '#'
+            shift++;
+            int base1;
+            set_base(shift, &base1);
+            int shift_bits = (int) strtol(shift, NULL, base1);
+
+            //set the shift register or int
+            if (shift_by_register){
+                set_n_bits(&binary, 8, shift_bits);
+            } else {
+                set_n_bits(&binary, 7, shift_bits);
+            }
+
+            //set the shift type
+            set_n_bits(&binary, 5, shift_type);
+
+            //set bit 4
+            set_n_bits(&binary, 4, shift_by_register);
+        }
 
         //set Rm
         int rm = (int) strtol(operand2, (char **) NULL, 10);
@@ -304,7 +305,7 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
             set_I = 1;
         }
 
-        //either type [rn,<#exp>] or type [rn], TODO: identify type, set offset based on it
+        //either type [rn,<#exp>] or type [rn]
         if (address_offset[0] == '#') {
             //type is [rn,<#expression>]
 
