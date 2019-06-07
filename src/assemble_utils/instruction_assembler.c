@@ -70,17 +70,17 @@ void assemble_dpi_to(tokenised_line *tokenised_line, int line, char *binary_stri
     }
 
 
-// Optional
-    int no_of_operands = 4;
-    //Optional sub command e.g. sub r5,r4, r3, lsr r2
-    if (!(strcmp(command, "sub") && no_of_operands == 4){
-        char* ret;
-        if (ret = strstr(tokenised_line->operands[line][3], "lsr"){
-            ret += sizeof(char);
-            // ret now contains the register number to get the last byte
-                    
-        }
-    }
+//// Optional
+//    int no_of_operands = 4;
+//    //Optional sub command e.g. sub r5,r4, r3, lsr r2
+//    if (!(strcmp(command, "sub") && no_of_operands == 4){
+//        char* ret;
+//        if (ret = strstr(tokenised_line->operands[line][3], "lsr"){
+//            ret += sizeof(char);
+//            // ret now contains the register number to get the last byte
+//
+//        }
+//    }
 
 
     //set S bit if type is set_CPSR
@@ -194,7 +194,7 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
     int set_offset = 0;
 
     //extract rd
-    set_rd = (int) strtol((tokenised_line->operands[line][0] += sizeof(char)), NULL, 10);
+    set_rd = (int) strtol((tokenised_line->operands[line][0]), NULL, 10);
 
     int expression_value;
 
@@ -209,9 +209,9 @@ void assemble_sdt_to(tokenised_line *tokenised_line, int line, char *binary_stri
             expression_value = (int) strtol(address, NULL, 16);
             if (expression_value <= 0xFF) {
                 //convert to mov instruction
-                opcode[0] = 'm';
-                opcode[1] = 'o';
-                opcode[2] = 'v';
+                tokenised_line->opcode[line][0] = 'm';
+                tokenised_line->opcode[line][1] = 'o';
+                tokenised_line->opcode[line][2] = 'v';
 
                 address -= sizeof(char);
                 address[0] = '#';
