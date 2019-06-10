@@ -11,7 +11,7 @@
 
 void assemble_dpi_to(tokenised_line *, int, char *);
 
-void assemble_sdt_to(tokenised_line *, int, char *, int, int, int *,int, char **);
+void assemble_sdt_to(tokenised_line *, int, char *, int, int, int *, int, char **);
 
 void assemble_mul_to(tokenised_line *, int, char *);
 

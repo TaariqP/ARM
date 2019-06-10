@@ -28,7 +28,7 @@ typedef enum {
     compute_result,
     single_operand,
     set_CPSR
-}DPI_TYPE;
+} DPI_TYPE;
 
 /*contains a string label, and its memory address*/
 typedef struct {
@@ -39,7 +39,7 @@ typedef struct {
 /* contains all mappings (mapping defined above)*/
 typedef struct {
     int num_elements;
-    mapping* mappings;
+    mapping *mappings;
 } symbol_table;
 
 /*contains all tokenized lines
@@ -48,12 +48,12 @@ typedef struct {
 typedef struct {
     //Array of strings
     int num_of_lines;
-    char** label;
-    char** opcode;
+    char **label;
+    char **opcode;
     //array of ints
     int *num_of_operands;
     //Array of array of strings
-    char*** operands;
+    char ***operands;
 } tokenised_line;
 
 

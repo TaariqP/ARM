@@ -23,7 +23,6 @@ bool containsChar(char, char *);
 
 bool is8bit(int);
 
-
 bool is26bit(int);
 
 bool isArgument(char);
