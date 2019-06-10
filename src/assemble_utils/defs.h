@@ -5,7 +5,6 @@
 #ifndef ARM11_11_DEFS_H
 #define ARM11_11_DEFS_H
 
-
 #include <stdint-gcc.h>
 
 #define LINES 50
@@ -22,31 +21,36 @@
 #define COND_END_BIT 28
 #define DPI_OPCODE_END_BIT 21
 #define COMMAND_LENGTH 128
-// the initial 0 binary that we set depending on the instruction
 
+/*required for DPI assemble*/
 typedef enum {
     compute_result,
     single_operand,
     set_CPSR
 } DPI_TYPE;
 
-
+/*contains a string label, and its memory address*/
 typedef struct {
     char *label;
     int memory_address;
 } mapping;
 
+/* contains all mappings (mapping defined above)*/
 typedef struct {
     int num_elements;
     mapping *mappings;
 } symbol_table;
 
+/*contains all tokenized lines
+ * specific line properties can be accessed by
+ * e.g: tokenized_line->opcode[line]*/
 typedef struct {
     //Array of strings
-    //? to keep line_num??
     int num_of_lines;
-    char** label;
-    char** opcode;
+    char **label;
+    char **opcode;
+    //array of ints
+    int *num_of_operands;
     //Array of array of strings
     char ***operands;
 } tokenised_line;

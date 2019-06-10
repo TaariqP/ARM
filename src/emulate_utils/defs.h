@@ -26,6 +26,7 @@
 //0x2020 0008
 #define GPIO_20_29 538968072
 
+/*following enum is used to identify the type of instruction*/
 typedef enum {
     DPI,
     SDT,
@@ -35,6 +36,9 @@ typedef enum {
     NONE
 } instruction_type;
 
+/*contains all the possible partitions of the 32 bit integer
+ * not specific to one instruction type. Uses partitions from all 4 types*/
+//TODO: rename the properties
 typedef struct {
     instruction_type type;
     uint8_t cond;
@@ -53,11 +57,13 @@ typedef struct {
     uint32_t offset;
 } decoded_instruction;
 
+/*contains the binary value of the instruction that has just been fetched*/
 typedef struct {
     uint32_t binary_value;
     char *binary;
 } fetched_instruction;
 
+/*contains the state of the memory, registers and the current decoded and fetched instructions*/
 typedef struct {
     uint8_t memory[NUM_ADDRESSES];
     int32_t registers[NUM_REGISTERS];

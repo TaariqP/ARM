@@ -6,20 +6,24 @@
 #include <stdbool.h>
 #include "defs.h"
 
+/*returns the value of the exact bit of the value inputted that we want (0 indexed)*/
 uint8_t mask_1_bit(int value, int bit) {
-  return (uint8_t)((value >> bit) & 0x1);
+  return (uint8_t) ((value >> bit) & 0x1);
 }
 
+/*returns the 4 bits required from the value (given the end bit) (0 indexed)*/
 uint8_t mask_4_bit(int value, int end_bit) {
-  return (uint8_t)((value >> end_bit) & 0xF);
+  return (uint8_t) ((value >> end_bit) & 0xF);
 }
 
+/*returns the byte required from the value (given the end bit) (0 indexed)*/
 uint8_t mask_8_bit(int value, int end_bit) {
-  return (uint8_t)((value >> end_bit) & 0xFF);
+  return (uint8_t) ((value >> end_bit) & 0xFF);
 }
 
 //Reads the binary file
 void binary_file_loader(char *filename, char *memory) {
+
   FILE *binaryFile = fopen(filename, "rb");
   fseek(binaryFile, 0, SEEK_END);
   int size = (int) ftell(binaryFile);
@@ -30,11 +34,14 @@ void binary_file_loader(char *filename, char *memory) {
     printf("%s", "Could not read\n");
   }
   fclose(binaryFile);
+
 }
 
+/*prints all non zero memories as required by emulate test outputs*/
 void print_binary(uint8_t *memory) {
+
   printf("%s\n", "Non-zero memory:");
-  for (int i = 0; i < INSTRUCTION_SIZE; i = i + 4) {
+  for (int i = 0; i < NUM_ADDRESSES; i = i + 4) {
     uint8_t value[4];
     value[3] = (memory[i]);
     value[2] = (memory[i + 1]);
@@ -47,21 +54,23 @@ void print_binary(uint8_t *memory) {
   }
 }
 
+/*prints out the value of all registers as required by emulate test outputs*/
 void print_registers(int32_t *registers) {
   printf("%s\n", "Registers:");
   for (int i = 0; i < 13; i++) {
-    char buffer[1000];
+    char reg[4];
+    reg[0] = '$';
+    sprintf(&reg[1], "%d", i);
     if (i < 10) {
-      sprintf(buffer, "$%d  : %10d (0x%08x)\n", i, registers[i], registers[i]);
-    } else {
-      sprintf(buffer, "$%d : %10d (0x%08x)\n", i, registers[i], registers[i]);
+      sprintf(&reg[2], " ");
     }
-    printf("%s", buffer);
+    printf("%s : %10d (0x%08x)\n", reg, registers[i], registers[i]);
   }
   printf("PC  : %10d (0x%08x)\n", registers[PC], registers[PC]);
   printf("CPSR: %10d (0x%08x)\n", registers[CPSR], registers[CPSR]);
 }
 
+/*checks the CPSR register to see whether condition is valid*/
 bool check_condition(current_state *state) {
   int32_t value = state->registers[CPSR];
   uint8_t n = mask_1_bit(value, N);
@@ -86,12 +95,13 @@ bool check_condition(current_state *state) {
     case 14:
       return 1;
     default:
-      printf("Failed CPSR Check");
+      printf("Failed CPSR Check\n");
       return 0;
   }
 }
 
 int get_file_size(char *filename) {
+
   FILE *fp = fopen(filename, "rb");
   fseek(fp, 0, SEEK_END);
   int lengthOfFile = (int) ftell(fp);
@@ -100,6 +110,7 @@ int get_file_size(char *filename) {
 }
 
 uint32_t get_instruct(current_state *state, int address) {
+
   uint8_t value[4];
   value[0] = (state->memory[address]);
   value[1] = (state->memory[address + 1]);
@@ -107,6 +118,7 @@ uint32_t get_instruct(current_state *state, int address) {
   value[3] = (state->memory[address + 3]);
   uint32_t instruction = (value[3] << 24) | (value[2] << 16) | (value[1] << 8) | value[0];
   return instruction;
+
 }
 
 void pc_increment(current_state *state) {
@@ -126,7 +138,9 @@ void set_CPSR_bit(current_state *state, int bit_number, int val) {
   } else {
     cpsr |= (0x1 << bit_number);
   }
+
   state->registers[CPSR] = cpsr;
+
 }
 
 int32_t sign_extend_26_to_32(int32_t value) {
