@@ -228,6 +228,7 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
   char *line_t = (char *) malloc(sizeof(char) * LINE_LENGTH);
   strcpy(line_t, line);
 
+  char *line_t_alt = line_t;
 
   //Get label (if its just a label) (e.g. wait: this gets wait)
   if (strchr(line_t, ':') != NULL) {
@@ -236,30 +237,39 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
   }
 
   //Get Opcode (e.g mov r1, r2 - this gets mov"
-  char *opcode;
-  opcode = strtok_r(line_t, " ", &line_t);
-  (tokenised_line->opcode[line_num]) = opcode;
+  char *opcode_from_line_t;
+  opcode_from_line_t = strtok_r(line_t, " ", &line_t);
+  char opcode[strlen(opcode_from_line_t) +1];
+  strcpy(opcode, opcode_from_line_t);
+  strcpy(tokenised_line->opcode[line_num], opcode);
 
   //Split into operands (e.g. mov r1,r2 - this gets r1 etc
   int num_of_operands = 0;
-  char *operand;
+  char *operand_from_line_t;
   if (strchr(line_t, ',') != NULL) {
-    operand = strtok_r(line_t, ",", &line_t);
-    while (operand) {
-      (tokenised_line->operands)[line_num][num_of_operands] = operand;
+    operand_from_line_t = strtok_r(line_t, ",", &line_t);
+    while (operand_from_line_t) {
+      char operand[strlen(opcode_from_line_t) +1];
+      strcpy(operand, operand_from_line_t);
+      strcpy(tokenised_line->operands[line_num][num_of_operands], operand);
 
       num_of_operands++;
-      operand = strtok_r(line_t, ",", &line_t);
+      operand_from_line_t = strtok_r(line_t, ",", &line_t);
     }
   } else {
-    (tokenised_line->operands)[line_num][num_of_operands] = line_t;
+    char line_t_string[strlen(line_t) +1];
+    strcpy(line_t_string, line_t);
+    strcpy(tokenised_line->operands[line_num][num_of_operands], line_t_string);
     num_of_operands++;
   }
   tokenised_line->num_of_operands[line_num] = num_of_operands;
   for (int i = 0; i < num_of_operands; ++i) {
-    (tokenised_line->operands)[line_num][i] = trim_whitespace((tokenised_line->operands)[line_num][i]);
+    char operand_to_add[strlen(trim_whitespace((tokenised_line->operands)[line_num][i])) + 1];
+    strcpy(operand_to_add, (trim_whitespace((tokenised_line->operands)[line_num][i])));
+    strcpy(tokenised_line->operands[line_num][i], operand_to_add);
   }
-  //free(line_t);
+
+  free(line_t_alt);
   return num_of_operands;
 
 }
@@ -371,6 +381,7 @@ char *second_pass(char **code, tokenised_line *tokenised_line, symbol_table *sym
     }
   }
   strcat(binary, byte_to_add);
+  free(byte_to_add);
   return binary;
 }
 
@@ -386,7 +397,6 @@ char *two_pass_assembly(char **code, int num_of_lines) {
   tokenised_line->label = (char **) malloc(sizeof(char) * LINE_LENGTH);
 
   tokenised_line->opcode = (char **) malloc(sizeof(char *) * OPCODE_LENGTH * (num_of_lines));
-  tokenised_line->num_of_operands = (int *) malloc(sizeof(int) * (num_of_lines));
   for (int k = 0; k < num_of_lines; ++k) {
     tokenised_line->opcode[k] = (char *) malloc(sizeof(char) * (OPCODE_LENGTH + 1));
   }
@@ -410,12 +420,12 @@ char *two_pass_assembly(char **code, int num_of_lines) {
 
   char *binary = second_pass(code, tokenised_line, symbol_table, total_labels);
 
-//    for (int i = 0; i < num_of_lines; ++i) {
-//        for (int j = 0; j < MAX_OPERANDS; ++j) {
-//            free(tokenised_line->operands[i][j]);  // free the string
-//        }
-//        free(tokenised_line->operands[i]);         // free the row
-//    }
+    for (int i = 0; i < num_of_lines; ++i) {
+        for (int j = 0; j < MAX_OPERANDS; ++j) {
+            free(tokenised_line->operands[i][j]);  // free the string
+        }
+        free(tokenised_line->operands[i]);         // free the row
+    }
 
   for (int l = 0; l < num_of_lines; ++l) {
     free(tokenised_line->opcode[l]);
