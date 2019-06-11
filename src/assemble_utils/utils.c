@@ -414,10 +414,10 @@ char *two_pass_assembly(char **code, int num_of_lines) {
   tokenised_line->num_of_operands = (int *) malloc(sizeof(int) * num_of_lines);
   for (int i = 0; i < num_of_lines; ++i) {
     // allocate each row (the row cells)
-    tokenised_line->operands[i] = (char **) malloc(sizeof(char *) * MAX_OPERANDS);
+    tokenised_line->operands[i] = (char **) calloc( MAX_OPERANDS, sizeof(char *));
     for (int j = 0; j < MAX_OPERANDS; ++j) {
       // initialize the row cell by allocating the string
-      tokenised_line->operands[i][j] = (char *) malloc(sizeof(char) * (OPERAND_LENGTH + 1));/* allocate string */
+      tokenised_line->operands[i][j] = (char *) calloc((OPERAND_LENGTH + 1), sizeof(char));/* allocate string */
     }
   }
 
