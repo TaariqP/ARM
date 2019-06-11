@@ -232,7 +232,11 @@ int tokenizer(char *line, int line_num, tokenised_line *tokenised_line) {
 
   //Get label (if its just a label) (e.g. wait: this gets wait)
   if (strchr(line_t, ':') != NULL) {
-    tokenised_line->label[line_num] = strtok_r(line_t, ":", &line_t);
+    char *label_from_line_t = strtok_r(line_t, ":", &line_t);
+    char label[strlen(label_from_line_t) + 1];
+    strcpy(label, label_from_line_t);
+    strcpy(tokenised_line->label[line_num], label);
+    free(line_t_alt);
     return 0;
   }
 
@@ -293,11 +297,12 @@ int first_pass(char **code, tokenised_line *tokenised_line, symbol_table *symbol
     line = code[line_num];
     int operand_num = tokenizer(line, line_num, tokenised_line);
     if (operand_num == 0) {
-      mapping *mapping = malloc(sizeof(mapping));
+      mapping *mapping = malloc(sizeof(mapping) * 500);
       mapping->label = tokenised_line->label[line_num];
       mapping->memory_address = 4 * line_num;
       add_to_mappings(symbol_table, *mapping);
       total_labels++;
+      free(mapping);
     }
   }
   return total_labels;
@@ -394,7 +399,10 @@ char *two_pass_assembly(char **code, int num_of_lines) {
 
   tokenised_line *tokenised_line = malloc(sizeof(*tokenised_line) * num_of_lines);
   tokenised_line->num_of_lines = num_of_lines;
-  tokenised_line->label = (char **) malloc(sizeof(char) * LINE_LENGTH);
+  tokenised_line->label = (char **) malloc(sizeof(char *) * num_of_lines);
+  for (int k = 0; k < num_of_lines; ++k) {
+    tokenised_line->label[k] = (char *) malloc(sizeof(char) * LINE_LENGTH);
+  }
 
   tokenised_line->opcode = (char **) malloc(sizeof(char *) * OPCODE_LENGTH * (num_of_lines));
   for (int k = 0; k < num_of_lines; ++k) {
@@ -432,6 +440,10 @@ char *two_pass_assembly(char **code, int num_of_lines) {
   }
   free(tokenised_line->opcode);
   free(tokenised_line->num_of_operands);
+
+  for (int l = 0; l < num_of_lines; ++l) {
+    free(tokenised_line->label[l]);
+  }
   free(tokenised_line->label);
   free(tokenised_line->operands);
   free(tokenised_line);
