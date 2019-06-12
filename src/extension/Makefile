@@ -10,10 +10,10 @@ OB = main.o
 
 
 
-all: $(NAME)
+all: main
 
-$(NAME):
-	gcc $(CFLAGS) $(SRC) -o $(NAME) -lncurses
+main:
+	gcc $(CFLAGS) main.c -o main -lncurses
 
 
 clean:
