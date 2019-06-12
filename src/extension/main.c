@@ -5,6 +5,7 @@
 #include <ncurses.h>
 #include <unistd.h>
 #include "sticks.h"
+#include "ball.h"
 
 int main(void) {
   /*initialising game space*/
@@ -18,13 +19,14 @@ int main(void) {
 
 /*initialising local variables (co-ordinates)*/
   int stick_y_l = 13,
-      stick_y_r = 13,
-      end = 0,
-      key = 0,
-      max_y = 0,
-      max_x = 0;
-
-
+    stick_y_r = 13,
+    ball_y = 14,
+    ball_x = 50,
+    end = 0,
+    key = 0,
+    direction = 1,
+    max_y = 0,
+    max_x = 0;
 
   while (!end) {
     box(win, '+', '-');
@@ -32,13 +34,22 @@ int main(void) {
     getmaxyx(stick_window, max_y, max_x);
     werase(stick_window);
 
+    /*the sticks start at slightly offset heights - need to fix*/
     display_left_stick(stick_window, stick_y_l);
     display_right_stick(stick_window, stick_y_r);
+
+    display_ball(stick_window, ball_x, ball_y);
+
+    if ((ball_x + direction) >= max_x || (ball_x + direction) < 0) {
+      direction *= -1;
+    } else {
+      ball_x += direction;
+    }
 
     /*behaviour of valid key presses*/
     nodelay(stick_window, TRUE);
     key = getch();
-    switch (key){
+    switch (key) {
       case KEY_UP:
         stick_y_r--;
         wrefresh(stick_window);
@@ -59,6 +70,8 @@ int main(void) {
       default:
         break;
     }
+
+
 
   }
   endwin();
