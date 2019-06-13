@@ -9,6 +9,10 @@
 #ifndef ARM11_11_BALL_H
 #define ARM11_11_BALL_H
 
+#define BALL_INITIAL_X 50
+#define BALL_INITIAL_Y 14
+
+
 typedef enum {
     ZERO = 0,
     POSITIVE = 1,
@@ -34,7 +38,7 @@ void move_ball(ball *);
 
 void free_ball(ball *);
 
-void bounce_ball(ball *);
+void bounce_ball(WINDOW *, ball *, int, int, int *, int *);
 
 ball *create_ball();
 

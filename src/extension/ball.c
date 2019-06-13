@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <time.h>
 #include "ball.h"
+#include "sticks.h"
 
 ball *create_ball() {
   ball *ball = calloc(1, sizeof(ball));
@@ -65,13 +66,47 @@ static int getRand() {
   return options[index];
 }
 
-void bounce_ball(ball *ball) {
+static void refresh_screen(WINDOW *window, ball *ball, int stick_left_y, int stick_right_y){
+  sleep(1);
+  ball->x_position = BALL_INITIAL_X;
+  ball->y_position = BALL_INITIAL_Y;
+  ball->direction->x *= -1;
+  werase(window);
+  display_left_stick(window, stick_left_y);
+  display_right_stick(window, stick_right_y);
+  display_ball(window, ball);
+  wrefresh(window);
+  sleep(1);
+}
+
+void bounce_ball(WINDOW *window, ball *ball, int stick_left_y, int stick_right_y, int *score_left, int *score_right) {
   while (illegal_x(ball) || illegal_y(ball)) {
     if (illegal_x(ball) && !illegal_y(ball)) {
-      ball->direction->x *= -1;
-      ball->direction->y = getRand();
+      if (ball->direction->x == -1) {
+
+        //travelling left
+        if (ball->y_position >= stick_left_y && ball->y_position <= stick_left_y + HEIGHT_OF_STICK) {
+          //will hit stick
+          ball->direction->x *= -1;
+          ball->direction->y = getRand();
+          break;
+        }
+        *score_right+=1;
+        refresh_screen(window, ball, stick_left_y, stick_right_y);
+        break;
+      }
+
+      if (ball->y_position >= stick_right_y && ball->y_position <= stick_right_y + HEIGHT_OF_STICK) {
+        //will hit stick
+        ball->direction->x *= -1;
+        ball->direction->y = getRand();
+        break;
+      }
+      *score_left+=1;
+      refresh_screen(window, ball, stick_left_y, stick_right_y);
       break;
     }
+
     if (illegal_y(ball) && !illegal_x(ball)) {
       ball->direction->y *= -1;
       break;
