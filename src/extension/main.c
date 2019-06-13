@@ -2,6 +2,7 @@
 // Created by taariq on 6/11/19.
 //
 
+#include <stdlib.h>
 #include <ncurses.h>
 #include <unistd.h>
 #include "sticks.h"
@@ -26,17 +27,20 @@ int main(void) {
   wrefresh(win);
 
 
-/*initialising local variables (co-ordinates)*/
+/*initialising local variables*/
   int stick_y_l = (STICK_WINDOW_HEIGHT / 2 - 1),
     stick_y_r = (STICK_WINDOW_HEIGHT / 2 - 1),
-    ball_y = 14,
-    ball_x = 50,
     end = 0,
     key = 0,
-    direction = 1,
     max_y = 0,
     max_x = 0;
 
+  ball *ball = create_ball();
+  ball->x_position = 50;
+  ball->y_position = 14;
+  ball->direction = EAST;
+
+  /*the actual game execution*/
   while (!end) {
     cbreak();
     getmaxyx(stick_window, max_y, max_x);
@@ -45,7 +49,9 @@ int main(void) {
     display_left_stick(stick_window, stick_y_l);
     display_right_stick(stick_window, stick_y_r);
 
-    display_ball(stick_window, ball_x, ball_y);
+    display_ball(stick_window, ball);
+
+//    display_ball(stick_window, ball_x, ball_y);
 
     /*behaviour of valid key presses*/
     nodelay(stick_window, TRUE);
@@ -84,13 +90,26 @@ int main(void) {
         break;
     }
 
-
-    if ((ball_x + direction) >= max_x || (ball_x + direction) < 0) {
-      direction *= -1;
-    } else {
-      ball_x += direction;
+    /*logic for ball movements*/
+    int next_x = ball->x_position + (ball->vector->x);
+    int next_y = ball->y_position + (ball->vector->y);
+    if (next_x >= (max_x -1) || next_x < 1){
+      bounce_ball(ball);
     }
+    if (next_y >= max_y || max_y < 0) {
+      bounce_ball(ball);
+    }
+    move_ball(ball);
+
+
+
+//    if ((ball_x + direction) >= (max_x -1) || (ball_x + direction) < 1) {
+//      direction *= -1;
+//    } else {
+//      ball_x += direction;
+//    }
 
   }
+  free_ball(ball);
   endwin();
 }

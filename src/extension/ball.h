@@ -7,6 +7,12 @@
 #ifndef ARM11_11_BALL_H
 #define ARM11_11_BALL_H
 
+
+typedef struct {
+    int x;
+    int y;
+} vector;
+
 typedef enum {
     NORTH,
     NORTHEAST,
@@ -18,7 +24,20 @@ typedef enum {
     NORTHWEST
 } ball_direction;
 
-void display_ball(WINDOW *, int, int);
+typedef struct {
+    int x_position;
+    int y_position;
+    ball_direction direction;
+    vector *vector;
+} ball;
+
+
+
+void display_ball(WINDOW *, ball *);
+void move_ball(ball *);
+void free_ball(ball *);
+void bounce_ball(ball *);
+ball *create_ball();
 
 
 
