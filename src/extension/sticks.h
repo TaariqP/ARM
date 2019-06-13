@@ -7,7 +7,9 @@
 #ifndef ARM11_11_STICKS_H
 #define ARM11_11_STICKS_H
 
-#define LEFT_X 0
+#define STICK_WINDOW_WIDTH 98
+#define STICK_WINDOW_HEIGHT 28
+#define HEIGHT_OF_STICK 2
 
 void display_left_stick(WINDOW *, int);
 void display_right_stick(WINDOW *, int);

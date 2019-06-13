@@ -7,19 +7,22 @@
 #include "sticks.h"
 #include "ball.h"
 
+#define SCREEN_WIDTH 100
+#define SCREEN_HEIGHT 30
+
 int main(void) {
   /*initialising game space*/
   initscr(); // Initialize the window
-  WINDOW *win = newwin(30, 100, 5, 10);
-  WINDOW *stick_window = subwin(win, 28, 98, 6, 11);
+  WINDOW *win = newwin(SCREEN_HEIGHT, SCREEN_WIDTH, 5, 10);
+  WINDOW *stick_window = subwin(win, STICK_WINDOW_HEIGHT, STICK_WINDOW_WIDTH, 6, 11);
   noecho(); // Don't echo any keypresses
   curs_set(FALSE); // Don't display a cursor
   keypad(stdscr, TRUE); //recognises key inputs
 
 
 /*initialising local variables (co-ordinates)*/
-  int stick_y_l = 13,
-    stick_y_r = 13,
+  int stick_y_l = (STICK_WINDOW_HEIGHT / 2 + 1),
+    stick_y_r = (STICK_WINDOW_HEIGHT / 2 + 1),
     ball_y = 14,
     ball_x = 50,
     end = 0,
@@ -29,7 +32,8 @@ int main(void) {
     max_x = 0;
 
   while (!end) {
-    box(win, '+', '-');
+    wclear(win);
+    box(win, '|', '-');
     wrefresh(win);
     getmaxyx(stick_window, max_y, max_x);
     werase(stick_window);
@@ -47,30 +51,41 @@ int main(void) {
     }
 
     /*behaviour of valid key presses*/
-    nodelay(stick_window, TRUE);
     key = getch();
+    nodelay(stick_window, TRUE);
     switch (key) {
       case KEY_UP:
-        stick_y_r--;
-        wrefresh(stick_window);
+        if (stick_y_r > 0) {
+          //next position is valid
+          stick_y_r--;
+        }
+        //can potentially add scroll feature
         break;
       case KEY_DOWN:
-        stick_y_r++;
+        if (stick_y_r + HEIGHT_OF_STICK < max_y) {
+          //next position is valid
+          stick_y_r++;
+        }
         break;
       case 'w':
-        stick_y_l--;
-        wrefresh(stick_window);
+        if (stick_y_l > 0) {
+          //next position is valid
+          stick_y_l--;
+        }
         break;
       case 's':
-        stick_y_l++;
+        if (stick_y_l + HEIGHT_OF_STICK < max_y) {
+          //next position is valid
+          stick_y_l++;
+        }
         break;
       case 'q':
+        //exit key
         end = 1;
         break;
       default:
         break;
     }
-
 
 
   }
