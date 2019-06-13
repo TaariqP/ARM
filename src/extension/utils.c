@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <memory.h>
 #include "utils.h"
+#include "ball.h"
 
 
 void printA(WINDOW *window, int start_x, int start_y) {
@@ -122,4 +123,15 @@ void print_number(WINDOW *window, int score, int start_x, int start_y) {
       printers[i] (window, start_x, start_y);
     }
   }
+}
+
+void initialise_game(WINDOW *window, ball *ball, int *left_score, int *right_score, int *stickleft, int *stickright) {
+  *stickleft = (STICK_WINDOW_HEIGHT / 2 - 1);
+  *stickright = (STICK_WINDOW_HEIGHT / 2 - 1);
+  *left_score = 0;
+  *right_score = 0;
+  ball->x_position = BALL_INITIAL_X;
+  ball->y_position = BALL_INITIAL_Y;
+  ball->direction->x = 1;
+  ball->direction->y = 0;
 }

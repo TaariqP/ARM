@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <ncurses.h>
 #include <unistd.h>
+#include "ball.h"
 
 #ifndef ARM11_11_UTILS_H
 #define ARM11_11_UTILS_H
@@ -20,5 +21,6 @@ void printG(WINDOW *window, int start_x, int start_y);
 
 
 void print_number(WINDOW *, int, int, int);
+void initialise_game(WINDOW *, ball *, int *, int *, int *, int *);
 
 #endif //ARM11_11_UTILS_H
