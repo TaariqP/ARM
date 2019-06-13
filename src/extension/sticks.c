@@ -9,17 +9,23 @@
 
 /*prints a stick to a window at a set position*/
 void display_left_stick(WINDOW *window, int y_position) {
-  mvwprintw(window, y_position, 0, "|");
-  mvwprintw(window, y_position+1, 0, "|");
+  for (int i = 0; i < 3; i++) {
+    mvwprintw(window, y_position +i, 1, "|");
+    mvwprintw(window, y_position +i, 2, "|");
+  }
+
   wrefresh(window);
+
 }
 
 void display_right_stick(WINDOW *window, int y_position) {
 
   int end_x_position = getmaxx(window) - 1;
-
-  mvwprintw(window, y_position, end_x_position, "|");
-  mvwprintw(window, y_position+1, end_x_position, "|");
+  for (int i = 0; i < 3; i++) {
+    mvwprintw(window, y_position +i, end_x_position -1, "|");
+    mvwprintw(window, y_position +i, end_x_position -2, "|");
+  }
   wrefresh(window);
 }
+
 

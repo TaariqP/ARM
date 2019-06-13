@@ -7,15 +7,21 @@
 #include <unistd.h>
 #include "sticks.h"
 #include "ball.h"
+#include "utils.h"
+
 
 #define SCREEN_WIDTH 100
-#define SCREEN_HEIGHT 30
+#define SCREEN_HEIGHT 45
+#define SCORE_HEIGHT 13
+#define SCORE_WIDTH (STICK_WINDOW_WIDTH - 20)
 
 int main(void) {
   /*initialising game space*/
   initscr(); // Initialize the window
   WINDOW *win = newwin(SCREEN_HEIGHT, SCREEN_WIDTH, 5, 10);
   WINDOW *stick_window = subwin(win, STICK_WINDOW_HEIGHT, STICK_WINDOW_WIDTH, 6, 11);
+  WINDOW *score_window = subwin(win, SCORE_HEIGHT, SCORE_WIDTH, 6 + STICK_WINDOW_HEIGHT + 2 , 21);
+
   cbreak();
 
   noecho(); // Don't echo any keypresses
@@ -23,16 +29,13 @@ int main(void) {
   keypad(stick_window, TRUE); //recognises key inputs
 
 
-  box(win, '|', '-');
-  wrefresh(win);
-
-
 /*initialising local variables*/
   int stick_y_l = (STICK_WINDOW_HEIGHT / 2 - 1),
     stick_y_r = (STICK_WINDOW_HEIGHT / 2 - 1),
     end = 0,
+    left_score = 0,
+    right_score = 0,
     key = 0;
-
 
   ball *ball = create_ball();
   ball->x_position = 50;
@@ -45,7 +48,20 @@ int main(void) {
   /*the actual game execution*/
   while (!end) {
     cbreak();
+    werase(score_window);
+    box(score_window, ACS_VLINE, ACS_HLINE);
+
+    for (int i = 1; i < SCORE_HEIGHT -1; i++) {
+      mvwprintw(score_window, i, (STICK_WINDOW_WIDTH/2) - 10, "|");
+    }
+    wrefresh(score_window);
+
+    print_number(score_window, left_score, 10, 3);
+    print_number(score_window, right_score, SCORE_WIDTH - 20, 3);
     werase(stick_window);
+    box(stick_window, ACS_VLINE, ACS_HLINE);
+    wrefresh(stick_window);
+
 
     display_left_stick(stick_window, stick_y_l);
     display_right_stick(stick_window, stick_y_r);

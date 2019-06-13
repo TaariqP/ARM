@@ -9,7 +9,7 @@
 
 #define STICK_WINDOW_WIDTH 98
 #define STICK_WINDOW_HEIGHT 28
-#define HEIGHT_OF_STICK 2
+#define HEIGHT_OF_STICK 3
 
 void display_left_stick(WINDOW *, int);
 void display_right_stick(WINDOW *, int);

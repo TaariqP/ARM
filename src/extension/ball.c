@@ -42,7 +42,7 @@ void move_ball(ball *ball) {
 static int illegal_x(ball *ball) {
   //check next x
   int next_x = ball->x_position + ball->direction->x;
-  if (next_x >= STICK_WINDOW_WIDTH -1 || next_x < 1) {
+  if (next_x >= STICK_WINDOW_WIDTH -2 || next_x < 2) {
     return 1;
   }
   return 0;
@@ -51,7 +51,7 @@ static int illegal_x(ball *ball) {
 static int illegal_y(ball *ball) {
     //check next y
   int next_y = ball->y_position -= ball->direction->y;
-  if (next_y > STICK_WINDOW_HEIGHT -1 || next_y < 1) {
+  if (next_y > STICK_WINDOW_HEIGHT -2 || next_y < 1) {
     return 1;
   }
 
