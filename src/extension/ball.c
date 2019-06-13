@@ -25,12 +25,18 @@ ball *create_ball() {
 void display_ball(WINDOW *window, ball *ball) {
   mvwprintw(window, ball->y_position, ball->x_position, "o");
   wrefresh(window);
-  usleep(30000);
 }
 
 void move_ball(ball *ball) {
   ball->x_position += ball->direction->x;
   ball->y_position -= ball->direction->y;
+
+  if (ball->direction->y != 0) {
+    usleep(60000);
+  } else {
+    usleep(30000);
+  }
+
 }
 
 static int illegal_x(ball *ball) {
@@ -45,7 +51,7 @@ static int illegal_x(ball *ball) {
 static int illegal_y(ball *ball) {
     //check next y
   int next_y = ball->y_position -= ball->direction->y;
-  if (next_y > STICK_WINDOW_HEIGHT || next_y < 0) {
+  if (next_y > STICK_WINDOW_HEIGHT -1 || next_y < 1) {
     return 1;
   }
 
@@ -54,21 +60,26 @@ static int illegal_y(ball *ball) {
 
 static int getRand() {
   srand(time(0));
-  int options[3] = {-1, 0, 1};
+  int options[3] = {-1 ,0, 1};
   int index = rand() % 3;
   return options[index];
 }
 
 void bounce_ball(ball *ball) {
   while (illegal_x(ball) || illegal_y(ball)) {
-    if (illegal_x(ball)) {
+    if (illegal_x(ball) && !illegal_y(ball)) {
       ball->direction->x *= -1;
       ball->direction->y = getRand();
-
+      break;
     }
-    if (illegal_y(ball)) {
+    if (illegal_y(ball) && !illegal_x(ball)) {
       ball->direction->y *= -1;
-      ball->direction->x = getRand();
+      break;
+    }
+    if (illegal_x(ball) && illegal_y(ball)) {
+      ball->direction->y *= -1;
+      ball->direction->x *= -1;
+      break;
     }
   }
 }

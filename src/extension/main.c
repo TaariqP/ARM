@@ -90,7 +90,7 @@ int main(void) {
       default:
         break;
     }
-    
+
     bounce_ball(ball);
     move_ball(ball);
   }
