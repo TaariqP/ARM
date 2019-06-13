@@ -31,19 +31,20 @@ int main(void) {
   int stick_y_l = (STICK_WINDOW_HEIGHT / 2 - 1),
     stick_y_r = (STICK_WINDOW_HEIGHT / 2 - 1),
     end = 0,
-    key = 0,
-    max_y = 0,
-    max_x = 0;
+    key = 0;
+
 
   ball *ball = create_ball();
   ball->x_position = 50;
   ball->y_position = 14;
-  ball->direction = EAST;
+  ball->direction->x = 1;
+  ball->direction->y = 0;
+
+
 
   /*the actual game execution*/
   while (!end) {
     cbreak();
-    getmaxyx(stick_window, max_y, max_x);
     werase(stick_window);
 
     display_left_stick(stick_window, stick_y_l);
@@ -65,7 +66,7 @@ int main(void) {
         //can potentially add scroll feature
         break;
       case KEY_DOWN:
-        if (stick_y_r + HEIGHT_OF_STICK < max_y) {
+        if (stick_y_r + HEIGHT_OF_STICK < STICK_WINDOW_HEIGHT) {
           //next position is valid
           stick_y_r++;
         }
@@ -77,7 +78,7 @@ int main(void) {
         }
         break;
       case 's':
-        if (stick_y_l + HEIGHT_OF_STICK < max_y) {
+        if (stick_y_l + HEIGHT_OF_STICK < STICK_WINDOW_HEIGHT) {
           //next position is valid
           stick_y_l++;
         }
@@ -89,26 +90,9 @@ int main(void) {
       default:
         break;
     }
-
-    /*logic for ball movements*/
-    int next_x = ball->x_position + (ball->vector->x);
-    int next_y = ball->y_position + (ball->vector->y);
-    if (next_x >= (max_x -1) || next_x < 1){
-      bounce_ball(ball);
-    }
-    if (next_y >= max_y || max_y < 0) {
-      bounce_ball(ball);
-    }
+    
+    bounce_ball(ball);
     move_ball(ball);
-
-
-
-//    if ((ball_x + direction) >= (max_x -1) || (ball_x + direction) < 1) {
-//      direction *= -1;
-//    } else {
-//      ball_x += direction;
-//    }
-
   }
   free_ball(ball);
   endwin();
