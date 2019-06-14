@@ -85,7 +85,7 @@ void bounce_ball(WINDOW *window, ball *ball, int stick_left_y, int stick_right_y
       if (ball->direction->x == -1) {
 
         //travelling left
-        if (ball->y_position >= stick_left_y && ball->y_position <= stick_left_y + HEIGHT_OF_STICK) {
+        if (ball->y_position >= stick_left_y && ball->y_position < stick_left_y + HEIGHT_OF_STICK) {
           //will hit stick
           ball->direction->x *= -1;
           ball->direction->y = getRand();
@@ -96,7 +96,7 @@ void bounce_ball(WINDOW *window, ball *ball, int stick_left_y, int stick_right_y
         break;
       }
 
-      if (ball->y_position >= stick_right_y && ball->y_position <= stick_right_y + HEIGHT_OF_STICK) {
+      if (ball->y_position >= stick_right_y && ball->y_position < stick_right_y + HEIGHT_OF_STICK) {
         //will hit stick
         ball->direction->x *= -1;
         ball->direction->y = getRand();

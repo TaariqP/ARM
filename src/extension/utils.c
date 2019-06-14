@@ -7,6 +7,7 @@
 #include <memory.h>
 #include "utils.h"
 #include "ball.h"
+#include "sticks.h"
 
 
 void printA(WINDOW *window, int start_x, int start_y) {
@@ -134,4 +135,26 @@ void initialise_game(WINDOW *window, ball *ball, int *left_score, int *right_sco
   ball->y_position = BALL_INITIAL_Y;
   ball->direction->x = 1;
   ball->direction->y = 0;
+}
+
+void display_game_state(WINDOW *game_window, WINDOW *score_window, ball *ball, int stick_y_l, int stick_y_r, int left_score, int right_score) {
+  box(score_window, ACS_VLINE, ACS_HLINE);
+  for (int i = 1; i < SCORE_HEIGHT - 1; i++) {
+    mvwprintw(score_window, i, (STICK_WINDOW_WIDTH / 2) - 10, "|");
+  }
+  wrefresh(score_window);
+  print_number(score_window, left_score, 10, 3);
+  print_number(score_window, right_score, SCORE_WIDTH - 20, 3);
+
+  box(game_window, ACS_VLINE, ACS_HLINE);
+  display_left_stick(game_window, stick_y_l);
+  display_right_stick(game_window, stick_y_r);
+  display_ball(game_window, ball);
+}
+
+void print_message_center(WINDOW *window, char *message, int y_pos) {
+  int l = (int) strlen(message);
+  mvwprintw(window, y_pos, (STICK_WINDOW_WIDTH / 2) - (l / 2), message);
+  wrefresh(window);
+
 }
