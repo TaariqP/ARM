@@ -7,7 +7,6 @@ CFLAGS  = -Wall -g -D_POSIX_SOURCE -D_DEFAULT_SOURCE -std=c99 -pedantic
 
 
 
-all: clean main
 
 main:
 	gcc $(CFLAGS) main.c sticks.c ball.c utils.c -o main -lncurses

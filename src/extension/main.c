@@ -49,7 +49,7 @@ int main(void) {
 
   initialise_game(game_window, ball, &left_score, &right_score, &stick_y_l, &stick_y_r);
 
-  print_message_center(game_window, "Are you ready to play Neon Pong? (Y/N)", 10);
+  print_message_center(game_window, "Are you ready to play NEON PONG? (Y/N)", 10);
   print_message_center(game_window, "(For controls, press C)", 12);
 
   /*starter windows*/
