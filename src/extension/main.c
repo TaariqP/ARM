@@ -91,26 +91,26 @@ int main(void) {
         case KEY_UP:
           if (stick_y_r > 0) {
             //next position is valid
-            stick_y_r--;
+            stick_y_r-=2;
           }
           //can potentially add scroll feature
           break;
         case KEY_DOWN:
           if (stick_y_r + HEIGHT_OF_STICK < STICK_WINDOW_HEIGHT) {
             //next position is valid
-            stick_y_r++;
+            stick_y_r+=2;
           }
           break;
         case 'w':
           if (stick_y_l > 0) {
             //next position is valid
-            stick_y_l--;
+            stick_y_l-=2;
           }
           break;
         case 's':
           if (stick_y_l + HEIGHT_OF_STICK < STICK_WINDOW_HEIGHT) {
             //next position is valid
-            stick_y_l++;
+            stick_y_l+=2;
           }
           break;
         case 'q':
@@ -134,7 +134,15 @@ int main(void) {
       has_just_quit = 0;
     }
 
-    print_message_center(game_window, "Press R for rematch or Q to confirm quit", 10);
+    if (left_score > right_score) {
+      print_message_center(game_window, "Left Player Wins!", 10);
+    } else if (right_score > left_score) {
+      print_message_center(game_window, "Right Player Wins!", 10);
+    } else {
+      print_message_center(game_window, "Game is a Draw...", 10);
+    }
+
+    print_message_center(game_window, "Press R for rematch or Q to confirm quit", 12);
     display_game_state(game_window, score_window, ball, stick_y_l, stick_y_r, left_score, right_score);
 
 

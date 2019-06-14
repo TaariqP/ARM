@@ -15,4 +15,5 @@ main:
 
 clean:
 	rm -f $(wildcard *.o)
+	rm -f $(wildcard *.s)
 	rm -f main

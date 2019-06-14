@@ -33,9 +33,9 @@ void move_ball(ball *ball) {
   ball->y_position -= ball->direction->y;
 
   if (ball->direction->y != 0) {
-    usleep(60000);
+    usleep(120000);
   } else {
-    usleep(30000);
+    usleep(60000);
   }
 
 }
@@ -59,10 +59,14 @@ static int illegal_y(ball *ball) {
   return 0;
 }
 
-static int getRand() {
+static int random_index(int length_of_list) {
   srand(time(0));
+  return rand() % length_of_list;
+}
+
+static int get_random_magintude() {
   int options[3] = {-1 ,0, 1};
-  int index = rand() % 3;
+  int index = random_index(3);
   return options[index];
 }
 
@@ -79,6 +83,7 @@ static void refresh_screen(WINDOW *window, ball *ball, int stick_left_y, int sti
   sleep(1);
 }
 
+
 void set_steepness_to_2(ball *ball) {
   if (ball->direction->x == 1 || ball->direction->x == -1) {
     ball->direction->x *=2;
@@ -91,44 +96,54 @@ void set_steepness_to_1(ball *ball) {
   }
 }
 
+
 void (*steepness_functions[2]) (ball *) = {set_steepness_to_1, set_steepness_to_2};
 
+static void bounce_behaviour(WINDOW *window, ball *ball, int stick_left_y, int stick_right_y, int *score_left, int *score_right){
+  if (ball->direction->x == -1) {
+
+    //travelling left
+    if (ball->y_position >= stick_left_y && ball->y_position < stick_left_y + HEIGHT_OF_STICK) {
+      //will hit left stick
+      ball->direction->x *= -1;
+      int index = random_index(2);
+      steepness_functions[index] (ball);
+      ball->direction->y = get_random_magintude();
+      return;
+    }
+    *score_right+=1;
+    refresh_screen(window, ball, stick_left_y, stick_right_y);
+    return;
+  }
+
+  if (ball->y_position >= stick_right_y && ball->y_position < stick_right_y + HEIGHT_OF_STICK) {
+    //will hit right stick
+    ball->direction->x *= -1;
+    int index = random_index(2);
+    steepness_functions[index] (ball);
+    ball->direction->y = get_random_magintude();
+    return;
+  }
+  *score_left+=1;
+  refresh_screen(window, ball, stick_left_y, stick_right_y);
+}
 
 void bounce_ball(WINDOW *window, ball *ball, int stick_left_y, int stick_right_y, int *score_left, int *score_right) {
   while (illegal_x(ball) || illegal_y(ball)) {
     if (illegal_x(ball) && !illegal_y(ball)) {
-      if (ball->direction->x == -1) {
-
-        //travelling left
-        if (ball->y_position >= stick_left_y && ball->y_position < stick_left_y + HEIGHT_OF_STICK) {
-          //will hit left stick
-          ball->direction->x *= -1;
-          ball->direction->y = getRand();
-          break;
-        }
-        *score_right+=1;
-        refresh_screen(window, ball, stick_left_y, stick_right_y);
-        break;
-      }
-
-      if (ball->y_position >= stick_right_y && ball->y_position < stick_right_y + HEIGHT_OF_STICK) {
-        //will hit right stick
-        ball->direction->x *= -1;
-        ball->direction->y = getRand();
-        break;
-      }
-      *score_left+=1;
-      refresh_screen(window, ball, stick_left_y, stick_right_y);
+      bounce_behaviour(window, ball, stick_left_y, stick_right_y, score_left, score_right);
       break;
     }
 
     if (illegal_y(ball) && !illegal_x(ball)) {
       ball->direction->y *= -1;
+      int index = random_index(2);
+      steepness_functions[index] (ball);
       break;
     }
     if (illegal_x(ball) && illegal_y(ball)) {
       ball->direction->y *= -1;
-      ball->direction->x *= -1;
+      bounce_behaviour(window, ball, stick_left_y, stick_right_y, score_left, score_right);
       break;
     }
   }
