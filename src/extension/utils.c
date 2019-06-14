@@ -171,3 +171,14 @@ void print_message_center(WINDOW *window, char *message, int y_pos) {
   wrefresh(window);
 
 }
+
+void computer_move(ball *ball, int *stick_y_l) {
+  int top_of_paddle = *stick_y_l;
+  int bottom_of_paddle = *stick_y_l + HEIGHT_OF_STICK;
+
+  if (ball->y_position > bottom_of_paddle) {
+    *stick_y_l+=2;
+  } else if (ball->y_position < top_of_paddle +1) {
+    *stick_y_l-=2;
+  }
+}

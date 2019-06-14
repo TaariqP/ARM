@@ -39,6 +39,7 @@ int main(void) {
     stick_y_r,
     has_just_quit = 0,
     end = 0,
+    mode = 0,
     cont = 1,
     left_score,
     right_score,
@@ -59,6 +60,7 @@ int main(void) {
     if (key == 'n') {
       end = 1;
       cont = 0;
+      mode = 3;
       break;
     } else if (key == 'c') {
       werase(game_window);
@@ -68,6 +70,25 @@ int main(void) {
       print_message_center(game_window, "Press Y to begin game, or N to quit", 9);
       print_message_center(game_window, "Once you have begun the game, press Q to quit", 11);
     }
+  }
+
+
+  werase(game_window);
+  /*select mode, will have different game cycles*/
+  while (mode == 0) {
+    display_game_state(game_window, score_window, ball, stick_y_l, stick_y_r, left_score, right_score);
+    print_message_center(game_window, "Press 1 for single player mode, or 2 for two players ", 7);
+    print_message_center(game_window, "In single player mode, you will be right player (use arrow keys)", 9);
+    print_message_center(game_window, "*** BETA VERSION: DO NOT USE SINGLE PLAYER MODE ***", 11);
+
+    key = wgetch(game_window);
+    if (key == '2') {
+      mode = 2;
+    }
+    if (key == '1') {
+      mode = 1;
+    }
+
   }
 
   while (cont) {
@@ -85,41 +106,69 @@ int main(void) {
 
 //    display_ball(stick_window, ball_x, ball_y);
 
-      /*behaviour of valid key presses*/
+      /*behaviour of valid key presses, mode dependent*/
       nodelay(game_window, TRUE);
       key = wgetch(game_window);
-      switch (key) {
-        case KEY_UP:
-          if (stick_y_r > 0) {
-            //next position is valid
-            stick_y_r -= 2;
-          }
-          //can potentially add scroll feature
-          break;
-        case KEY_DOWN:
-          if (stick_y_r + HEIGHT_OF_STICK < STICK_WINDOW_HEIGHT) {
-            //next position is valid
-            stick_y_r += 2;
-          }
-          break;
-        case 'w':
-          if (stick_y_l > 0) {
-            //next position is valid
-            stick_y_l -= 2;
-          }
-          break;
-        case 's':
-          if (stick_y_l + HEIGHT_OF_STICK < STICK_WINDOW_HEIGHT) {
-            //next position is valid
-            stick_y_l += 2;
-          }
-          break;
-        case 'q':
-          //exit key
-          end = 1;
-          break;
-        default:
-          break;
+      if (mode == 2) {
+        switch (key) {
+          case KEY_UP:
+            if (stick_y_r > 0) {
+              //next position is valid
+              stick_y_r -= 2;
+            }
+            //can potentially add scroll feature
+            break;
+          case KEY_DOWN:
+            if (stick_y_r + HEIGHT_OF_STICK < STICK_WINDOW_HEIGHT) {
+              //next position is valid
+              stick_y_r += 2;
+            }
+            break;
+          case 'w':
+            if (stick_y_l > 0) {
+              //next position is valid
+              stick_y_l -= 2;
+            }
+            break;
+          case 's':
+            if (stick_y_l + HEIGHT_OF_STICK < STICK_WINDOW_HEIGHT) {
+              //next position is valid
+              stick_y_l += 2;
+            }
+            break;
+          case 'q':
+            //exit key
+            end = 1;
+            break;
+          default:
+            break;
+        }
+      } else {
+        /*user moves*/
+        switch (key) {
+          case KEY_UP:
+            if (stick_y_r > 0) {
+              //next position is valid
+              stick_y_r -= 2;
+            }
+            //can potentially add scroll feature
+            break;
+          case KEY_DOWN:
+            if (stick_y_r + HEIGHT_OF_STICK < STICK_WINDOW_HEIGHT) {
+              //next position is valid
+              stick_y_r += 2;
+            }
+            break;
+          case 'q':
+            //exit key
+            end = 1;
+            break;
+          default:
+            break;
+        }
+
+        /*computer moves*/
+        computer_move(ball, &stick_y_l);
       }
 
       bounce_ball(game_window, ball, stick_y_l, stick_y_r, &left_score, &right_score);
@@ -154,6 +203,22 @@ int main(void) {
       cont = 1;
       end = 0;
       initialise_game(game_window, ball, &left_score, &right_score, &stick_y_l, &stick_y_r);
+      display_game_state(game_window, score_window, ball, stick_y_l, stick_y_r, left_score, right_score);
+      print_message_center(game_window, "Press 1 for single player mode, or 2 for two players ", 7);
+      print_message_center(game_window, "In single player mode, you will be right player (use arrow keys)", 9);
+      print_message_center(game_window, "*** BETA VERSION: DO NOT USE SINGLE PLAYER MODE ***", 11);
+
+      mode = 0;
+      while (mode == 0) {
+        key = wgetch(game_window);
+        if (key == '2') {
+          mode = 2;
+        }
+        if (key == '1') {
+          mode = 1;
+        }
+      }
+      werase(game_window);
       display_game_state(game_window, score_window, ball, stick_y_l, stick_y_r, left_score, right_score);
       sleep(1);
     } else if (key == 'q') {

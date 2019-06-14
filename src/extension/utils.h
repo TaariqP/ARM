@@ -27,4 +27,6 @@ void display_game_state(WINDOW *, WINDOW *, ball *, int, int, int, int);
 
 void print_message_center(WINDOW *, char *, int);
 
+void computer_move(ball *ball, int *stick_y_l);
+
 #endif //ARM11_11_UTILS_H
