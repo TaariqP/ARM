@@ -29,6 +29,11 @@ int main(void) {
   curs_set(FALSE); // Don't display a cursor
   keypad(game_window, TRUE); //recognises key inputs
 
+  start_color();
+  init_pair(1,COLOR_CYAN, COLOR_BLUE);
+  init_pair(2,COLOR_CYAN,COLOR_GREEN);
+  wattron(game_window,COLOR_PAIR(1));
+  wattron(score_window,COLOR_PAIR(2));
 
 /*initialising local variables*/
   int stick_y_l,
@@ -153,6 +158,8 @@ int main(void) {
       break;
     }
   }
+  wattroff(score_window,COLOR_PAIR(2));
+  wattroff(game_window,COLOR_PAIR(1));
   free_ball(ball);
   wattroff(win, A_BOLD);
   endwin();
