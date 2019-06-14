@@ -14,7 +14,7 @@
 #define SCREEN_HEIGHT 45
 #define SCORE_HEIGHT 13
 #define SCORE_WIDTH (STICK_WINDOW_WIDTH - 20)
-#define MAXSCORE 2
+#define MAXSCORE 5
 #define max(x, y) ((x) >= (y)) ? (x) : (y)
 
 void print_number(WINDOW *, int, int, int);
@@ -27,6 +27,10 @@ void display_game_state(WINDOW *, WINDOW *, ball *, int, int, int, int);
 
 void print_message_center(WINDOW *, char *, int);
 
-void computer_move(ball *ball, int *stick_y_l);
+void computer_move(ball *, int *);
+
+void win_player(WINDOW *, int, int);
+
+void print_instructions(WINDOW *);
 
 #endif //ARM11_11_UTILS_H

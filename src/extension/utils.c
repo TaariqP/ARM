@@ -172,11 +172,28 @@ void print_message_center(WINDOW *window, char *message, int y_pos) {
 
 }
 
+void print_instructions(WINDOW *game_window) {
+  print_message_center(game_window, "Player 1 (right) uses up and down arrow keys to move paddle", 5);
+  print_message_center(game_window, "Player 2 (left) uses W and S keys to move paddle", 7);
+  print_message_center(game_window, "Press Y to begin game, or N to quit", 9);
+  print_message_center(game_window, "Once you have begun the game, press Q to quit", 11);
+}
+
+void win_player(WINDOW *window, int left_score, int right_score) {
+  if (left_score > right_score) {
+    print_message_center(window, "Left Player Wins!", 10);
+  } else if (right_score > left_score) {
+    print_message_center(window, "Right Player Wins!", 10);
+  } else {
+    print_message_center(window, "Game is a Draw...", 10);
+  }
+}
+
 void computer_move(ball *ball, int *stick_y_l) {
   int top_of_paddle = *stick_y_l;
   int bottom_of_paddle = *stick_y_l + HEIGHT_OF_STICK;
 
-  if (STICK_WINDOW_WIDTH/2 > ball->x_position) {
+  if (STICK_WINDOW_WIDTH / 2 > ball->x_position) {
     if (ball->y_position > bottom_of_paddle) {
       *stick_y_l += 2;
     } else if (ball->y_position < top_of_paddle + 1) {

@@ -49,7 +49,8 @@ int main(void) {
 
   initialise_game(game_window, ball, &left_score, &right_score, &stick_y_l, &stick_y_r);
 
-  print_message_center(game_window, "Are you ready to play NEON PONG? (Y/N)", 10);
+  print_message_center(game_window, "Are you ready to play NEON PONG? (Y/N)", 8);
+  print_message_center(game_window, "First one to five wins!", 10);
   print_message_center(game_window, "(For controls, press C)", 12);
 
   /*starter windows*/
@@ -65,13 +66,9 @@ int main(void) {
     } else if (key == 'c') {
       werase(game_window);
       display_game_state(game_window, score_window, ball, stick_y_l, stick_y_r, left_score, right_score);
-      print_message_center(game_window, "Player 1 (right) uses up and down arrow keys to move paddle", 5);
-      print_message_center(game_window, "Player 2 (left) uses W and S keys to move paddle", 7);
-      print_message_center(game_window, "Press Y to begin game, or N to quit", 9);
-      print_message_center(game_window, "Once you have begun the game, press Q to quit", 11);
+      print_instructions(game_window);
     }
   }
-
 
   werase(game_window);
   /*select mode, will have different game cycles*/
@@ -79,7 +76,6 @@ int main(void) {
     display_game_state(game_window, score_window, ball, stick_y_l, stick_y_r, left_score, right_score);
     print_message_center(game_window, "Press 1 for single player mode, or 2 for two players ", 7);
     print_message_center(game_window, "In single player mode, you will be right player (use arrow keys)", 9);
-    print_message_center(game_window, "*** BETA VERSION: DO NOT USE SINGLE PLAYER MODE ***", 11);
 
     key = wgetch(game_window);
     if (key == '2') {
@@ -88,7 +84,6 @@ int main(void) {
     if (key == '1') {
       mode = 1;
     }
-
   }
 
   while (cont) {
@@ -104,72 +99,10 @@ int main(void) {
 
       display_ball(game_window, ball);
 
-//    display_ball(stick_window, ball_x, ball_y);
-
       /*behaviour of valid key presses, mode dependent*/
       nodelay(game_window, TRUE);
       key = wgetch(game_window);
-      if (mode == 2) {
-        switch (key) {
-          case KEY_UP:
-            if (stick_y_r > 0) {
-              //next position is valid
-              stick_y_r -= 2;
-            }
-            //can potentially add scroll feature
-            break;
-          case KEY_DOWN:
-            if (stick_y_r + HEIGHT_OF_STICK < STICK_WINDOW_HEIGHT) {
-              //next position is valid
-              stick_y_r += 2;
-            }
-            break;
-          case 'w':
-            if (stick_y_l > 0) {
-              //next position is valid
-              stick_y_l -= 2;
-            }
-            break;
-          case 's':
-            if (stick_y_l + HEIGHT_OF_STICK < STICK_WINDOW_HEIGHT) {
-              //next position is valid
-              stick_y_l += 2;
-            }
-            break;
-          case 'q':
-            //exit key
-            end = 1;
-            break;
-          default:
-            break;
-        }
-      } else {
-        /*user moves*/
-        switch (key) {
-          case KEY_UP:
-            if (stick_y_r > 0) {
-              //next position is valid
-              stick_y_r -= 2;
-            }
-            //can potentially add scroll feature
-            break;
-          case KEY_DOWN:
-            if (stick_y_r + HEIGHT_OF_STICK < STICK_WINDOW_HEIGHT) {
-              //next position is valid
-              stick_y_r += 2;
-            }
-            break;
-          case 'q':
-            //exit key
-            end = 1;
-            break;
-          default:
-            break;
-        }
-
-        /*computer moves*/
-        computer_move(ball, &stick_y_l);
-      }
+      stick_move(ball, mode, key, &end, &stick_y_l, &stick_y_r);
 
       bounce_ball(game_window, ball, stick_y_l, stick_y_r, &left_score, &right_score);
       move_ball(ball);
@@ -184,13 +117,7 @@ int main(void) {
       has_just_quit = 0;
     }
 
-    if (left_score > right_score) {
-      print_message_center(game_window, "Left Player Wins!", 10);
-    } else if (right_score > left_score) {
-      print_message_center(game_window, "Right Player Wins!", 10);
-    } else {
-      print_message_center(game_window, "Game is a Draw...", 10);
-    }
+    win_player(game_window, left_score, right_score);
 
     print_message_center(game_window, "Press R for rematch or Q to confirm quit", 12);
     display_game_state(game_window, score_window, ball, stick_y_l, stick_y_r, left_score, right_score);
@@ -206,7 +133,6 @@ int main(void) {
       display_game_state(game_window, score_window, ball, stick_y_l, stick_y_r, left_score, right_score);
       print_message_center(game_window, "Press 1 for single player mode, or 2 for two players ", 7);
       print_message_center(game_window, "In single player mode, you will be right player (use arrow keys)", 9);
-      print_message_center(game_window, "*** BETA VERSION: DO NOT USE SINGLE PLAYER MODE ***", 11);
 
       mode = 0;
       while (mode == 0) {
@@ -228,7 +154,8 @@ int main(void) {
   }
   wattroff(score_window, COLOR_PAIR(2));
   wattroff(game_window, COLOR_PAIR(1));
-  free_ball(ball);
   wattroff(win, A_BOLD);
+  free_ball(ball);
+
   endwin();
 }
