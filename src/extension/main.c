@@ -46,7 +46,7 @@ int main(void) {
 
 
 
-  print_message_center(game_window, "Are you ready to play pong? (Y/N)", 10);
+  print_message_center(game_window, "Are you ready to play Neon Pong? (Y/N)", 10);
   print_message_center(game_window, "(For controls, press C)", 12);
 
   /*starter windows*/
