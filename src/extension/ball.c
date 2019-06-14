@@ -25,7 +25,7 @@ ball *create_ball() {
 }
 
 void display_ball(WINDOW *window, ball *ball) {
-  mvwprintw(window, ball->y_position, ball->x_position, "0");
+  mvwprintw(window, ball->y_position, ball->x_position, "o");
   wrefresh(window);
 }
 
@@ -41,13 +41,12 @@ void move_ball(ball *ball) {
 
 }
 
-
 static int illegal_x(ball *ball) {
   //check next x
   int next_x = ball->x_position + ball->direction->x;
   if (ball->direction->x == 2 || ball->direction->x == -2) {
     if (next_x >= STICK_WINDOW_WIDTH - 3 || next_x < 3) {
-      ball->direction->x /=2;
+      ball->direction->x /= 2;
       return illegal_x(ball);
     }
   } else {
@@ -55,8 +54,6 @@ static int illegal_x(ball *ball) {
       return 1;
     }
   }
-
-
   return 0;
 }
 
@@ -66,7 +63,6 @@ static int illegal_y(ball *ball) {
   if (next_y > STICK_WINDOW_HEIGHT - 2 || next_y < 1) {
     return 1;
   }
-
   return 0;
 }
 

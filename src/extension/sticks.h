@@ -12,6 +12,7 @@
 #define HEIGHT_OF_STICK 4
 
 void display_left_stick(WINDOW *, int);
+
 void display_right_stick(WINDOW *, int);
 
 #endif //ARM11_11_STICKS_H
