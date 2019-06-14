@@ -144,6 +144,13 @@ void initialise_game(WINDOW *window, ball *ball, int *left_score, int *right_sco
   ball->direction->y = 0;
 }
 
+void display_game(WINDOW *game_window, ball *ball, int stick_y_l, int stick_y_r) {
+  box(game_window, ACS_VLINE, ACS_HLINE);
+  display_left_stick(game_window, stick_y_l);
+  display_right_stick(game_window, stick_y_r);
+  display_ball(game_window, ball);
+}
+
 void display_game_state(WINDOW *game_window, WINDOW *score_window, ball *ball, int stick_y_l, int stick_y_r, int left_score, int right_score) {
   box(score_window, ACS_VLINE, ACS_HLINE);
   for (int i = 1; i < SCORE_HEIGHT - 1; i++) {
@@ -153,10 +160,8 @@ void display_game_state(WINDOW *game_window, WINDOW *score_window, ball *ball, i
   print_number(score_window, left_score, SCORE_WIDTH/4 - 5, 3);
   print_number(score_window, right_score, (3 *(SCORE_WIDTH/4)), 3);
 
-  box(game_window, ACS_VLINE, ACS_HLINE);
-  display_left_stick(game_window, stick_y_l);
-  display_right_stick(game_window, stick_y_r);
-  display_ball(game_window, ball);
+  display_game(game_window, ball, stick_y_l, stick_y_r );
+
 }
 
 void print_message_center(WINDOW *window, char *message, int y_pos) {

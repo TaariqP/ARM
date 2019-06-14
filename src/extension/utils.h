@@ -19,6 +19,7 @@
 
 void print_number(WINDOW *, int, int, int);
 void initialise_game(WINDOW *, ball *, int *, int *, int *, int *);
+void display_game(WINDOW *, ball *, int , int );
 void display_game_state(WINDOW *, WINDOW *, ball *, int , int , int , int);
 void print_message_center(WINDOW *, char *, int );
 
