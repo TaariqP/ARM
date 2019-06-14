@@ -1,7 +1,7 @@
 //
 // Created by Satadru on 12/06/19.
 //
-#include <ncurses.h>
+#include <curses.h>
 #include <unistd.h>
 
 #ifndef ARM11_11_STICKS_H

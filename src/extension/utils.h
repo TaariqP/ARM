@@ -3,7 +3,7 @@
 //
 
 #include <stdlib.h>
-#include <ncurses.h>
+#include <curses.h>
 #include <unistd.h>
 #include "ball.h"
 
@@ -14,17 +14,8 @@
 #define SCREEN_HEIGHT 45
 #define SCORE_HEIGHT 13
 #define SCORE_WIDTH (STICK_WINDOW_WIDTH - 20)
-#define MAXSCORE 1
+#define MAXSCORE 2
 #define max(x,y) ((x) >= (y)) ? (x) : (y)
-
-void printA(WINDOW *window, int start_x, int start_y);
-void printB(WINDOW *window, int start_x, int start_y);
-void printC(WINDOW *window, int start_x, int start_y);
-void printD(WINDOW *window, int start_x, int start_y);
-void printE(WINDOW *window, int start_x, int start_y);
-void printF(WINDOW *window, int start_x, int start_y);
-void printG(WINDOW *window, int start_x, int start_y);
-
 
 void print_number(WINDOW *, int, int, int);
 void initialise_game(WINDOW *, ball *, int *, int *, int *, int *);

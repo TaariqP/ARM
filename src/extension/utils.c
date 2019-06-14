@@ -2,13 +2,17 @@
 // Created by Akanksha on 13/06/19.
 //
 #include <stdlib.h>
-#include <ncurses.h>
+#include <curses.h>
 #include <unistd.h>
 #include <memory.h>
 #include "utils.h"
 #include "ball.h"
 #include "sticks.h"
 
+/*the functions in the section below are not intended to be used outside of utils.c*/
+/*--------------------------------------------------------*/
+/*--------------------------------------------------------*/
+/*--------------------------------------------------------*/
 
 void printA(WINDOW *window, int start_x, int start_y) {
 
@@ -55,6 +59,9 @@ void printG(WINDOW *window, int start_x, int start_y) {
   mvwprintw(window, start_y + 2, start_x + 1, "____");
   wrefresh(window);
 }
+/*--------------------------------------------------------*/
+/*--------------------------------------------------------*/
+/*--------------------------------------------------------*/
 
 void (*printers[7])(WINDOW *, int, int) = {printA, printB, printC, printD, printE, printF, printG};
 
@@ -143,8 +150,8 @@ void display_game_state(WINDOW *game_window, WINDOW *score_window, ball *ball, i
     mvwprintw(score_window, i, (STICK_WINDOW_WIDTH / 2) - 10, "|");
   }
   wrefresh(score_window);
-  print_number(score_window, left_score, 10, 3);
-  print_number(score_window, right_score, SCORE_WIDTH - 20, 3);
+  print_number(score_window, left_score, SCORE_WIDTH/4 - 5, 3);
+  print_number(score_window, right_score, (3 *(SCORE_WIDTH/4)), 3);
 
   box(game_window, ACS_VLINE, ACS_HLINE);
   display_left_stick(game_window, stick_y_l);

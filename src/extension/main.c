@@ -3,22 +3,27 @@
 //
 
 #include <stdlib.h>
-#include <ncurses.h>
+#include <curses.h>
 #include <unistd.h>
 #include <memory.h>
+#include <sys/ioctl.h>
 #include "sticks.h"
 #include "ball.h"
 #include "utils.h"
+
 
 
 int main(void) {
   /*initialising game space*/
   initscr(); // Initialize the window
   WINDOW *win = newwin(SCREEN_HEIGHT, SCREEN_WIDTH, 5, 10);
+  wattron(win, A_BOLD);
   WINDOW *game_window = subwin(win, STICK_WINDOW_HEIGHT, STICK_WINDOW_WIDTH, 6, 11);
   WINDOW *score_window = subwin(win, SCORE_HEIGHT, SCORE_WIDTH, 6 + STICK_WINDOW_HEIGHT + 2, 21);
 
   cbreak();
+  scrollok(game_window, TRUE);
+  scrollok(score_window, TRUE);
 
   noecho(); // Don't echo any keypresses
   curs_set(FALSE); // Don't display a cursor
@@ -39,9 +44,10 @@ int main(void) {
 
   initialise_game(game_window, ball, &left_score, &right_score, &stick_y_l, &stick_y_r);
 
+
+
   print_message_center(game_window, "Are you ready to play pong? (Y/N)", 10);
   print_message_center(game_window, "(For controls, press C)", 12);
-
 
   /*starter windows*/
   while (key != 'y') {
@@ -55,9 +61,10 @@ int main(void) {
     } else if (key == 'c') {
       werase(game_window);
       display_game_state(game_window, score_window, ball, stick_y_l, stick_y_r, left_score, right_score);
-      print_message_center(game_window, "Player 1 (left) uses up and down arrow keys to move paddle", 8);
-      print_message_center(game_window, "Player 2 (right) uses W and S keys to move paddle", 10);
-      print_message_center(game_window, "Press Y to begin game, or N to exit", 12);
+      print_message_center(game_window, "Player 1 (right) uses up and down arrow keys to move paddle", 5);
+      print_message_center(game_window, "Player 2 (left) uses W and S keys to move paddle", 7);
+      print_message_center(game_window, "Press Y to begin game, or N to quit", 9);
+      print_message_center(game_window, "Once you have begun the game, press Q to quit", 11);
     }
   }
 
@@ -147,5 +154,6 @@ int main(void) {
     }
   }
   free_ball(ball);
+  wattroff(win, A_BOLD);
   endwin();
 }

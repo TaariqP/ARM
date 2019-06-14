@@ -1,7 +1,7 @@
 //
 // Created by Akanksha on 12/06/19.
 //
-#include <ncurses.h>
+#include <curses.h>
 #include <unistd.h>
 
 #define STICK_WINDOW_WIDTH 98
@@ -13,15 +13,9 @@
 #define BALL_INITIAL_Y 14
 
 
-typedef enum {
-    ZERO = 0,
-    POSITIVE = 1,
-    NEGATIVE = -1
-} magnitude;
-
 typedef struct {
-    magnitude x;
-    magnitude y;
+    int x;
+    int y;
 } direction;
 
 

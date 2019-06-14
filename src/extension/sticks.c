@@ -2,7 +2,7 @@
 // Created by Satadru on 12/06/19.
 //
 
-#include <ncurses.h>
+#include <curses.h>
 #include <unistd.h>
 #include "sticks.h"
 

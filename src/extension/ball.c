@@ -2,7 +2,7 @@
 // Created by Akanksha on 12/06/19.
 //
 #include <stdlib.h>
-#include <ncurses.h>
+#include <curses.h>
 #include <unistd.h>
 #include <time.h>
 #include "ball.h"
@@ -79,6 +79,21 @@ static void refresh_screen(WINDOW *window, ball *ball, int stick_left_y, int sti
   sleep(1);
 }
 
+void set_steepness_to_2(ball *ball) {
+  if (ball->direction->x == 1 || ball->direction->x == -1) {
+    ball->direction->x *=2;
+  }
+}
+
+void set_steepness_to_1(ball *ball) {
+  if (ball->direction->x == 2 || ball->direction->x == -2) {
+    ball->direction->x /=2;
+  }
+}
+
+void (*steepness_functions[2]) (ball *) = {set_steepness_to_1, set_steepness_to_2};
+
+
 void bounce_ball(WINDOW *window, ball *ball, int stick_left_y, int stick_right_y, int *score_left, int *score_right) {
   while (illegal_x(ball) || illegal_y(ball)) {
     if (illegal_x(ball) && !illegal_y(ball)) {
@@ -86,7 +101,7 @@ void bounce_ball(WINDOW *window, ball *ball, int stick_left_y, int stick_right_y
 
         //travelling left
         if (ball->y_position >= stick_left_y && ball->y_position < stick_left_y + HEIGHT_OF_STICK) {
-          //will hit stick
+          //will hit left stick
           ball->direction->x *= -1;
           ball->direction->y = getRand();
           break;
@@ -97,7 +112,7 @@ void bounce_ball(WINDOW *window, ball *ball, int stick_left_y, int stick_right_y
       }
 
       if (ball->y_position >= stick_right_y && ball->y_position < stick_right_y + HEIGHT_OF_STICK) {
-        //will hit stick
+        //will hit right stick
         ball->direction->x *= -1;
         ball->direction->y = getRand();
         break;
